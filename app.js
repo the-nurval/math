@@ -770,6 +770,9 @@ document.addEventListener("input",e=>{
 document.addEventListener("focusin",e=>{const b=e.target.closest("[data-block]");if(b&&st.view==="main")activeBlock=Number(b.dataset.block)});
 
 applyTheme();renderAll();initAuth();
+function navShadow(){const n=document.querySelector(".nav");if(n)n.classList.toggle("scrolled",window.scrollY>4)}
+window.addEventListener("scroll",navShadow,{passive:true});navShadow();
+
 window.addEventListener("resize",()=>placeThumbs());
 
 })();
