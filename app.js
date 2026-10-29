@@ -133,6 +133,52 @@ const UI2={
   me:"My profile",noName:"No name",loading:"Loading…",account:"Account"}
 };
 Object.keys(UI).forEach(l=>Object.assign(UI[l],UI2[l]));
+
+const UI3={
+ ru:{family:"Семья",main:"главный родитель",second:"второй родитель",inviteParent:"Пригласить родителя",inviteChild:"Пригласить ученика",inviteSecond:"Пригласить второго родителя",
+  emailPh:"Почта",invite:"Пригласить",invited:"приглашение отправлено",cancelInv:"Отменить",waiting:"ждёт подтверждения ученика",
+  okInvited:e=>`Приглашение отправлено на ${e}.`,okRequested:"Запрос отправлен. Ученик подтвердит его, когда зайдёт на сайт.",okLinked:"Подключено.",
+  eNotStudent:"Эта почта принадлежит аккаунту родителя.",eNotParentAcc:"Эта почта принадлежит аккаунту ученика.",eBadEmail:"Проверьте почту.",eNotMain:"Приглашать может только главный родитель.",
+  leave:"Отключиться",removeP:"Отключить",online:"в сети",seenToday:t=>`был(а) сегодня в ${t}`,seenYday:t=>`был(а) вчера в ${t}`,seenDays:n=>`был(а) ${n} дн. назад`,seenDate:d=>`был(а) ${d}`,
+  askTitle:"Это твой родитель?",askText:(n,e)=>`${n||"Кто-то"} (${e}) хочет видеть твои результаты.`,yes:"Да",no:"Нет",
+  helpBtn:"Попросить помощи",helpSent:"Просьба отправлена",helpSec:"Просьбы о помощи",helpNone:"Просьб нет.",helpOpen:"Открыть",helpDone:"Разобрали",helpDoneMark:"разобрали",
+  accountSec:"Аккаунт",accountRow:"Аккаунт и роль",roleNow:r=>`Роль: ${r==="student"?"ученик":"родитель"}`,roleS:"ученик",roleP:"родитель",
+  changeRole:"Сменить роль",changeOnce:"Роль можно сменить только один раз.",roleChangedAlready:"Роль уже меняли, второй раз нельзя.",deleteAcc:"Удалить аккаунт",
+  roleAsk:r=>`Вы собираетесь поменять роль на «${r}»?`,
+  roleWarn:r=>`Поменять роль на «${r}» можно только один раз: вернуть обратно на этом аккаунте будет нельзя. Все настройки будут удалены, а также ${r==="родитель"?"все работы, история и достижения":"все подключённые ученики"}.`,
+  phraseRole:"сменить роль",phraseDel:"удалить аккаунт",typePhrase:p=>`Чтобы подтвердить, введите: ${p}`,
+  delWarn:"Аккаунт будет удалён вместе со всеми работами, историей и связями. Восстановить его нельзя. Потом можно войти заново, как новый пользователь.",
+  cancel:"Отмена",doChange:"Сменить роль",doDelete:"Удалить"},
+ et:{family:"Pere",main:"peamine vanem",second:"teine vanem",inviteParent:"Kutsu vanem",inviteChild:"Kutsu õpilane",inviteSecond:"Kutsu teine vanem",
+  emailPh:"E-post",invite:"Kutsu",invited:"kutse saadetud",cancelInv:"Tühista",waiting:"ootab õpilase kinnitust",
+  okInvited:e=>`Kutse saadeti aadressile ${e}.`,okRequested:"Taotlus saadetud. Õpilane kinnitab selle, kui saidile tuleb.",okLinked:"Ühendatud.",
+  eNotStudent:"See e-post kuulub lapsevanema kontole.",eNotParentAcc:"See e-post kuulub õpilase kontole.",eBadEmail:"Kontrolli e-posti.",eNotMain:"Kutsuda saab ainult peamine vanem.",
+  leave:"Lahku",removeP:"Eemalda",online:"võrgus",seenToday:t=>`oli täna ${t}`,seenYday:t=>`oli eile ${t}`,seenDays:n=>`oli ${n} p tagasi`,seenDate:d=>`oli ${d}`,
+  askTitle:"Kas see on sinu vanem?",askText:(n,e)=>`${n||"Keegi"} (${e}) soovib näha sinu tulemusi.`,yes:"Jah",no:"Ei",
+  helpBtn:"Palu abi",helpSent:"Palve saadetud",helpSec:"Abipalved",helpNone:"Palveid pole.",helpOpen:"Ava",helpDone:"Arutatud",helpDoneMark:"arutatud",
+  accountSec:"Konto",accountRow:"Konto ja roll",roleNow:r=>`Roll: ${r==="student"?"õpilane":"lapsevanem"}`,roleS:"õpilane",roleP:"lapsevanem",
+  changeRole:"Muuda rolli",changeOnce:"Rolli saab muuta ainult üks kord.",roleChangedAlready:"Rolli on juba muudetud, teist korda ei saa.",deleteAcc:"Kustuta konto",
+  roleAsk:r=>`Kas soovid muuta rolli: «${r}»?`,
+  roleWarn:r=>`Rolli «${r}» saab muuta ainult üks kord: tagasi sellel kontol muuta ei saa. Kõik seaded kustutatakse, samuti ${r==="lapsevanem"?"kõik tööd, ajalugu ja saavutused":"kõik ühendatud õpilased"}.`,
+  phraseRole:"muuda rolli",phraseDel:"kustuta konto",typePhrase:p=>`Kinnitamiseks kirjuta: ${p}`,
+  delWarn:"Konto kustutatakse koos kõigi tööde, ajaloo ja ühendustega. Taastada ei saa. Hiljem saab uuesti sisse logida uue kasutajana.",
+  cancel:"Loobu",doChange:"Muuda rolli",doDelete:"Kustuta"},
+ en:{family:"Family",main:"main parent",second:"second parent",inviteParent:"Invite a parent",inviteChild:"Invite a student",inviteSecond:"Invite a second parent",
+  emailPh:"Email",invite:"Invite",invited:"invitation sent",cancelInv:"Cancel",waiting:"waiting for the student to confirm",
+  okInvited:e=>`Invitation sent to ${e}.`,okRequested:"Request sent. The student will confirm it on their next visit.",okLinked:"Connected.",
+  eNotStudent:"This email belongs to a parent account.",eNotParentAcc:"This email belongs to a student account.",eBadEmail:"Check the email.",eNotMain:"Only the main parent can invite.",
+  leave:"Leave",removeP:"Disconnect",online:"online",seenToday:t=>`seen today at ${t}`,seenYday:t=>`seen yesterday at ${t}`,seenDays:n=>`seen ${n} days ago`,seenDate:d=>`seen ${d}`,
+  askTitle:"Is this your parent?",askText:(n,e)=>`${n||"Someone"} (${e}) wants to see your results.`,yes:"Yes",no:"No",
+  helpBtn:"Ask for help",helpSent:"Request sent",helpSec:"Help requests",helpNone:"No requests.",helpOpen:"Open",helpDone:"Done",helpDoneMark:"done",
+  accountSec:"Account",accountRow:"Account and role",roleNow:r=>`Role: ${r==="student"?"student":"parent"}`,roleS:"student",roleP:"parent",
+  changeRole:"Change role",changeOnce:"The role can be changed only once.",roleChangedAlready:"The role was already changed; it can't be changed again.",deleteAcc:"Delete account",
+  roleAsk:r=>`Change your role to “${r}”?`,
+  roleWarn:r=>`You can change the role to “${r}” only once: there is no way back on this account. All settings will be deleted, as well as ${r==="parent"?"all tests, history and achievements":"all connected students"}.`,
+  phraseRole:"change role",phraseDel:"delete account",typePhrase:p=>`To confirm, type: ${p}`,
+  delWarn:"The account will be deleted with all tests, history and connections. It can't be restored. You can sign in again later as a new user.",
+  cancel:"Cancel",doChange:"Change role",doDelete:"Delete"}
+};
+Object.keys(UI).forEach(l=>Object.assign(UI[l],UI3[l]));
 const LETTERS={ru:"абвгдежзиклм",et:"abcdefghijkl",en:"abcdefghijkl"};
 const ICON_BACK=`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>`;
 const ICON_PLAY=`<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M8 5.5v13l10-6.5z"/></svg>`;
@@ -156,10 +202,10 @@ let st=Object.assign({lang:"ru",level:"n",type:"theme",date:todayStr(),timer:"of
   history:[],seen:[],train:null,laps:[],lapStart:0,rv:null,faqOpen:null,limitTouched:false},LS.get("math7.prefs")||{});
 let U=UI[st.lang];let activeBlock=null;
 let USER=null,PROFILE=null,authState="loading",sync="ok",authMsg="",authErr=false,linkMsg="",linkErr=false;
-let parents=[],kids=[],kid=null,kidHist=[];
+let parents=[],kids=[],kid=null,kidHist=[],kidParents=[],kidHelp=[],myInvites=[],modal=null,helpSent={};
 
 function savePrefs(){LS.set("math7.prefs",{lang:st.lang,theme:st.theme})}
-const WORK_KEYS=["meta","answers","checked","open","elapsed","blockTime","timeUp","laps","lapStart","timer","limit","type","date","limitTouched","confirming"];
+const WORK_KEYS=["lastCid","meta","answers","checked","open","elapsed","blockTime","timeUp","laps","lapStart","timer","limit","type","date","limitTouched","confirming"];
 let workT=null;
 function saveWork(){if(!USER||!PROFILE||PROFILE.role!=="student")return;clearTimeout(workT);workT=setTimeout(()=>{const o={};WORK_KEYS.forEach(k=>o[k]=st[k]);LS.set("math7.work."+USER.id,o)},300)}
 function restoreWork(){const o=LS.get("math7.work."+USER.id);if(o&&o.meta){Object.assign(st,o);st.test=buildFrom(st.meta);st.running=!st.checked&&st.timer==="limit"}}
@@ -176,9 +222,10 @@ async function onSession(session){
   if(uid===sessUid)return;sessUid=uid;USER=u;
   if(!u){authState="out";PROFILE=null;st.history=[];st.test=null;st.meta=null;renderAll();return}
   authState="loading";renderAll();
-  const {data,error}=await sb.from("profiles").select("*").eq("id",u.id).maybeSingle();
+  const meta=u.user_metadata||{};
+  const {data,error}=await sb.rpc("bootstrap",{p_name:meta.full_name||meta.name||""});
   if(error){const cached=LS.get("math7.profile."+u.id);if(cached){sync="offline";applyProfile(cached);return}authState="out";authErr=true;authMsg=U.authErr+error.message;renderAll();return}
-  if(!data){authState="role";renderAll();return}
+  if(!data||!data.id){authState="role";renderAll();return}
   applyProfile(data);
 }
 function applyProfile(p){
@@ -187,13 +234,14 @@ function applyProfile(p){
   U=UI[st.lang];applyTheme();savePrefs();
   if(p.role==="student"){st.view="main";restoreWork();loadHistory();loadParents()}
   else{st.view="kids";loadKids()}
+  loadInvites();
   renderAll();
 }
 async function createProfile(role){
   const nameEl=document.getElementById("f-rname");
   const meta=USER.user_metadata||{};
   const name=((nameEl&&nameEl.value)||meta.full_name||meta.name||"").trim();
-  const {data,error}=await sb.from("profiles").insert({id:USER.id,role,name,settings:{level:st.level,theme:st.theme,lang:st.lang}}).select().single();
+  const {data,error}=await sb.rpc("create_profile",{p_role:role,p_name:name,p_settings:{level:st.level,theme:st.theme,lang:st.lang}});
   if(error){authErr=true;authMsg=U.authErr+error.message;renderMain();return}
   applyProfile(data);
 }
@@ -217,7 +265,7 @@ async function loadHistory(){
   flushQueue();refreshIf();
 }
 async function saveResult(r){
-  r.cid=Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+  r.cid=Date.now().toString(36)+Math.random().toString(36).slice(2,8);st.lastCid=r.cid;
   st.seen=Array.from(new Set(st.seen.concat(r.oly||[]))).slice(-200);
   st.history=[r].concat(st.history);
   const q=LS.get(qKey())||[];q.push(r);LS.set(qKey(),q);
@@ -237,14 +285,28 @@ async function flushQueue(){
   flushing=false;refreshIf();
 }
 window.addEventListener("online",flushQueue);
-async function loadParents(){if(!sb)return;const {data}=await sb.rpc("my_parents");parents=data||[];refreshIf()}
-async function loadKids(){if(!sb)return;const {data}=await sb.rpc("my_students");kids=data||[];if(st.view==="kids")renderMain()}
-async function openKid(id){
-  kid=kids.find(k=>k.student_id===id);if(!kid)return;
-  const {data}=await sb.from("results").select("data").eq("student_id",id).order("ts",{ascending:false}).limit(1000);
-  kidHist=(data||[]).map(r=>r.data);st.view="kid";renderMain();window.scrollTo({top:0});
+async function loadParents(){if(!sb)return;const {data}=await sb.rpc("my_parents");parents=data||[];
+  const pend=parents.find(p=>p.status==="pending");if(pend&&!modal){modal={type:"ask",p:pend};renderModal()}refreshIf()}
+async function loadKids(){if(!sb)return;const {data}=await sb.rpc("my_students");kids=data||[];if(kid){const k=kids.find(x=>x.student_id===kid.student_id);if(k)kid=k}refreshIf()}
+async function loadInvites(){if(!sb||!USER)return;const {data}=await sb.from("invites").select("id,email,role,student_id,kind,invited_by").order("created_at");myInvites=data||[];refreshIf()}
+async function loadKidExtra(id){
+  const [a,b]=await Promise.all([sb.rpc("student_parents",{p_student:id}),sb.from("help").select("*").eq("student_id",id).order("created_at",{ascending:false}).limit(100)]);
+  kidParents=a.data||[];kidHelp=b.data||[];refreshIf();
 }
-function refreshIf(){if(st.view==="profile"||st.view==="kids"||st.view==="kid")renderMain()}
+async function openKid(id){
+  kid=kids.find(k=>k.student_id===id);if(!kid)return;kidParents=[];kidHelp=[];
+  const {data}=await sb.from("results").select("data").eq("student_id",id).order("ts",{ascending:false}).limit(1000);
+  kidHist=(data||[]).map(r=>r.data);st.view="kid";renderMain();window.scrollTo({top:0});loadKidExtra(id);
+}
+function refreshIf(){if(["profile","kids","kid","account","me"].includes(st.view)&&!document.activeElement.matches("input.txt"))renderMain()}
+function sendMail(){if(sb)sb.functions.invoke("send-mail",{body:{}}).catch(()=>{})}
+function touch(){if(sb&&PROFILE&&document.visibilityState==="visible")sb.rpc("touch").then(()=>{},()=>{})}
+setInterval(()=>{touch();if(PROFILE){if(PROFILE.role==="student")loadParents();else{loadKids();if(kid&&st.view==="kid")loadKidExtra(kid.student_id)}}},5*60*1000);
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")touch()});
+function errText(m){m=String(m||"");if(/not_student/.test(m))return U.eNotStudent;if(/not_parent_account/.test(m))return U.eNotParentAcc;if(/bad_email/.test(m))return U.eBadEmail;if(/not_main/.test(m))return U.eNotMain;return U.authErr+m}
+function seenTxt(ts){if(!ts)return "";const d=new Date(ts),now=new Date();const diff=(now-d)/1000;if(diff<180)return U.online;
+  const t=d.toLocaleTimeString(loc(),{hour:"2-digit",minute:"2-digit"});const day=x=>{const y=new Date(x);y.setHours(0,0,0,0);return y.getTime()};
+  const dd=Math.round((day(now)-day(d))/864e5);if(dd===0)return U.seenToday(t);if(dd===1)return U.seenYday(t);if(dd<7)return U.seenDays(dd);return U.seenDate(fmtD(d))}
 
 function applyTheme(){const r=document.documentElement;if(st.theme==="system")r.removeAttribute("data-theme");else r.setAttribute("data-theme",st.theme)}
 
@@ -328,7 +390,9 @@ function sheetHtml(ctx){
         if(self)res=`<div class="exp"><p><b>${U.model}:</b></p>${it.exp}</div><div class="selfgrade"><span>${U.selfQ}</span>${U.self.map((l,i)=>`<button class="opt" type="button" data-k="${k}" data-self="${i}" aria-pressed="${v===String(i)}" ${ctx.readonly?"disabled":""}>${l}</button>`).join("")}</div>`;
         else res=`<div class="res">${sc===b.pts?`<span class="right">${U.correctPts(b.pts)}</span>`:`<span class="right">${filled?U.right:U.noAns}: <b>${it.show}</b></span>`}<button class="why" type="button" data-why="${k}" aria-expanded="${open}">${open?U.hide:U.why}</button></div>${open?`<div class="exp">${it.exp}${it.alt?`<div class="alt"><b>${U.alt}.</b> ${it.alt}</div>`:""}</div>`:""}`;
       }
-      h+=`<div class="${cls}">${row}${res}</div>`;
+      if(ctx.checked&&ctx.helpCid){const hk=ctx.helpCid+"|"+k;const ttl=`${U.task} ${bi+1}${b.items.length>1?" "+LETTERS[st.lang][ii]+")":""} · ${b.title}`.replace(/<[^>]+>/g,"");
+        res+=`<div class="helprow">${helpSent[hk]?`<span class="sub">${U.helpSent}</span>`:`<button class="btn ghost sm" type="button" data-act="help" data-cid="${ctx.helpCid}" data-hk="${k}" data-title="${esc(ttl)}">${U.helpBtn}</button>`}</div>`}
+      h+=`<div class="${cls}${ctx.focus===k?" focus":""}" id="it-${k}">${row}${res}</div>`;
     });
     h+=`</div></div>`;
   });
@@ -346,7 +410,7 @@ function viewMain(){
     <div class="row2"><button class="btn" type="button" data-act="new">${U.create}</button><div class="tags" id="tags">${tagsHtml()}</div></div>
   </section>`;
   if(!st.test)h+=`<p class="empty">${U.noTest}</p>`;
-  else h+=sheetHtml({test:st.test,meta:st.meta,answers:st.answers,checked:st.checked,open:st.open,blockTime:st.blockTime,timeSec:st.timer!=="off"?st.elapsed:0,timeUp:st.timeUp,laps:st.laps});
+  else h+=sheetHtml({helpCid:st.checked&&parents.some(p=>p.status==="active")?st.lastCid:null,test:st.test,meta:st.meta,answers:st.answers,checked:st.checked,open:st.open,blockTime:st.blockTime,timeSec:st.timer!=="off"?st.elapsed:0,timeUp:st.timeUp,laps:st.laps});
   return h;
 }
 function viewSettings(){
@@ -358,6 +422,8 @@ function viewSettings(){
     <div class="group"><div class="srow"><span class="k">${U.theme}</span>${seg("theme",["system","light","dark"],st.theme,U.th,"sm")}</div></div>
     <div class="sec">${U.secHelp}</div>
     <div class="group"><button class="srow link" type="button" data-go="faq"><span>${U.faq}</span>${ICON_CHEV}</button></div>
+    <div class="sec">${U.accountSec}</div>
+    <div class="group"><button class="srow link" type="button" data-go="account"><span>${U.accountRow}</span>${ICON_CHEV}</button></div>
   </div>`;
 }
 function viewFaq(){
@@ -448,7 +514,7 @@ function viewReview(){
   const r=(fromKid?kidHist.slice().sort((a,b)=>b.ts-a.ts):sortedHist())[st.rv?st.rv.i:-1];
   if(!r||!r.meta){st.view=fromKid?"kid":"profile";return fromKid?viewKid():viewProfile(studentProfileOpts())}
   const test=buildFrom(r.meta);
-  return `<div class="screen">${subhead(`${U.review} ${fmtD(new Date(r.ts))}`,fromKid?"kid":"profile")}${sheetHtml({test,meta:r.meta,answers:r.answers||{},checked:true,open:st.rv.open||{},blockTime:r.blockTime||{},timeSec:r.timeSec||0,laps:r.laps||[],readonly:true})}</div>`;
+  return `<div class="screen">${subhead(`${U.review} ${fmtD(new Date(r.ts))}`,fromKid?"kid":"profile")}${sheetHtml({helpCid:!fromKid&&r.cid&&parents.some(p=>p.status==="active")?r.cid:null,focus:st.rv.focus,test,meta:r.meta,answers:r.answers||{},checked:true,open:st.rv.open||{},blockTime:r.blockTime||{},timeSec:r.timeSec||0,laps:r.laps||[],readonly:true})}</div>`;
 }
 
 const ICON_G=`<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z"/><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path fill="#FBBC05" d="M6.4 14c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.4H3.1a10 10 0 0 0 0 9.2z"/><path fill="#EA4335" d="M12 6c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3.1 7.4L6.4 10C7.2 7.7 9.4 6 12 6z"/></svg>`;
@@ -472,35 +538,72 @@ function viewRole(){
     ${authMsg?`<p class="msg${authErr?" err":""}">${esc(authMsg)}</p>`:""}
   </div></div>`;
 }
-function accountGroup(){return `<div class="sec">${U.account}</div><div class="group"><div class="srow"><span class="k">${esc((USER&&USER.email)||"")}</span><button class="btn ghost" type="button" data-act="logout">${U.logout}</button></div></div>`}
-function parentsHtml(){
-  const code=(PROFILE&&PROFILE.link_code)||"—";
-  let h=`<div class="sec">${U.parentsSec}</div><div class="group">
-    <div class="srow"><span><span class="k">${U.codeFor}</span><br><b class="code">${esc(code)}</b></span><button class="btn ghost" type="button" data-act="copycode" id="copybtn">${U.copy}</button></div>`;
-  if(!parents.length)h+=`<div class="srow"><span class="sub">${U.noParents}</span></div>`;
-  parents.forEach(p=>{h+=`<div class="srow"><span><b>${esc(p.name||U.noName)}</b> <span class="sub">${esc(p.email||"")}</span><br><span class="sub">${p.status==="active"?U.active:U.pending}</span></span>
-    <span class="tline">${p.status==="pending"?`<button class="btn" type="button" data-act="acceptp" data-pid="${p.parent_id}">${U.accept}</button><button class="btn ghost" type="button" data-act="removep" data-pid="${p.parent_id}">${U.decline}</button>`:`<button class="btn ghost" type="button" data-act="removep" data-pid="${p.parent_id}">${U.remove}</button>`}</span></div>`});
-  return h+`</div>`;
+function viewAccount(){
+  const isS=PROFILE.role==="student";const other=isS?U.roleP:U.roleS;
+  return `<div class="screen">${subhead(U.accountSec,"settings")}
+    <div class="group" style="margin-top:12px"><div class="srow"><span><span class="k">${esc((USER&&USER.email)||"")}</span><br><span class="sub">${U.roleNow(PROFILE.role)}</span></span><button class="btn ghost" type="button" data-act="logout">${U.logout}</button></div></div>
+    <div class="sec">${U.changeRole}</div>
+    <div class="group"><div class="srow"><span class="sub">${PROFILE.role_changed?U.roleChangedAlready:U.changeOnce}</span>${PROFILE.role_changed?"":`<button class="btn ghost" type="button" data-act="role1">${U.changeRole}: ${esc(other)}</button>`}</div></div>
+    <div class="sec">${U.deleteAcc}</div>
+    <div class="group"><div class="srow"><span class="sub">${U.delWarn}</span><button class="btn ghost danger" type="button" data-act="del1">${U.deleteAcc}</button></div></div>
+  </div>`;
 }
-function studentProfileOpts(){return {extra:parentsHtml()+accountGroup()}}
+function personRow(p,right){return `<div class="srow"><span><b>${esc(p.name||U.noName)}</b> <span class="sub">${esc(p.email||"")}</span><br><span class="sub">${[p.kind?U[p.kind]:"",seenTxt(p.last_seen)].filter(Boolean).join(" · ")}</span></span>${right||"<span></span>"}</div>`}
+function inviteRows(list){return list.map(i=>`<div class="srow"><span><span class="k">${esc(i.email)}</span><br><span class="sub">${U.invited}</span></span>${i.invited_by===USER.id?`<button class="btn ghost" type="button" data-act="uninvite" data-id="${i.id}">${U.cancelInv}</button>`:"<span></span>"}</div>`).join("")}
+function inviteForm(act,label,extra){return `<div class="srow"><input class="txt" type="email" id="f-inv-${act}" placeholder="${esc(U.emailPh)}" autocomplete="off"><button class="btn" type="button" data-act="${act}"${extra||""}>${U.invite}</button></div>`}
+function msgHtml(){return linkMsg?`<p class="msg${linkErr?" err":""}" role="status">${esc(linkMsg)}</p>`:""}
+function familyHtml(){
+  const act=parents.filter(p=>p.status==="active");const inv=myInvites.filter(i=>i.role==="parent");
+  let h=`<div class="sec">${U.family}</div><div class="group">`;
+  if(!act.length&&!inv.length)h+=`<div class="srow"><span class="sub">${U.noParents}</span></div>`;
+  h+=act.map(p=>personRow(p)).join("")+inviteRows(inv);
+  h+=`</div><div class="sec">${U.inviteParent}</div><div class="group">${inviteForm("invparent")}</div>${msgHtml()}`;
+  return h;
+}
+function studentProfileOpts(){return {extra:familyHtml()}}
 function viewKids(){
   let h=`<div class="screen"><div class="subhead"><h2>${U.kidsTitle}</h2></div><div class="group">`;
-  if(!kids.length)h+=`<div class="srow"><span class="sub">${U.kidsNone}</span></div>`;
-  kids.forEach(k=>{h+=k.status==="active"?`<button class="srow link" type="button" data-kid="${k.student_id}"><span><b>${esc(k.name||U.noName)}</b><br><span class="sub">${esc(k.email||"")}</span></span>${ICON_CHEV}</button>`
-    :`<div class="srow"><span><b>${esc(k.name||U.noName)}</b><br><span class="sub">${esc(k.email||"")} · ${U.waiting}</span></span><button class="btn ghost" type="button" data-act="unkid" data-sid="${k.student_id}">${U.remove}</button></div>`});
-  h+=`</div>
-    <div class="sec">${U.linkCode}</div><div class="group"><div class="srow"><input class="txt" id="f-code" placeholder="${esc(U.codePh)}" autocomplete="off" maxlength="12"><button class="btn" type="button" data-act="linkcode">${U.linkBtn}</button></div></div>
-    <div class="sec">${U.linkEmail}</div><div class="group"><div class="srow"><input class="txt" type="email" id="f-kmail" placeholder="${esc(U.emailPh)}" autocomplete="off"><button class="btn" type="button" data-act="linkmail">${U.reqBtn}</button></div></div>
-    ${linkMsg?`<p class="msg${linkErr?" err":""}" role="status">${esc(linkMsg)}</p>`:""}
-  </div>`;
+  const inv=myInvites.filter(i=>i.role==="student");
+  if(!kids.length&&!inv.length)h+=`<div class="srow"><span class="sub">${U.kidsNone}</span></div>`;
+  kids.forEach(k=>{h+=k.status==="active"?`<button class="srow link" type="button" data-kid="${k.student_id}"><span><b>${esc(k.name||U.noName)}</b>${k.help_open?` <span class="badge">${k.help_open}</span>`:""}<br><span class="sub">${[esc(k.email||""),seenTxt(k.last_seen)].filter(Boolean).join(" · ")}</span></span>${ICON_CHEV}</button>`
+    :`<div class="srow"><span><b>${esc(k.name||U.noName)}</b><br><span class="sub">${esc(k.email||"")} · ${U.waiting}</span></span><button class="btn ghost" type="button" data-act="unlink" data-pid="${USER.id}" data-sid="${k.student_id}">${U.cancelInv}</button></div>`});
+  h+=inviteRows(inv)+`</div><div class="sec">${U.inviteChild}</div><div class="group">${inviteForm("invchild")}</div>${msgHtml()}</div>`;
   return h;
+}
+function kidExtra(){
+  const amMain=kid.kind==="main";const sid=kid.student_id;
+  let h=`<div class="sec">${U.helpSec}</div><div class="group">`;
+  if(!kidHelp.length)h+=`<div class="srow"><span class="sub">${U.helpNone}</span></div>`;
+  kidHelp.forEach(x=>{h+=`<div class="srow"><span>${x.done?"":"<b>"}${esc(x.title)}${x.done?"":"</b>"}<br><span class="sub">${fmtD(new Date(x.created_at))}${x.done?" · "+U.helpDoneMark:""}</span></span><span class="tline"><button class="btn ghost" type="button" data-act="helpopen" data-cid="${esc(x.result_cid)}" data-hk="${esc(x.item_key)}">${U.helpOpen}</button>${x.done?"":`<button class="btn ghost" type="button" data-act="helpdone" data-id="${x.id}">${U.helpDone}</button>`}</span></div>`});
+  h+=`</div><div class="sec">${U.family}</div><div class="group">`;
+  h+=kidParents.map(p=>personRow(p,p.parent_id===USER.id?`<button class="btn ghost" type="button" data-act="unlink" data-pid="${p.parent_id}" data-sid="${sid}">${U.leave}</button>`:amMain&&p.kind==="second"?`<button class="btn ghost" type="button" data-act="unlink" data-pid="${p.parent_id}" data-sid="${sid}">${U.removeP}</button>`:"")).join("");
+  h+=inviteRows(myInvites.filter(i=>i.role==="parent"&&i.student_id===sid))+`</div>`;
+  if(amMain)h+=`<div class="sec">${U.inviteSecond}</div><div class="group">${inviteForm("invsecond",""," data-sid=\""+sid+"\"")}</div>`;
+  return h+msgHtml();
 }
 function viewKid(){
   if(!kid)return viewKids();
-  return viewProfile({hist:kidHist.slice().sort((a,b)=>b.ts-a.ts),readonly:true,name:kid.name,back:"kids",title:kid.name||U.noName});
+  return viewProfile({hist:kidHist.slice().sort((a,b)=>b.ts-a.ts),readonly:true,name:kid.name,back:"kids",title:kid.name||U.noName,extra:kidExtra()});
 }
 function viewMe(){
-  return `<div class="screen">${subhead(U.me,"kids")}<div class="group" style="margin-top:12px"><div class="srow"><label style="display:grid;gap:4px"><span class="sub">${U.name}</span><input class="txt" id="f-name" value="${esc(st.name)}" autocomplete="off"></label></div></div>${accountGroup()}</div>`;
+  return `<div class="screen">${subhead(U.me,"kids")}<div class="group" style="margin-top:12px"><div class="srow"><label style="display:grid;gap:4px"><span class="sub">${U.name}</span><input class="txt" id="f-name" value="${esc(st.name)}" autocomplete="off"></label></div></div></div>`;
+}
+/* ---------- окна ---------- */
+function renderModal(){
+  let el=document.getElementById("modal");
+  if(!modal){if(el)el.remove();document.body.classList.remove("modal-open");return}
+  if(!el){el=document.createElement("div");el.id="modal";el.className="overlay";document.body.appendChild(el)}
+  document.body.classList.add("modal-open");
+  const other=PROFILE&&PROFILE.role==="student"?U.roleP:U.roleS;let h="";
+  if(modal.type==="ask")h=`<h2>${U.askTitle}</h2><p>${esc(U.askText(modal.p.name,modal.p.email))}</p><div class="mbtns"><button class="btn ghost" type="button" data-act="askno">${U.no}</button><button class="btn" type="button" data-act="askyes">${U.yes}</button></div>`;
+  if(modal.type==="role1")h=`<h2>${U.changeRole}</h2><p>${esc(U.roleAsk(other))}</p><div class="mbtns"><button class="btn ghost" type="button" data-act="mclose">${U.no}</button><button class="btn" type="button" data-act="role2">${U.yes}</button></div>`;
+  if(modal.type==="role2"||modal.type==="del"){const ph=modal.type==="del"?U.phraseDel:U.phraseRole;
+    h=`<h2>${modal.type==="del"?U.deleteAcc:U.changeRole}</h2><p>${esc(modal.type==="del"?U.delWarn:U.roleWarn(other))}</p>
+      <label class="ctrl"><span>${esc(U.typePhrase(ph))}</span><input class="txt" id="f-phrase" autocomplete="off" autocapitalize="off" spellcheck="false" data-phrase="${esc(ph)}"></label>
+      ${modal.err?`<p class="msg err">${esc(modal.err)}</p>`:""}
+      <div class="mbtns"><button class="btn ghost" type="button" data-act="mclose">${U.cancel}</button><button class="btn danger" type="button" id="m-go" data-act="${modal.type==="del"?"delgo":"rolego"}" disabled>${modal.type==="del"?U.doDelete:U.doChange}</button></div>`}
+  el.innerHTML=`<div class="dialog" role="dialog" aria-modal="true">${h}</div>`;
+  const f=document.getElementById("f-phrase");if(f){f.focus();f.addEventListener("paste",e=>e.preventDefault());f.addEventListener("drop",e=>e.preventDefault())}
 }
 function renderMain(){
   G.setLang(st.lang);
@@ -509,11 +612,11 @@ function renderMain(){
   if(authState==="out"){m.innerHTML=viewAuth();return}
   if(authState==="role"){m.innerHTML=viewRole();return}
   const isP=PROFILE&&PROFILE.role==="parent";
-  m.innerHTML=v==="settings"?viewSettings():v==="faq"?viewFaq():v==="prog"?viewProg():v==="review"?viewReview()
+  m.innerHTML=v==="settings"?viewSettings():v==="account"?viewAccount():v==="faq"?viewFaq():v==="prog"?viewProg():v==="review"?viewReview()
     :isP?(v==="kid"?viewKid():v==="me"?viewMe():viewKids())
     :v==="profile"?viewProfile(studentProfileOpts()):viewMain();
   document.getElementById("navprog").setAttribute("aria-current",st.view==="prog"?"page":"false");
-  document.getElementById("ib-set").setAttribute("aria-current",st.view==="settings"||st.view==="faq"?"page":"false");
+  document.getElementById("ib-set").setAttribute("aria-current",st.view==="settings"||st.view==="faq"||st.view==="account"?"page":"false");
   document.getElementById("ib-prof").setAttribute("aria-current",st.view==="profile"||st.view==="review"||st.view==="me"?"page":"false");
 }
 function renderNav(){
@@ -580,15 +683,27 @@ document.addEventListener("click",e=>{
     if(act==="magic"){const em=(document.getElementById("f-email").value||"").trim();if(!em)return;a.disabled=true;
       sb.auth.signInWithOtp({email:em,options:{emailRedirectTo:location.origin+location.pathname}}).then(({error})=>{authErr=!!error;authMsg=error?U.authErr+error.message:U.linkSent(em);renderMain()});return}
     if(act==="role"){createProfile(a.dataset.role);return}
-    if(act==="logout"){const id=USER&&USER.id;sb.auth.signOut().then(()=>{st.test=null;st.meta=null;st.view="main";authMsg="";renderAll()});return}
-    if(act==="copycode"){const c=PROFILE.link_code||"";const done=()=>{a.textContent=U.copied};if(navigator.clipboard)navigator.clipboard.writeText(c).then(done,()=>{});return}
-    if(act==="acceptp"){sb.from("links").update({status:"active"}).eq("parent_id",a.dataset.pid).eq("student_id",USER.id).then(loadParents);return}
-    if(act==="removep"){sb.from("links").delete().eq("parent_id",a.dataset.pid).eq("student_id",USER.id).then(loadParents);return}
-    if(act==="unkid"){sb.from("links").delete().eq("parent_id",USER.id).eq("student_id",a.dataset.sid).then(loadKids);return}
-    if(act==="linkcode"){const c=(document.getElementById("f-code").value||"").trim();if(!c)return;
-      sb.rpc("link_by_code",{p_code:c}).then(({data,error})=>{linkErr=!!error;linkMsg=error?(/not_found/.test(error.message)?U.notFound:U.authErr+error.message):U.linkedOk(data&&data.name);loadKids();renderMain()});return}
-    if(act==="linkmail"){const em=(document.getElementById("f-kmail").value||"").trim();if(!em)return;
-      sb.rpc("request_link_by_email",{p_email:em}).then(({error})=>{linkErr=!!error;linkMsg=error?(/not_found/.test(error.message)?U.notFound:U.authErr+error.message):U.reqSent;loadKids();renderMain()});return}
+    if(act==="logout"){modal=null;renderModal();sb.auth.signOut().then(()=>{st.test=null;st.meta=null;st.view="main";authMsg="";renderAll()});return}
+    if(act==="mclose"){modal=null;renderModal();return}
+    if(act==="askyes"||act==="askno"){const p=modal.p;modal=null;renderModal();sb.rpc("answer_parent",{p_parent:p.parent_id,p_yes:act==="askyes"}).then(loadParents);return}
+    if(act==="role1"){modal={type:"role1"};renderModal();return}
+    if(act==="role2"){modal={type:"role2"};renderModal();return}
+    if(act==="del1"){modal={type:"del"};renderModal();return}
+    if(act==="rolego"){a.disabled=true;sb.rpc("change_role").then(({data,error})=>{if(error){modal.err=errText(error.message);renderModal();return}
+      modal=null;renderModal();LS.del("math7.work."+USER.id);LS.del("math7.hist."+USER.id);LS.del(qKey());st.test=null;st.meta=null;st.history=[];parents=[];kids=[];kid=null;myInvites=[];applyProfile(data)});return}
+    if(act==="delgo"){a.disabled=true;sb.rpc("delete_account").then(({error})=>{if(error){modal.err=errText(error.message);renderModal();return}
+      const id=USER.id;["work","hist","queue","profile"].forEach(k=>LS.del("math7."+k+"."+id));modal=null;renderModal();sb.auth.signOut().then(()=>{st.test=null;st.meta=null;st.view="main";renderAll()})});return}
+    if(act==="invparent"||act==="invchild"||act==="invsecond"){const inp=document.getElementById("f-inv-"+act);const em=(inp&&inp.value||"").trim();if(!em)return;a.disabled=true;
+      const call=act==="invchild"?sb.rpc("invite_child",{p_email:em}):sb.rpc("invite_parent",{p_email:em,p_student:act==="invsecond"?a.dataset.sid:null});
+      call.then(({data,error})=>{linkErr=!!error;linkMsg=error?errText(error.message):data==="invited"?U.okInvited(em):data==="requested"?U.okRequested:U.okLinked;
+        if(!error)sendMail();loadInvites();if(PROFILE.role==="student")loadParents();else{loadKids();if(kid)loadKidExtra(kid.student_id)}renderMain()});return}
+    if(act==="uninvite"){sb.rpc("cancel_invite",{p_id:a.dataset.id}).then(loadInvites);return}
+    if(act==="unlink"){sb.rpc("unlink",{p_parent:a.dataset.pid,p_student:a.dataset.sid}).then(()=>{if(a.dataset.pid===USER.id&&kid&&kid.student_id===a.dataset.sid){kid=null;st.view="kids"}loadKids();if(kid)loadKidExtra(kid.student_id);renderMain()});return}
+    if(act==="help"){a.disabled=true;const hk=a.dataset.cid+"|"+a.dataset.hk;sb.rpc("ask_help",{p_cid:a.dataset.cid,p_key:a.dataset.hk,p_title:a.dataset.title}).then(({error})=>{if(!error){helpSent[hk]=true;sendMail()}else a.disabled=false;renderMain()});return}
+    if(act==="helpopen"){const list=kidHist.slice().sort((x,y)=>y.ts-x.ts);const i=list.findIndex(r=>r.cid===a.dataset.cid);if(i<0)return;
+      const k=a.dataset.hk;st.rv={i,src:"kid",open:{[k]:true},focus:k};st.view="review";renderMain();renderBar();
+      setTimeout(()=>{const el=document.getElementById("it-"+k);if(el)el.scrollIntoView({block:"center"})},50);return}
+    if(act==="helpdone"){sb.from("help").update({done:true}).eq("id",a.dataset.id).then(()=>{loadKids();loadKidExtra(kid.student_id)});return}
     if(act==="train"){st.train=a.dataset.only.split(",");newTest();return}
     if(act==="check"){const T=totals(st.test,st.answers);if(T.filled<T.count){st.confirming=true;renderBar();return}finish();return}
     if(act==="finish"){finish();return}
@@ -599,6 +714,7 @@ document.addEventListener("click",e=>{
     if(act==="cancel"){st.confirming=false;renderBar();return}
     if(act==="openall"){st.test.blocks.forEach((b,bi)=>b.items.forEach((it,ii)=>st.open[bi+"-"+ii]=true));renderMain();return}
   }
+  if(modal&&e.target.id==="modal"&&modal.type!=="ask"){modal=null;renderModal();return}
   const kd=e.target.closest("[data-kid]");if(kd){openKid(kd.dataset.kid);return}
   const rv=e.target.closest("[data-review]");if(rv){st.rv={i:Number(rv.dataset.review),src:rv.dataset.src,open:{}};st.view="review";renderMain();renderBar();window.scrollTo({top:0});return}
   if(st.view==="review"){const w=e.target.closest("[data-why]");if(w){st.rv.open[w.dataset.why]=!st.rv.open[w.dataset.why];renderMain()}return}
@@ -616,6 +732,7 @@ document.addEventListener("input",e=>{
     st.confirming=false;renderBar();return}
   if(e.target.id==="f-date"&&e.target.value){st.date=e.target.value;const tg=document.getElementById("tags");if(tg)tg.innerHTML=tagsHtml();return}
   if(e.target.id==="f-limit"){const v=Number(e.target.value);if(v>0){st.limit=v;st.limitTouched=true}return}
+  if(e.target.id==="f-phrase"){const ok=e.target.value.trim().toLowerCase()===e.target.dataset.phrase;const b=document.getElementById("m-go");if(b)b.disabled=!ok;return}
   if(e.target.id==="f-name"){st.name=e.target.value;const av=document.getElementById("ava");if(av)av.textContent=(st.name||"").trim().charAt(0).toUpperCase()||"?";saveProfile()}
 });
 document.addEventListener("focusin",e=>{const b=e.target.closest("[data-block]");if(b&&st.view==="main")activeBlock=Number(b.dataset.block)});

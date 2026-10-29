@@ -1,17 +1,20 @@
 # Математика, 7 класс
 
-Статический сайт: генератор контрольных (5–9 классы, сейчас 7-й) с профилем ученика и доступом для родителя.
+Статический сайт: генератор контрольных с профилем ученика и доступом для родителей.
 
 - `index.html`: разметка и стили
 - `gen7.js`: генератор заданий
-- `app.js`: интерфейс, вход и сохранение
+- `app.js`: интерфейс, вход, семья, сохранение
 - `config.js`: адрес и публичный ключ Supabase
-- `supabase/schema.sql`: таблицы и правила доступа
+- `supabase/schema.sql`: таблицы, правила доступа, функции
+- `supabase/functions/send-mail/index.ts`: отправка писем через SMTP
 
-## Настройка
+## Настройка Supabase
 
-1. Supabase → SQL Editor → вставить `supabase/schema.sql` → Run.
-2. Vercel → Add New → Project → репозиторий → Deploy (сборка не нужна).
-3. Адрес сайта на Vercel добавить:
-   - Google Cloud → Clients → Authorized JavaScript origins;
-   - Supabase → Authentication → URL Configuration → Site URL и Redirect URLs.
+1. SQL Editor → вставить `supabase/schema.sql` → Run. Повторный запуск безопасен.
+2. Edge Functions → Deploy a new function → Via Editor → имя `send-mail` → вставить `index.ts` → Deploy.
+3. Edge Functions → Secrets: `SMTP_HOST=mail.spacemail.com`, `SMTP_PORT=465`, `SMTP_USER=info@nurval.ee`,
+   `SMTP_PASS`, `MAIL_FROM_NAME=Математика`, `SITE_URL=https://math-nurval.vercel.app`.
+4. Authentication → Emails → SMTP Settings: тот же ящик, чтобы письма для входа шли с nurval.ee без лимита.
+
+Все письма приложения начинаются с метки `[Математика]` в теме.
