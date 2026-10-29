@@ -17,7 +17,7 @@ const UI={
   secWork:"Работа",secLook:"Внешний вид",secHelp:"Помощь",theme:"Тема",th:{system:"Как в системе",light:"Светлая",dark:"Тёмная"},
   levelsWhat:"Что значат уровни",faq:"Вопросы и ответы",
   progTitle:"Программа 7 класса",stDone:"пройдено",stNow:"идёт",stNext:"впереди",wk:"нед.",
-  name:"Имя ученика",namePh:"Как зовут ученика",grade:"7 класс",year:"учебный год",
+  name:"Имя ученика",nameParent:"Имя родителя",namePh:"Как зовут ученика",grade:"7 класс",year:"учебный год",
   kWorks:"работ",kAvg:"средний результат",kStreak:"дней подряд",kTime:"в среднем на работу",
   act:"Активность за 12 недель",less:"меньше",more:"больше",trend:"Результаты по работам, %",trendNone:"График появится после двух проверенных работ.",
   topics:"Темы",weak:"слабая",trainBtn:"Потренировать слабые темы",timeT:"Время",
@@ -48,7 +48,7 @@ const UI={
   secWork:"Töö",secLook:"Välimus",secHelp:"Abi",theme:"Teema",th:{system:"Nagu süsteemis",light:"Hele",dark:"Tume"},
   levelsWhat:"Mida tasemed tähendavad",faq:"Küsimused ja vastused",
   progTitle:"7. klassi õppekava",stDone:"läbitud",stNow:"käsil",stNext:"ees",wk:"näd",
-  name:"Õpilase nimi",namePh:"Õpilase nimi",grade:"7. klass",year:"õppeaasta",
+  name:"Õpilase nimi",nameParent:"Lapsevanema nimi",namePh:"Õpilase nimi",grade:"7. klass",year:"õppeaasta",
   kWorks:"tööd",kAvg:"keskmine tulemus",kStreak:"päeva järjest",kTime:"keskmiselt töö kohta",
   act:"Aktiivsus 12 nädala jooksul",less:"vähem",more:"rohkem",trend:"Tulemused töö kaupa, %",trendNone:"Graafik ilmub pärast kahte kontrollitud tööd.",
   topics:"Teemad",weak:"nõrk",trainBtn:"Harjuta nõrku teemasid",timeT:"Aeg",
@@ -79,7 +79,7 @@ const UI={
   secWork:"Test",secLook:"Appearance",secHelp:"Help",theme:"Theme",th:{system:"System",light:"Light",dark:"Dark"},
   levelsWhat:"What the levels mean",faq:"Questions and answers",
   progTitle:"Grade 7 curriculum",stDone:"done",stNow:"in progress",stNext:"ahead",wk:"wk",
-  name:"Student's name",namePh:"Student's name",grade:"Grade 7",year:"school year",
+  name:"Student's name",nameParent:"Parent's name",namePh:"Student's name",grade:"Grade 7",year:"school year",
   kWorks:"tests",kAvg:"average score",kStreak:"days in a row",kTime:"average per test",
   act:"Activity over 12 weeks",less:"less",more:"more",trend:"Score per test, %",trendNone:"The chart appears after two checked tests.",
   topics:"Topics",weak:"weak",trainBtn:"Practise weak topics",timeT:"Time",
@@ -318,7 +318,7 @@ function newTest(){
   st.meta={seed,level:st.level,type:only?"train":st.type,date:st.date,seen:st.seen.slice(),only:only||null};
   st.test=buildFrom(st.meta);st.answers={};st.checked=false;st.open={};st.confirming=false;st.elapsed=0;st.blockTime={};st.timeUp=false;st.laps=[];st.lapStart=0;
   if(st.timer==="limit"&&!st.limitTouched)st.limit=st.test.minutes;
-  st.running=st.timer!=="off";st.view="main";
+  st.running=st.timer!=="off";st.view="main";enter("test");
   renderAll();window.scrollTo({top:0});
 }
 function totals(test,answers){
@@ -337,21 +337,50 @@ function finish(){
   saveResult({ts:Date.now(),asOf:st.meta.date,level:st.meta.level,type:st.meta.type,lang:st.lang,score:T.got,max:T.max,items:T.count,
     timeSec:st.timer!=="off"?st.elapsed:0,limitSec:st.timer==="limit"?st.limit*60:0,topics:T.topics,oly:st.test.olyIds,olyOk:T.olyOk,
     meta:{seed:st.meta.seed,date:st.meta.date,level:st.meta.level,type:st.meta.type,seen:st.meta.seen,only:st.meta.only||null},answers:st.answers,blockTime:st.blockTime,laps:st.laps.slice()});
-  renderAll();window.scrollTo({top:0,behavior:"smooth"});
+  enter("score");renderAll();window.scrollTo({top:0,behavior:"smooth"});
 }
 
 /* ---------- общие куски ---------- */
-function seg(name,vals,cur,labels,cls){return `<div class="seg${cls?" "+cls:""}" role="group">${vals.map(v=>`<button type="button" data-set="${name}" data-v="${v}" aria-pressed="${cur===v}">${labels[v]}</button>`).join("")}</div>`}
+function seg(name,vals,cur,labels,cls){return `<div class="seg${cls?" "+cls:""}" role="group" data-seg="${name}"><span class="thumb" aria-hidden="true"></span>${vals.map(v=>`<button type="button" data-set="${name}" data-v="${v}" aria-pressed="${cur===v}">${labels[v]}</button>`).join("")}</div>`}
 function posInfo(){
   const pos=G.schoolPos(parseDate(st.date));let txt;
   if(pos.before)txt=U.before;else if(pos.after&&pos.weeks>=35)txt=U.after;
   else txt=`${U.week} ${Math.min(35,pos.weeks+(pos.inBreak?0:1))} ${U.of} 35 · ${G.PERIODS[pos.period].name} ${U.period}${pos.inBreak?" · "+U.brk:""}`;
-  return {pos,txt,cur:G.currentTopics(pos).map(t=>G.tr(t.name))};
+  return {pos,txt,cur:G.currentTopics(pos).map(t=>G.tr(t.name)),curIds:G.currentTopics(pos).map(t=>t.id)};
 }
-function tagsHtml(){const P=posInfo();return `<span class="chip">${esc(P.txt)}</span>${P.cur.map(n=>`<span class="chip now">${U.now}: ${esc(n)}</span>`).join("")}`}
+const TCOL={rat:'coral',dist:'teal',pow:'yellow',std:'lilac',pct:'sky',eq:'green',word:'coral',func:'teal',poly:'yellow',prism:'lilac',stat:'sky',r6:'green',oly:'lilac',proof:'sky'};
+function tc(id){return 't-'+(TCOL[id]||'sky')}
+function tagsHtml(){const P=posInfo();return `<span class="chip">${esc(P.txt)}</span>${P.cur.map((n,i)=>`<span class="chip now ${tc(P.curIds[i])}">${U.now}: ${esc(n)}</span>`).join("")}`}
 function topicName(id){const t=G.TOPICS.find(x=>x.id===id);if(t)return G.tr(t.name);if(id==="oly")return U.oly;if(id==="proof")return U.proofs;return id}
 function subhead(title,backTo){return `<div class="subhead"><button class="back" type="button" data-go="${backTo}" aria-label="${esc(U.back)}">${ICON_BACK}</button><h2>${esc(title)}</h2></div>`}
 
+
+/* ---------- движение (токены — в index.html, правила — «Токены движения») ---------- */
+const reduced=()=>window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const segPos={};
+function placeThumbs(){
+  document.querySelectorAll(".seg").forEach(sg=>{
+    const th=sg.querySelector(".thumb"),on=sg.querySelector('button[aria-pressed="true"]');if(!th)return;
+    if(!on){th.style.opacity="0";return}
+    const key=sg.dataset.seg+"|"+(sg.closest("[id]")||{}).id;const x=on.offsetLeft,w=on.offsetWidth;
+    const prev=segPos[key];segPos[key]=x;
+    th.style.width=w+"px";th.style.opacity="1";
+    if(prev!=null&&prev!==x&&!reduced()){th.style.transition="none";th.style.transform=`translateX(${prev}px)`;th.getBoundingClientRect();th.style.transition="";}
+    th.style.transform=`translateX(${x}px)`;
+  });
+}
+let enterNext=null;
+function enter(kind){enterNext=kind}
+function runEnter(){
+  const k=enterNext;enterNext=null;if(!k||reduced())return;
+  const m=document.getElementById("main");
+  if(k==="screen"){m.classList.remove("in-screen");m.getBoundingClientRect();m.classList.add("in-screen")}
+  if(k==="test"){const els=[...m.querySelectorAll(".sheet .sheet-head,.sheet .hint,.sheet .task")].slice(0,8);
+    els.forEach((el,i)=>{el.style.setProperty("--d",(i*50)+"ms");el.classList.add("in-up")})}
+  if(k==="profile"){m.querySelectorAll(".trow .meter i").forEach((el,i)=>{el.style.setProperty("--d",(i*50)+"ms");el.classList.add("in-fill")})}
+  if(k==="score"){const b=m.querySelector(".score .big");if(!b)return;const [g,mx]=b.textContent.split("/").map(s=>parseFloat(s));if(!(g>0))return;
+    const t0=performance.now(),D=420;const step=t=>{const p=Math.min(1,(t-t0)/D),e=1-Math.pow(1-p,3);b.textContent=`${Math.round(g*e)} / ${mx}`;if(p<1)requestAnimationFrame(step)};requestAnimationFrame(step)}
+}
 /* ---------- лист с заданиями ---------- */
 function inputFor(it,k,ctx){
   const v=ctx.answers[k],dis=ctx.checked?"disabled":"";const a=it.ans;
@@ -434,7 +463,7 @@ function viewProg(){
   const per=w=>G.PERIODS.find(p=>w>=p.w0&&w<p.w0+p.weeks);
   return `<div class="screen">${subhead(U.progTitle,"main")}<p class="sub" style="margin:0 0 12px 4px">${esc(P.txt)}</p><div class="group"><ul class="prog">${G.TOPICS.filter(t=>t.id!=="r6").map(t=>{
     const done=t.start<P.pos.weeks,now=cur.has(t.id),p=per(t.start);
-    return `<li><span class="wk">${t.start+1} ${U.wk}${p?"<br>"+p.name:""}</span><span>${esc(G.tr(t.name))}</span><span class="st ${now?"now":done?"done":""}">${now?U.stNow:done?U.stDone:U.stNext}</span></li>`}).join("")}</ul></div></div>`;
+    return `<li class="${tc(t.id)}"><span class="wk">${t.start+1} ${U.wk}${p?"<br>"+p.name:""}</span><span>${esc(G.tr(t.name))}</span><span class="st ${now?"now":done?"done":""}">${now?U.stNow:done?U.stDone:U.stNext}</span></li>`}).join("")}</ul></div></div>`;
 }
 
 /* ---------- профиль ---------- */
@@ -493,14 +522,14 @@ function viewProfile(o){o=o||{};const ro=!!o.readonly;
    <div class="group" style="margin-top:12px">
     <div class="pcard"><div class="ava" id="ava">${esc(initial)}</div>
       ${ro?`<b style="font-size:1.1rem">${esc(nm||U.noName)}</b>`:`<label><span class="sub" style="display:block;margin:0 0 4px">${U.name}</span><input class="txt" id="f-name" value="${esc(st.name)}" placeholder="${esc(U.namePh)}" autocomplete="off"></label>`}
-      <span class="sub">${U.grade} · ${U.year} ${y0}</span></div>
+      <span class="sub">${U.grade} · ${U.year} ${y0}</span>${ro?"":`<div class="out"><span class="sub">${esc((USER&&USER.email)||"")}</span><button class="btn ghost" type="button" data-act="logout">${U.logout}</button></div>`}</div>
     <div class="kpis"><div class="kpi"><b>${n}</b><span>${U.kWorks}</span></div><div class="kpi"><b>${n?avg+"%":"—"}</b><span>${U.kAvg}</span></div><div class="kpi"><b>${streak}</b><span>${U.kStreak}</span></div><div class="kpi"><b>${avgTime?fmtTime(avgTime):"—"}</b><span>${U.kTime}</span></div></div>
    </div>
    ${ro?"":`<p class="sub" style="margin:8px 4px 0">${sync==="ok"?U.synced:U.offline}</p>`}
    <div class="sec">${U.act}</div><div class="group"><div class="chartbox">${heatSvg(hist)}</div></div>
    <div class="sec">${U.trend}</div><div class="group"><div class="chartbox">${trendSvg(hist)}</div></div>`;
   if(rows.length){
-    h+=`<div class="sec">${U.topics}</div><div class="group">${rows.map(r=>`<div class="trow${r.p<70?" weak":""}"><span>${esc(topicName(r.id))}${r.p<70?`<span class="tag-weak">${U.weak}</span>`:""}</span><div class="meter"><i style="width:${r.p}%"></i></div><span class="pc">${r.p}%</span><span class="arrow ${r.arr}" title="${esc(U.cmp)}">${r.sym}</span></div>`).join("")}
+    h+=`<div class="sec">${U.topics}</div><div class="group">${rows.map(r=>`<div class="trow ${tc(r.id)}${r.p<70?" weak":""}"><span>${esc(topicName(r.id))}${r.p<70?`<span class="tag-weak">${U.weak}</span>`:""}</span><div class="meter"><i style="width:${r.p}%"></i></div><span class="pc">${r.p}%</span><span class="arrow ${r.arr}" title="${esc(U.cmp)}">${r.sym}</span></div>`).join("")}
       ${weak.length&&!ro?`<div class="srow trainrow" style="border-top:1px solid var(--line)"><span class="sub" style="margin:0">${esc(weak.map(topicName).join(", "))}</span><button class="btn sm" type="button" data-act="train" data-only="${weak.join(",")}">${U.trainBtn}</button></div>`:""}</div>`;
   }
   h+=`<div class="sec">${U.timeT}</div><div class="group">${timed.length?`<div class="srow"><span class="k">${U.kTime}</span><b>${fmtTime(avgTime)}</b></div><div class="srow"><span class="k">${U.tPerTask}</span><b>${fmtTime(perTask)}</b></div>${limShare!=null?`<div class="srow"><span class="k">${U.tLimit}</span><b>${limShare}%</b></div>`:""}`:`<div class="srow"><span class="sub" style="margin:0">${U.tNone}</span></div>`}</div>
@@ -586,12 +615,14 @@ function viewKid(){
   return viewProfile({hist:kidHist.slice().sort((a,b)=>b.ts-a.ts),readonly:true,name:kid.name,back:"kids",title:kid.name||U.noName,extra:kidExtra()});
 }
 function viewMe(){
-  return `<div class="screen">${subhead(U.me,"kids")}<div class="group" style="margin-top:12px"><div class="srow"><label style="display:grid;gap:4px"><span class="sub">${U.name}</span><input class="txt" id="f-name" value="${esc(st.name)}" autocomplete="off"></label></div></div></div>`;
+  return `<div class="screen">${subhead(U.me,"kids")}<div class="group" style="margin-top:12px"><div class="srow"><label style="display:grid;gap:4px"><span class="sub">${U.nameParent}</span><input class="txt" id="f-name" value="${esc(st.name)}" autocomplete="off"></label></div>
+    <div class="srow"><span class="k">${esc((USER&&USER.email)||"")}</span><button class="btn ghost" type="button" data-act="logout">${U.logout}</button></div></div></div>`;
 }
 /* ---------- окна ---------- */
 function renderModal(){
   let el=document.getElementById("modal");
-  if(!modal){if(el)el.remove();document.body.classList.remove("modal-open");return}
+  if(!modal){if(el){if(reduced())el.remove();else{el.classList.remove("in");el.classList.add("out");setTimeout(()=>el.remove(),200)}}document.body.classList.remove("modal-open");return}
+  if(el&&el.classList.contains("out")){el.remove();el=null}
   if(!el){el=document.createElement("div");el.id="modal";el.className="overlay";document.body.appendChild(el)}
   document.body.classList.add("modal-open");
   const other=PROFILE&&PROFILE.role==="student"?U.roleP:U.roleS;let h="";
@@ -602,7 +633,7 @@ function renderModal(){
       <label class="ctrl"><span>${esc(U.typePhrase(ph))}</span><input class="txt" id="f-phrase" autocomplete="off" autocapitalize="off" spellcheck="false" data-phrase="${esc(ph)}"></label>
       ${modal.err?`<p class="msg err">${esc(modal.err)}</p>`:""}
       <div class="mbtns"><button class="btn ghost" type="button" data-act="mclose">${U.cancel}</button><button class="btn danger" type="button" id="m-go" data-act="${modal.type==="del"?"delgo":"rolego"}" disabled>${modal.type==="del"?U.doDelete:U.doChange}</button></div>`}
-  el.innerHTML=`<div class="dialog" role="dialog" aria-modal="true">${h}</div>`;
+  const fresh=!el.firstChild;el.innerHTML=`<div class="dialog" role="dialog" aria-modal="true">${h}</div>`;if(fresh&&!reduced()){el.classList.remove("in");el.getBoundingClientRect();el.classList.add("in")}
   const f=document.getElementById("f-phrase");if(f){f.focus();f.addEventListener("paste",e=>e.preventDefault());f.addEventListener("drop",e=>e.preventDefault())}
 }
 function renderMain(){
@@ -618,11 +649,12 @@ function renderMain(){
   document.getElementById("navprog").setAttribute("aria-current",st.view==="prog"?"page":"false");
   document.getElementById("ib-set").setAttribute("aria-current",st.view==="settings"||st.view==="faq"||st.view==="account"?"page":"false");
   document.getElementById("ib-prof").setAttribute("aria-current",st.view==="profile"||st.view==="review"||st.view==="me"?"page":"false");
+  placeThumbs();runEnter();
 }
 function renderNav(){
   document.getElementById("ttl").textContent=U.title;document.getElementById("navprog").textContent=U.prog;
   document.getElementById("ib-set").setAttribute("aria-label",U.settings);document.getElementById("ib-prof").setAttribute("aria-label",U.profile);
-  document.getElementById("langsw").innerHTML=seg("lang",["ru","et","en"],st.lang,{ru:"RU",et:"ET",en:"EN"},"sm");
+  document.getElementById("langsw").innerHTML=seg("lang",["ru","et","en"],st.lang,{ru:"RU",et:"ET",en:"EN"},"sm");requestAnimationFrame(placeThumbs);
   const inApp=authState==="in";["ib-set","ib-prof","navprog"].forEach(id=>{document.getElementById(id).hidden=!inApp});
 }
 function renderBar(){
@@ -667,7 +699,7 @@ document.addEventListener("click",e=>{
     if(isP&&to==="main")to="kids";if(isP&&to==="profile")to="me";
     if(authState!=="in"){if(to==="main"){renderMain()}return}
     if(to==="faq"){st.faqBack=st.view==="main"?"main":"settings";st.faqOpen=go.dataset.faq!=null?Number(go.dataset.faq):null}
-    st.view=to;renderMain();renderBar();window.scrollTo({top:0});return}
+    st.view=to;enter(to==="profile"?"profile":"screen");renderMain();renderBar();window.scrollTo({top:0});return}
   const s=e.target.closest("[data-set]");
   if(s){const k=s.dataset.set,v=s.dataset.v;if(st[k]===v)return;st[k]=v;
     if(k==="lang"){U=UI[v];if(st.meta)st.test=buildFrom(st.meta,v);saveProfile();savePrefs();renderAll();return}
@@ -738,4 +770,6 @@ document.addEventListener("input",e=>{
 document.addEventListener("focusin",e=>{const b=e.target.closest("[data-block]");if(b&&st.view==="main")activeBlock=Number(b.dataset.block)});
 
 applyTheme();renderAll();initAuth();
+window.addEventListener("resize",()=>placeThumbs());
+
 })();
