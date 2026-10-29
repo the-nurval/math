@@ -301,7 +301,8 @@ async function openKid(id){
   st.view="kid";renderMain();window.scrollTo({top:0});loadKidExtra(id);
 }
 function refreshIf(){if(["profile","kids","kid","account","me"].includes(st.view)&&!document.activeElement.matches("input.txt"))renderMain()}
-function sendMail(){if(sb)sb.functions.invoke(CFG.mailFn||"send-mail",{body:{}}).catch(()=>{})}
+function sendMail(){if(!sb)return;const names=[...new Set(["send-mail",CFG.mailFn].filter(Boolean))];
+  (async()=>{for(const n of names){try{const {error}=await sb.functions.invoke(n,{body:{}});if(!error)return}catch(e){}}})()}
 function touch(){if(sb&&PROFILE&&document.visibilityState==="visible")sb.rpc("touch").then(()=>{},()=>{})}
 setInterval(()=>{touch();if(PROFILE){if(PROFILE.role==="student")loadParents();else{loadKids();if(kid&&st.view==="kid")loadKidExtra(kid.student_id)}}},5*60*1000);
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")touch()});
