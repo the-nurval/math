@@ -153,7 +153,7 @@ sup{font-size:.7em}
 .subhead h2{margin:0;font-size:1.5rem;line-height:1.2}
 .back{width:var(--ctl);height:var(--ctl);border:0;background:transparent;border-radius:var(--r-ctl);display:grid;place-items:center;cursor:pointer}
 .back:hover{background:var(--soft)}
-.sec{margin:24px 0 8px 4px;font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.sec{margin:24px 0 8px;font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .group{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-card);overflow:hidden}
 .srow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center;padding:var(--pad-card);min-height:56px;box-sizing:border-box}
 .srow+.srow{border-top:1px solid var(--line)}
@@ -243,7 +243,8 @@ sup{font-size:.7em}
 .or{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:.85rem}
 .or::before,.or::after{content:"";flex:1;border-top:1px solid var(--line)}
 .roles{margin-top:4px}
-.msg{margin:4px;font-size:.95rem}
+.msg{margin:12px 0 0;font-size:.95rem}
+.authcard .msg,.dialog .msg{margin:0}
 .msg.err{color:var(--red)}
 .code{font:500 1.2rem var(--f-mono);letter-spacing:.12em}
 .srow .txt{width:100%}
@@ -299,7 +300,7 @@ body{font-weight:500}
 .group,.head,.sheet{border:0;box-shadow:var(--shadow)}
 .head{padding:var(--pad-card)}
 .ctrl>span,.sec{text-transform:none;letter-spacing:0;font-size:.9rem;font-weight:700;color:var(--ink)}
-.sec{margin:32px 0 12px 4px;font-size:1.05rem}
+.sec{margin:32px 0 12px;font-size:1.05rem}
 .subhead h2{font-size:2rem;font-weight:800;letter-spacing:-.02em}
 .btn{border-radius:var(--r-ctl);font-weight:700}
 .btn.ghost{background:var(--soft);border-color:transparent}

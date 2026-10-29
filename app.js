@@ -461,7 +461,7 @@ function viewFaq(){
 function viewProg(){
   const P=posInfo();const cur=new Set(G.currentTopics(P.pos).map(t=>t.id));
   const per=w=>G.PERIODS.find(p=>w>=p.w0&&w<p.w0+p.weeks);
-  return `<div class="screen">${subhead(U.progTitle,"main")}<p class="sub" style="margin:0 0 12px 4px">${esc(P.txt)}</p><div class="group"><ul class="prog">${G.TOPICS.filter(t=>t.id!=="r6").map(t=>{
+  return `<div class="screen">${subhead(U.progTitle,"main")}<p class="sub" style="margin:0 0 12px">${esc(P.txt)}</p><div class="group"><ul class="prog">${G.TOPICS.filter(t=>t.id!=="r6").map(t=>{
     const done=t.start<P.pos.weeks,now=cur.has(t.id),p=per(t.start);
     return `<li class="${tc(t.id)}"><span class="wk">${t.start+1} ${U.wk}${p?"<br>"+p.name:""}</span><span>${esc(G.tr(t.name))}</span><span class="st ${now?"now":done?"done":""}">${now?U.stNow:done?U.stDone:U.stNext}</span></li>`}).join("")}</ul></div></div>`;
 }
@@ -525,7 +525,7 @@ function viewProfile(o){o=o||{};const ro=!!o.readonly;
       <span class="sub">${U.grade} · ${U.year} ${y0}</span>${ro?"":`<div class="out"><span class="sub">${esc((USER&&USER.email)||"")}</span><button class="btn ghost" type="button" data-act="logout">${U.logout}</button></div>`}</div>
     <div class="kpis"><div class="kpi"><b>${n}</b><span>${U.kWorks}</span></div><div class="kpi"><b>${n?avg+"%":"—"}</b><span>${U.kAvg}</span></div><div class="kpi"><b>${streak}</b><span>${U.kStreak}</span></div><div class="kpi"><b>${avgTime?fmtTime(avgTime):"—"}</b><span>${U.kTime}</span></div></div>
    </div>
-   ${ro?"":`<p class="sub" style="margin:8px 4px 0">${sync==="ok"?U.synced:U.offline}</p>`}
+   ${ro?"":`<p class="sub" style="margin:12px 0 0">${sync==="ok"?U.synced:U.offline}</p>`}
    <div class="sec">${U.act}</div><div class="group"><div class="chartbox">${heatSvg(hist)}</div></div>
    <div class="sec">${U.trend}</div><div class="group"><div class="chartbox">${trendSvg(hist)}</div></div>`;
   if(rows.length){
