@@ -3,7 +3,7 @@
 // Секреты задаются в Supabase → Edge Functions → Secrets:
 //   SMTP_HOST=mail.spacemail.com  SMTP_PORT=465  SMTP_USER=info@nurval.ee  SMTP_PASS=…
 //   MAIL_FROM_NAME=Math Check  SITE_URL=https://math-nurval.vercel.app
-import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
+import nodemailer from "npm:nodemailer@6.9.16";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
 
 const cors = {
@@ -62,21 +62,25 @@ Deno.serve(async (req) => {
   const db = createClient(env("SUPABASE_URL"), env("SUPABASE_SERVICE_ROLE_KEY"));
   const { data: rows } = await db.from("outbox").select("*").is("sent_at", null).is("error", null).order("created_at").limit(20);
   if (!rows?.length) return new Response(JSON.stringify({ sent: 0 }), { headers: cors });
-  const client = new SMTPClient({
-    connection: { hostname: env("SMTP_HOST", "mail.spacemail.com"), port: Number(env("SMTP_PORT", "465")), tls: true, auth: { username: user, password: pass } },
+  const transport = nodemailer.createTransport({
+    host: env("SMTP_HOST", "mail.spacemail.com"), port: Number(env("SMTP_PORT", "465")), secure: true,
+    auth: { user, pass },
   });
   const url = env("SITE_URL", "https://math-nurval.vercel.app");
   let sent = 0;
   for (const r of rows) {
+    // Забираем письмо себе: если функцию вызвали два раза одновременно, письмо уйдёт один раз.
+    const { data: claimed } = await db.from("outbox").update({ error: "sending" }).eq("id", r.id).is("sent_at", null).is("error", null).select("id");
+    if (!claimed?.length) continue;
     const t = tpl(r.kind, r.lang, r.payload || {}, url);
     try {
-      await client.send({ from: `${env("MAIL_FROM_NAME", "Math Check")} <${user}>`, to: r.to_email, subject: t.subject, content: t.text, html: html(t.text), headers: { "X-App": "math7" } });
-      await db.from("outbox").update({ sent_at: new Date().toISOString() }).eq("id", r.id);
+      await transport.sendMail({ from: { name: env("MAIL_FROM_NAME", "Math Check"), address: user }, to: r.to_email, subject: t.subject, text: t.text, html: html(t.text), headers: { "X-App": "math-check" } });
+      await db.from("outbox").update({ sent_at: new Date().toISOString(), error: null }).eq("id", r.id);
       sent++;
     } catch (e) {
       await db.from("outbox").update({ error: String(e).slice(0, 500) }).eq("id", r.id);
     }
   }
-  await client.close();
+  transport.close();
   return new Response(JSON.stringify({ sent }), { headers: cors });
 });
