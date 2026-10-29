@@ -655,7 +655,7 @@ function renderNav(){
   document.getElementById("ttl").textContent=U.title;document.getElementById("navprog").textContent=U.prog;
   document.getElementById("ib-set").setAttribute("aria-label",U.settings);document.getElementById("ib-prof").setAttribute("aria-label",U.profile);
   document.getElementById("langsw").innerHTML=seg("lang",["ru","et","en"],st.lang,{ru:"RU",et:"ET",en:"EN"},"sm");requestAnimationFrame(placeThumbs);
-  const inApp=authState==="in";["ib-set","ib-prof","navprog"].forEach(id=>{document.getElementById(id).hidden=!inApp});
+  const inApp=authState==="in";["ib-set","ib-prof","navprog","ttl","navsep"].forEach(id=>{document.getElementById(id).hidden=!inApp});
 }
 function renderBar(){
   const bar=document.getElementById("bar");
