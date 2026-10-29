@@ -299,7 +299,7 @@ async function openKid(id){
   kidHist=(data||[]).map(r=>r.data);st.view="kid";renderMain();window.scrollTo({top:0});loadKidExtra(id);
 }
 function refreshIf(){if(["profile","kids","kid","account","me"].includes(st.view)&&!document.activeElement.matches("input.txt"))renderMain()}
-function sendMail(){if(sb)sb.functions.invoke("send-mail",{body:{}}).catch(()=>{})}
+function sendMail(){if(sb)sb.functions.invoke(CFG.mailFn||"send-mail",{body:{}}).catch(()=>{})}
 function touch(){if(sb&&PROFILE&&document.visibilityState==="visible")sb.rpc("touch").then(()=>{},()=>{})}
 setInterval(()=>{touch();if(PROFILE){if(PROFILE.role==="student")loadParents();else{loadKids();if(kid&&st.view==="kid")loadKidExtra(kid.student_id)}}},5*60*1000);
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")touch()});
