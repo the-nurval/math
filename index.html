@@ -384,7 +384,8 @@ input.ans{border-radius:8px;border:0;border-bottom:2px solid var(--pen);backgrou
 .nav.scrolled{box-shadow:0 1px 0 var(--line),0 8px 24px rgba(19,32,59,.06)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .nav{background:rgba(18,22,29,.86)}}
 :root[data-theme="dark"] .nav{background:rgba(18,22,29,.86)}
-.brand{align-items:center}
+.brand{align-items:baseline}
+.brand .logo,.brand .navsep{align-self:center}
 .logo{display:flex;align-items:center;background:none;border:0;padding:0;margin:0;color:var(--ink);cursor:pointer;transition:transform var(--dur-release) var(--ease-spring)}
 .logo:active{transform:scale(.96);transition:transform var(--dur-tap) var(--ease-press)}
 .logo-svg{height:24px;width:auto;display:block}
