@@ -60,6 +60,7 @@ const esc = (s: string) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"
 
 // Таблицы и встроенные стили: так письмо одинаково выглядит в Gmail, Outlook и на телефоне.
 // Стиль сайта: светлый фон, белая карточка 28 без рамки, кнопка-таблетка, шрифт Manrope (где почта его грузит).
+// Выравнивание по DESIGN.md: логотип — по краю карточки; текст в карточке и подпись под ней — на одной линии (+24 px).
 function render(m: M & { foot: string }, url: string): { html: string; text: string } {
   const font = "Manrope,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
   const logo = `${url.replace(/\/$/, "")}/brand/email-logo.png`;
@@ -69,8 +70,8 @@ function render(m: M & { foot: string }, url: string): { html: string; text: str
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${esc(m.body)}</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#eef3f8;"><tr><td align="center" style="padding:40px 16px;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
-    <tr><td style="padding:0 8px 24px;"><a href="${esc(url)}" style="text-decoration:none;"><img src="${esc(logo)}" width="180" height="26" alt="Math Check" style="display:block;border:0;width:180px;height:auto;"></a></td></tr>
-    <tr><td style="background:#ffffff;border-radius:28px;padding:40px 32px;box-shadow:0 12px 32px rgba(19,32,59,.06);">
+    <tr><td style="padding:0 0 24px;"><a href="${esc(url)}" style="text-decoration:none;"><img src="${esc(logo)}" width="180" height="26" alt="Math Check" style="display:block;border:0;width:180px;height:auto;"></a></td></tr>
+    <tr><td style="background:#ffffff;border-radius:28px;padding:32px 24px;box-shadow:0 12px 32px rgba(19,32,59,.06);">
       <h1 style="margin:0 0 12px;font-family:${font};font-size:26px;line-height:1.25;font-weight:800;letter-spacing:-.02em;color:#13203b;">${esc(m.title)}</h1>
       <p style="margin:0 0 28px;font-family:${font};font-size:16px;line-height:1.6;font-weight:500;color:#4a5a72;">${esc(m.body)}</p>
       <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-radius:24px;background:#13203b;">
@@ -78,7 +79,7 @@ function render(m: M & { foot: string }, url: string): { html: string; text: str
       </td></tr></table>
       ${m.note ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:28px;"><tr><td style="background:#f3f7fb;border-radius:16px;padding:14px 16px;font-family:${font};font-size:14px;line-height:1.5;font-weight:500;color:#6b7a90;">${esc(m.note)}</td></tr></table>` : ""}
     </td></tr>
-    <tr><td style="padding:20px 8px 0;font-family:${font};font-size:12px;line-height:1.6;color:#8a97a8;">${esc(m.foot)}<br><a href="${esc(url)}" style="color:#8a97a8;">${esc(url.replace(/^https?:\/\//, "").replace(/\/$/, ""))}</a></td></tr>
+    <tr><td style="padding:16px 24px 0;font-family:${font};font-size:12px;line-height:1.6;color:#8a97a8;">${esc(m.foot)}<br><a href="${esc(url)}" style="color:#8a97a8;">${esc(url.replace(/^https?:\/\//, "").replace(/\/$/, ""))}</a></td></tr>
   </table>
 </td></tr></table></body></html>`;
   const text = `${m.title}\n\n${m.body}\n\n${m.cta}: ${url}${m.note ? `\n\n${m.note}` : ""}\n\n—\n${m.foot}`;
