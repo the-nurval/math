@@ -296,7 +296,9 @@ async function loadKidExtra(id){
 async function openKid(id){
   kid=kids.find(k=>k.student_id===id);if(!kid)return;kidParents=[];kidHelp=[];
   const {data}=await sb.from("results").select("data").eq("student_id",id).order("ts",{ascending:false}).limit(1000);
-  kidHist=(data||[]).map(r=>r.data);st.view="kid";renderMain();window.scrollTo({top:0});loadKidExtra(id);
+  kidHist=(data||[]).map(r=>r.data);
+  const pr=await sb.from("profiles").select("settings").eq("id",id).maybeSingle();kid.level=pr.data&&pr.data.settings&&pr.data.settings.level;
+  st.view="kid";renderMain();window.scrollTo({top:0});loadKidExtra(id);
 }
 function refreshIf(){if(["profile","kids","kid","account","me"].includes(st.view)&&!document.activeElement.matches("input.txt"))renderMain()}
 function sendMail(){if(sb)sb.functions.invoke(CFG.mailFn||"send-mail",{body:{}}).catch(()=>{})}
@@ -461,7 +463,7 @@ function viewFaq(){
 function viewProg(){
   const P=posInfo();const cur=new Set(G.currentTopics(P.pos).map(t=>t.id));
   const per=w=>G.PERIODS.find(p=>w>=p.w0&&w<p.w0+p.weeks);
-  return `<div class="screen">${subhead(U.progTitle,"main")}<p class="sub" style="margin:0 0 12px">${esc(P.txt)}</p><div class="group"><ul class="prog">${G.TOPICS.filter(t=>t.id!=="r6").map(t=>{
+  return `<div class="screen">${subhead(U.progTitle,st.progBack||"main")}<p class="sub" style="margin:0 0 12px">${esc(P.txt)}</p><div class="group"><ul class="prog">${G.TOPICS.filter(t=>t.id!=="r6").map(t=>{
     const done=t.start<P.pos.weeks,now=cur.has(t.id),p=per(t.start);
     return `<li class="${tc(t.id)}"><span class="wk">${t.start+1} ${U.wk}${p?"<br>"+p.name:""}</span><span>${esc(G.tr(t.name))}</span><span class="st ${now?"now":done?"done":""}">${now?U.stNow:done?U.stDone:U.stNext}</span></li>`}).join("")}</ul></div></div>`;
 }
@@ -522,7 +524,7 @@ function viewProfile(o){o=o||{};const ro=!!o.readonly;
    <div class="group" style="margin-top:12px">
     <div class="pcard"><div class="ava" id="ava">${esc(initial)}</div>
       ${ro?`<b style="font-size:1.1rem">${esc(nm||U.noName)}</b>`:`<label><span class="sub" style="display:block;margin:0 0 4px">${U.name}</span><input class="txt" id="f-name" value="${esc(st.name)}" placeholder="${esc(U.namePh)}" autocomplete="off"></label>`}
-      <span class="sub">${U.grade} · ${U.year} ${y0}</span>${ro?"":`<div class="out"><span class="sub">${esc((USER&&USER.email)||"")}</span><button class="btn ghost" type="button" data-act="logout">${U.logout}</button></div>`}</div>
+      <span class="sub">${ro?`${U.title}${o.level&&LV[o.level]?" · "+LV[o.level]:""} · ${U.year} ${y0}`:`${U.grade} · ${U.year} ${y0}`}</span>${ro?`<div class="out"><button class="btn ghost" type="button" data-go="prog">${U.prog}</button></div>`:""}${ro?"":`<div class="out"><span class="sub">${esc((USER&&USER.email)||"")}</span><button class="btn ghost" type="button" data-act="logout">${U.logout}</button></div>`}</div>
     <div class="kpis"><div class="kpi"><b>${n}</b><span>${U.kWorks}</span></div><div class="kpi"><b>${n?avg+"%":"—"}</b><span>${U.kAvg}</span></div><div class="kpi"><b>${streak}</b><span>${U.kStreak}</span></div><div class="kpi"><b>${avgTime?fmtTime(avgTime):"—"}</b><span>${U.kTime}</span></div></div>
    </div>
    ${ro?"":`<p class="sub" style="margin:12px 0 0">${sync==="ok"?U.synced:U.offline}</p>`}
@@ -612,7 +614,7 @@ function kidExtra(){
 }
 function viewKid(){
   if(!kid)return viewKids();
-  return viewProfile({hist:kidHist.slice().sort((a,b)=>b.ts-a.ts),readonly:true,name:kid.name,back:"kids",title:kid.name||U.noName,extra:kidExtra()});
+  return viewProfile({hist:kidHist.slice().sort((a,b)=>b.ts-a.ts),readonly:true,level:kid.level,name:kid.name,back:"kids",title:kid.name||U.noName,extra:kidExtra()});
 }
 function viewMe(){
   return `<div class="screen">${subhead(U.me,"kids")}<div class="group" style="margin-top:12px"><div class="srow"><label style="display:grid;gap:4px"><span class="sub">${U.nameParent}</span><input class="txt" id="f-name" value="${esc(st.name)}" autocomplete="off"></label></div>
@@ -655,7 +657,8 @@ function renderNav(){
   document.getElementById("ttl").textContent=U.title;document.getElementById("navprog").textContent=U.prog;
   document.getElementById("ib-set").setAttribute("aria-label",U.settings);document.getElementById("ib-prof").setAttribute("aria-label",U.profile);
   document.getElementById("langsw").innerHTML=seg("lang",["ru","et","en"],st.lang,{ru:"RU",et:"ET",en:"EN"},"sm");requestAnimationFrame(placeThumbs);
-  const inApp=authState==="in";["ib-set","ib-prof","navprog","ttl","navsep"].forEach(id=>{document.getElementById(id).hidden=!inApp});
+  const inApp=authState==="in";["ib-set","ib-prof"].forEach(id=>{document.getElementById(id).hidden=!inApp});
+  const isS=inApp&&PROFILE&&PROFILE.role==="student";["navprog","ttl","navsep"].forEach(id=>{document.getElementById(id).hidden=!isS});
 }
 function renderBar(){
   const bar=document.getElementById("bar");
@@ -698,6 +701,7 @@ document.addEventListener("click",e=>{
   if(go){let to=go.dataset.go;const isP=PROFILE&&PROFILE.role==="parent";
     if(isP&&to==="main")to="kids";if(isP&&to==="profile")to="me";
     if(authState!=="in"){if(to==="main"){renderMain()}return}
+    if(to==="prog")st.progBack=st.view==="kid"?"kid":"main";
     if(to==="faq"){st.faqBack=st.view==="main"?"main":"settings";st.faqOpen=go.dataset.faq!=null?Number(go.dataset.faq):null}
     st.view=to;enter(to==="profile"?"profile":"screen");renderMain();renderBar();window.scrollTo({top:0});return}
   const s=e.target.closest("[data-set]");
