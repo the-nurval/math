@@ -2,7 +2,7 @@
 // Кого и о чём уведомить, решает база (функции invite_*, ask_help), а не браузер.
 // Секреты задаются в Supabase → Edge Functions → Secrets:
 //   SMTP_HOST=mail.spacemail.com  SMTP_PORT=465  SMTP_USER=info@nurval.ee  SMTP_PASS=…
-//   MAIL_FROM_NAME=Математика  SITE_URL=https://math-nurval.vercel.app
+//   MAIL_FROM_NAME=Math Check  SITE_URL=https://math-nurval.vercel.app
 import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
 
@@ -11,7 +11,7 @@ const cors = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const TAG = "[Математика]";
+const TAG = "[Math Check]";
 type P = { from_name?: string; from_email?: string; title?: string };
 type T = { subject: string; text: string };
 
@@ -70,7 +70,7 @@ Deno.serve(async (req) => {
   for (const r of rows) {
     const t = tpl(r.kind, r.lang, r.payload || {}, url);
     try {
-      await client.send({ from: `${env("MAIL_FROM_NAME", "Математика")} <${user}>`, to: r.to_email, subject: t.subject, content: t.text, html: html(t.text), headers: { "X-App": "math7" } });
+      await client.send({ from: `${env("MAIL_FROM_NAME", "Math Check")} <${user}>`, to: r.to_email, subject: t.subject, content: t.text, html: html(t.text), headers: { "X-App": "math7" } });
       await db.from("outbox").update({ sent_at: new Date().toISOString() }).eq("id", r.id);
       sent++;
     } catch (e) {

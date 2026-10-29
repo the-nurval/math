@@ -14,7 +14,7 @@
 1. SQL Editor → вставить `supabase/schema.sql` → Run. Повторный запуск безопасен.
 2. Edge Functions → Deploy a new function → Via Editor → имя `send-mail` → вставить `index.ts` → Deploy.
 3. Edge Functions → Secrets: `SMTP_HOST=mail.spacemail.com`, `SMTP_PORT=465`, `SMTP_USER=info@nurval.ee`,
-   `SMTP_PASS`, `MAIL_FROM_NAME=Математика`, `SITE_URL=https://math-nurval.vercel.app`.
+   `SMTP_PASS`, `MAIL_FROM_NAME=Math Check`, `SITE_URL=https://math-nurval.vercel.app`.
 4. Authentication → Emails → SMTP Settings: тот же ящик, чтобы письма для входа шли с nurval.ee без лимита.
 
-Все письма приложения начинаются с метки `[Математика]` в теме.
+Все письма приложения начинаются с метки `[Math Check]` в теме.
