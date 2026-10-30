@@ -223,6 +223,81 @@ const UI5={
   fullHint:"You can choose what to remove yourself in your profile.",pickSelf:"Choose myself",saveReplace:"Save, remove oldest",removeIt:"Remove",workOf:t=>`test “${t}”`}
 };
 Object.keys(UI).forEach(l=>Object.assign(UI[l],UI5[l]));
+const UI6={
+ ru:{invLead:(w,isP,sn)=>isP?(sn?`Вы будете видеть успехи ученика ${sn} и сможете помочь с трудными заданиями.`:"Ваш ребёнок решает контрольные по математике и хочет, чтобы вы видели его результаты и могли помочь с трудными заданиями.")
+    :`Решай контрольные по математике, а ${w} будет видеть твои успехи и сможет помочь с трудными заданиями.`,
+  invTitle:(w,isP)=>isP?`${w} приглашает вас в Math Check`:`${w} приглашает тебя в Math Check`,invEmail:"Почта, на которую пришло приглашение",
+  invOther:isP=>isP?"Можно войти и с другой почтой — тогда сайт спросит, подключить ли вас к ученику с этой почтой.":"Можно войти и с другой почтой — тогда сайт спросит, подключить ли родителя к этому аккаунту.",
+  otherTitleS:"Подключить родителя к этому аккаунту?",otherTitleP:"Подключиться к ученику с этой почтой?",
+  otherText:(a,b,isP)=>`Приглашение пришло на ${a}, а ${isP?"вы вошли":"ты вошёл"} с ${b}. Это нормально — можно продолжить с этой почтой.`,
+  otherWillS:"будет видеть твои работы и просьбы о помощи",otherWillP:"вы будете видеть работы и просьбы о помощи",
+  notNow:"Не сейчас",yesConnect:"Да, подключить",signOutAs:e=>`Выйти и войти с ${e}`,
+  roleMismatch:(isP)=>isP?"Это приглашение для родителя, а этот аккаунт — ученика. Войдите с другой почтой, чтобы его принять.":"Это приглашение для ученика, а этот аккаунт — родителя. Войдите с другой почтой, чтобы его принять.",
+  invGoneTitle:"Приглашение недоступно",invGone:"Это приглашение уже использовано или отменено.",ok:"Понятно",
+  step:(a,b)=>`Шаг ${a} из ${b}`,del1Q:"Вы собираетесь удалить аккаунт?",del1Kid:n=>`Удалить аккаунт ученика ${n}?`,yesNext:"Да, продолжить",
+  delWhat:"Что удалится",dWorks:n=>`все работы и история — ${n} ${n%10===1&&n%100!==11?"работа":n%10>=2&&n%10<=4&&(n%100<10||n%100>=20)?"работы":"работ"}`,dProgress:"прогресс по темам и олимпиадным задачам",dLater:"список «Разобрать позже»",
+  dParents:l=>`связь с родителями: ${l}`,dKids:l=>`связь с учениками: ${l}`,dInvites:"отправленные приглашения",
+  d30:"30 дней аккаунт можно будет восстановить, потом всё удалится навсегда.",confirm:"Подтвердить",
+  del3T:"Подтвердите удаление в письме",del3Text:e=>`Мы отправили письмо на ${e}. Аккаунт удалится только после нажатия кнопки в письме. Ссылка действует 24 часа.`,
+  del3Kid:"Если передумали — просто не нажимайте кнопку в письме.",
+  delWarn:"Аккаунт удалится вместе со всеми работами, историей и связями. 30 дней его можно будет восстановить, потом всё удалится навсегда.",
+  kidAccSec:"Аккаунт ученика",kidDelWarn:"Удалить аккаунт ученика вместе с работами и историей. 30 дней ученик сможет его восстановить, мы сообщим ему письмом.",
+  byeT:isP=>isP?"Нам будет вас не хватать":"Нам будет тебя не хватать",byeText:(e,isP)=>isP?`Аккаунт ${e} удалён.`:`Аккаунт ${e} удалён. Мы отправили на почту письмо с твоими итогами в Math Check.`,
+  byeUntil:(d,isP)=>isP?`<b>Можно вернуться до ${d}.</b> Просто войдите с этой же почтой — всё восстановится. После этой даты всё удалится навсегда.`:`<b>Можно вернуться до ${d}.</b> Просто войди с этой же почтой — все работы и прогресс восстановятся. После этой даты всё удалится навсегда.`,
+  byeKidT:n=>`Аккаунт ученика ${n} удалён`,byeKidText:"Мы отправили вам письмо с итогами ученика.",byeKidUntil:(n,d)=>`${n} может восстановить аккаунт до ${d} — мы сообщили об этом письмом.`,
+  toHome:"На главную",toKids:"К ученикам",linkExpired:"Ссылка устарела или уже использована. Если аккаунт всё ещё нужно удалить, запросите удаление ещё раз.",
+  restT:"С возвращением!",restText:(a,b,isP)=>`Этот аккаунт удалён ${a}. Его можно восстановить до ${b} — вместе со ${isP?"всеми подключёнными учениками":"всеми работами и прогрессом. Родители снова будут подключены"}.`,restore:"Восстановить аккаунт",
+  unlinkBtn:"Отвязаться",unlinkT:"Отвязаться от родителя?",unlinkText:(n,e)=>`${n} (${e}) больше не будет видеть твои работы и просьбы о помощи. Мы сообщим об этом письмом. Подключить снова можно в любой момент через приглашение.`},
+ et:{invLead:(w,isP,sn)=>isP?(sn?`Näete õpilase ${sn} edusamme ja saate aidata keeruliste ülesannetega.`:"Teie laps lahendab matemaatika kontrolltöid ja soovib, et näeksite tema tulemusi ning saaksite aidata keeruliste ülesannetega.")
+    :`Lahenda matemaatika kontrolltöid ning ${w} näeb sinu edusamme ja saab aidata keeruliste ülesannetega.`,
+  invTitle:(w,isP)=>isP?`${w} kutsub teid Math Checki`:`${w} kutsub sind Math Checki`,invEmail:"E-post, kuhu kutse tuli",
+  invOther:isP=>isP?"Võite sisse logida ka teise e-postiga — siis küsib sait, kas ühendada teid selle e-postiga õpilasega.":"Võid sisse logida ka teise e-postiga — siis küsib sait, kas ühendada vanem selle kontoga.",
+  otherTitleS:"Kas ühendada vanem selle kontoga?",otherTitleP:"Kas ühenduda õpilasega selle e-postiga?",
+  otherText:(a,b,isP)=>`Kutse tuli aadressile ${a}, aga ${isP?"logisite sisse":"logisid sisse"} aadressiga ${b}. See on korras — võib jätkata selle e-postiga.`,
+  otherWillS:"näeb sinu töid ja abipalveid",otherWillP:"näete töid ja abipalveid",
+  notNow:"Mitte praegu",yesConnect:"Jah, ühenda",signOutAs:e=>`Logi välja ja sisse aadressiga ${e}`,
+  roleMismatch:(isP)=>isP?"See kutse on lapsevanemale, aga see konto on õpilase oma. Kutse vastuvõtmiseks logige sisse teise e-postiga.":"See kutse on õpilasele, aga see konto on lapsevanema oma. Kutse vastuvõtmiseks logige sisse teise e-postiga.",
+  invGoneTitle:"Kutse pole saadaval",invGone:"See kutse on juba kasutatud või tühistatud.",ok:"Selge",
+  step:(a,b)=>`Samm ${a}/${b}`,del1Q:"Kas soovite konto kustutada?",del1Kid:n=>`Kas kustutada õpilase ${n} konto?`,yesNext:"Jah, jätka",
+  delWhat:"Mis kustub",dWorks:n=>`kõik tööd ja ajalugu — ${n} tööd`,dProgress:"edusammud teemades ja olümpiaadiülesannetes",dLater:"nimekiri «Vaata hiljem»",
+  dParents:l=>`ühendus vanematega: ${l}`,dKids:l=>`ühendus õpilastega: ${l}`,dInvites:"saadetud kutsed",
+  d30:"30 päeva saab konto taastada, siis kustub kõik jäädavalt.",confirm:"Kinnita",
+  del3T:"Kinnitage kustutamine kirjas",del3Text:e=>`Saatsime kirja aadressile ${e}. Konto kustub alles pärast kirjas oleva nupu vajutamist. Link kehtib 24 tundi.`,
+  del3Kid:"Kui mõtlesite ümber, ärge vajutage kirjas olevat nuppu.",
+  delWarn:"Konto kustub koos kõigi tööde, ajaloo ja ühendustega. 30 päeva saab selle taastada, siis kustub kõik jäädavalt.",
+  kidAccSec:"Õpilase konto",kidDelWarn:"Kustuta õpilase konto koos tööde ja ajalooga. 30 päeva saab õpilane selle taastada, anname talle kirjaga teada.",
+  byeT:isP=>isP?"Meil hakkab teist puudus":"Meil hakkab sinust puudus",byeText:(e,isP)=>isP?`Konto ${e} on kustutatud.`:`Konto ${e} on kustutatud. Saatsime e-postile kirja sinu Math Checki tulemustega.`,
+  byeUntil:(d,isP)=>isP?`<b>Tagasi saab tulla kuni ${d}.</b> Logige lihtsalt sama e-postiga sisse — kõik taastub. Pärast seda kustub kõik jäädavalt.`:`<b>Tagasi saab tulla kuni ${d}.</b> Logi lihtsalt sama e-postiga sisse — kõik tööd ja edusammud taastuvad. Pärast seda kustub kõik jäädavalt.`,
+  byeKidT:n=>`Õpilase ${n} konto on kustutatud`,byeKidText:"Saatsime teile kirja õpilase tulemustega.",byeKidUntil:(n,d)=>`${n} saab konto taastada kuni ${d} — andsime sellest kirjaga teada.`,
+  toHome:"Avalehele",toKids:"Õpilaste juurde",linkExpired:"Link on aegunud või juba kasutatud. Kui konto on vaja ikka kustutada, taotlege kustutamist uuesti.",
+  restT:"Tere tulemast tagasi!",restText:(a,b,isP)=>`See konto kustutati ${a}. Selle saab taastada kuni ${b} — koos ${isP?"kõigi ühendatud õpilastega":"kõigi tööde ja edusammudega. Vanemad ühendatakse uuesti"}.`,restore:"Taasta konto",
+  unlinkBtn:"Eemalda ühendus",unlinkT:"Eemaldada ühendus vanemaga?",unlinkText:(n,e)=>`${n} (${e}) ei näe enam sinu töid ja abipalveid. Anname talle sellest kirjaga teada. Uuesti saab ühendada igal ajal kutsega.`},
+ en:{invLead:(w,isP,sn)=>isP?(sn?`You'll see ${sn}'s progress and can help with tricky tasks.`:"Your child takes math tests and wants you to see their results and help with tricky tasks.")
+    :`Take math tests, and ${w} will see your progress and can help with tricky tasks.`,
+  invTitle:(w,isP)=>`${w} invites you to Math Check`,invEmail:"Email the invitation was sent to",
+  invOther:isP=>isP?"You can sign in with another email too — the site will then ask whether to connect you to the student with that email.":"You can sign in with another email too — the site will then ask whether to connect the parent to that account.",
+  otherTitleS:"Connect the parent to this account?",otherTitleP:"Connect to the student with this email?",
+  otherText:(a,b)=>`The invitation was sent to ${a}, but you signed in with ${b}. That's fine — you can continue with this email.`,
+  otherWillS:"will see your tests and help requests",otherWillP:"you'll see tests and help requests",
+  notNow:"Not now",yesConnect:"Yes, connect",signOutAs:e=>`Sign out and sign in with ${e}`,
+  roleMismatch:(isP)=>isP?"This invitation is for a parent, but this is a student account. Sign in with another email to accept it.":"This invitation is for a student, but this is a parent account. Sign in with another email to accept it.",
+  invGoneTitle:"Invitation unavailable",invGone:"This invitation was already used or cancelled.",ok:"OK",
+  step:(a,b)=>`Step ${a} of ${b}`,del1Q:"Do you want to delete the account?",del1Kid:n=>`Delete ${n}'s account?`,yesNext:"Yes, continue",
+  delWhat:"What will be deleted",dWorks:n=>`all tests and history — ${n} ${n===1?"test":"tests"}`,dProgress:"progress in topics and olympiad problems",dLater:"the “Review later” list",
+  dParents:l=>`connection to parents: ${l}`,dKids:l=>`connection to students: ${l}`,dInvites:"sent invitations",
+  d30:"For 30 days the account can be restored, then everything is deleted for good.",confirm:"Confirm",
+  del3T:"Confirm the deletion in the email",del3Text:e=>`We've sent an email to ${e}. The account is deleted only after you press the button in the email. The link works for 24 hours.`,
+  del3Kid:"If you change your mind, just don't press the button in the email.",
+  delWarn:"The account will be deleted with all tests, history and connections. It can be restored for 30 days, then everything is deleted for good.",
+  kidAccSec:"Student's account",kidDelWarn:"Delete the student's account with tests and history. The student can restore it for 30 days; we'll let them know by email.",
+  byeT:()=>"We'll miss you",byeText:(e,isP)=>isP?`The account ${e} has been deleted.`:`The account ${e} has been deleted. We've emailed you your Math Check results.`,
+  byeUntil:(d)=>`<b>You can come back until ${d}.</b> Just sign in with the same email — everything will be restored. After that everything is deleted for good.`,
+  byeKidT:n=>`${n}'s account has been deleted`,byeKidText:"We've emailed you the student's results.",byeKidUntil:(n,d)=>`${n} can restore the account until ${d} — we've let them know by email.`,
+  toHome:"Home",toKids:"To students",linkExpired:"The link has expired or was already used. If the account still needs deleting, request it again.",
+  restT:"Welcome back!",restText:(a,b,isP)=>`This account was deleted on ${a}. You can restore it until ${b} — with ${isP?"all connected students":"all tests and progress. Parents will be connected again"}.`,restore:"Restore account",
+  unlinkBtn:"Disconnect",unlinkT:"Disconnect from the parent?",unlinkText:(n,e)=>`${n} (${e}) will no longer see your tests and help requests. We'll let them know by email. You can connect again any time with an invitation.`}
+};
+Object.keys(UI).forEach(l=>Object.assign(UI[l],UI6[l]));
 const LETTERS={ru:"абвгдежзиклм",et:"abcdefghijkl",en:"abcdefghijkl"};
 const ICON_BACK=`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>`;
 const ICON_PLAY=`<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M8 5.5v13l10-6.5z"/></svg>`;
@@ -247,6 +322,13 @@ let st=Object.assign({lang:"ru",level:"n",type:"theme",date:todayStr(),timer:"of
 let U=UI[st.lang];let activeBlock=null;
 let USER=null,PROFILE=null,authState="loading",sync="ok",authMsg="",authErr=false,linkMsg="",linkErr=false;
 let parents=[],kids=[],kid=null,kidHist=[],kidParents=[],kidHelp=[],myInvites=[],modal=null,helpSent={},myHelp=[];
+// приглашение по ссылке (?invite=…) и подтверждение удаления (?delete=…) из писем
+let pendInv=LS.get("math7.invite"),invInfo=null,delTok=null,bye=null,DELETED=null;
+(function(){const q=new URLSearchParams(location.search);const i=q.get("invite"),d=q.get("delete");
+  if(i){pendInv=i;LS.set("math7.invite",i)}if(d)delTok=d;
+  if(i||d)history.replaceState(null,"",location.pathname+location.hash)})();
+function clearInv(){pendInv=null;invInfo=null;LS.del("math7.invite")}
+const HEX={coral:"#f46b57",yellow:"#f5c84c",teal:"#5ec2b7",lilac:"#9b97f2",sky:"#6fa8f5",green:"#7ccb8e"};
 
 function savePrefs(){LS.set("math7.prefs",{lang:st.lang,theme:st.theme})}
 const WORK_KEYS=["workCid","lastCid","meta","answers","checked","open","elapsed","blockTime","timeUp","laps","lapStart","timer","limit","type","date","limitTouched","confirming"];
@@ -256,6 +338,8 @@ function restoreWork(){const o=LS.get("math7.work."+USER.id);if(o&&o.meta){Objec
 
 async function initAuth(){
   if(!sb){authState="out";authErr=true;authMsg="Supabase config missing";renderAll();return}
+  if(delTok){const {data,error}=await sb.rpc("confirm_delete",{p_token:delTok});delTok=null;bye=error?{err:true}:data;if(!error)sendMail()}
+  if(pendInv){const {data}=await sb.rpc("invite_info",{p_id:pendInv});invInfo=(data&&data[0])||null;if(!invInfo)clearInv()}
   sb.auth.onAuthStateChange((ev,session)=>{setTimeout(()=>onSession(session),0)});
   const {data}=await sb.auth.getSession();
   onSession(data.session);
@@ -264,13 +348,23 @@ let sessUid;
 async function onSession(session){
   const u=session?session.user:null;const uid=u?u.id:null;
   if(uid===sessUid)return;sessUid=uid;USER=u;
-  if(!u){authState="out";PROFILE=null;st.history=[];st.test=null;st.meta=null;renderAll();return}
+  if(!u){authState="out";PROFILE=null;DELETED=null;st.history=[];st.test=null;st.meta=null;renderAll();return}
+  // только что подтвердили удаление своего аккаунта: выходим
+  if(bye&&!bye.err&&(u.email||"").toLowerCase()===String(bye.email||"").toLowerCase()){["work","hist","queue","profile"].forEach(k=>LS.del("math7."+k+"."+u.id));sb.auth.signOut();return}
   authState="loading";renderAll();
   const meta=u.user_metadata||{};
   const {data,error}=await sb.rpc("bootstrap",{p_name:meta.full_name||meta.name||""});
   if(error){const cached=LS.get("math7.profile."+u.id);if(cached){sync="offline";applyProfile(cached);return}authState="out";authErr=true;authMsg=U.authErr+error.message;renderAll();return}
-  if(!data||!data.id){authState="role";renderAll();return}
-  applyProfile(data);
+  if(data&&data.deleted_at){PROFILE=null;DELETED=data;authState="deleted";renderAll();return}
+  if(!data||!data.id){authState="role";renderAll()}else applyProfile(data);
+  if(pendInv)checkInvite(u,data&&data.id?data:null);
+}
+// вошли по приглашению: та же почта — приглашение уже сработало; другая — спрашиваем
+async function checkInvite(u,prof){
+  let info=invInfo;if(!info){const {data}=await sb.rpc("invite_info",{p_id:pendInv});info=(data&&data[0])||null}
+  if(!info||String(info.email).toLowerCase()===(u.email||"").toLowerCase()){clearInv();return}
+  if(prof&&prof.role!==info.role){clearInv();modal={type:"invrole",isP:info.role==="parent"};renderModal();return}
+  modal={type:"invother",info};renderModal();
 }
 function applyProfile(p){
   PROFILE=p;authState="in";LS.set("math7.profile."+p.id,p);
@@ -629,6 +723,7 @@ function viewReview(){
 }
 
 const ICON_G=`<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z"/><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path fill="#FBBC05" d="M6.4 14c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.4H3.1a10 10 0 0 0 0 9.2z"/><path fill="#EA4335" d="M12 6c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3.1 7.4L6.4 10C7.2 7.7 9.4 6 12 6z"/></svg>`;
+const ICON_G_MONO=`<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="currentColor"><path d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z"/><path d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path d="M6.4 14c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.4H3.1a10 10 0 0 0 0 9.2z"/><path d="M12 6c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3.1 7.4L6.4 10C7.2 7.7 9.4 6 12 6z"/></svg>`;
 function viewAuth(){
   return `<div class="screen"><div class="group authcard">
     <h2>${U.signTitle}</h2><p class="sub">${U.signLead}</p>
@@ -638,6 +733,34 @@ function viewAuth(){
     <button class="btn wide" type="button" data-act="magic">${U.sendLink}</button>
     ${authMsg?`<p class="msg${authErr?" err":""}" role="status">${esc(authMsg)}</p>`:""}
   </div></div>`;
+}
+function isGmail(e){return /@(gmail|googlemail)\.com$/i.test(String(e||"").trim())}
+function viewInvite(){
+  const i=invInfo;const isP=i.role==="parent";const w=(i.from_name||"").trim()||i.from_email;const g=isGmail(i.email);
+  const gBtn=`<button class="btn wide${g?"":" ghost"}" type="button" data-act="google">${g?ICON_G_MONO:ICON_G}<span>${U.google}</span></button>`;
+  const mBtn=`<button class="btn wide${g?" ghost":""}" type="button" data-act="magic">${U.sendLink}</button>`;
+  return `<div class="screen"><div class="group authcard invite">
+    <div class="inviter"><div class="ava sm">${esc(w.trim().charAt(0).toUpperCase())}</div><span><b>${esc(w)}</b><br><span class="sub">${esc(i.from_email||"")}</span></span></div>
+    <h2>${esc(U.invTitle(w,isP))}</h2><p class="sub">${esc(U.invLead(w,isP,isP&&i.from_role==="parent"?i.student_name:""))}</p>
+    <label class="ctrl"><span>${U.invEmail}</span><input class="txt" type="email" id="f-email" value="${esc(i.email)}" autocomplete="email" inputmode="email"></label>
+    ${g?gBtn+mBtn:mBtn+gBtn}
+    ${authMsg?`<p class="msg${authErr?" err":""}" role="status">${esc(authMsg)}</p>`:""}
+    <p class="sub small">${esc(U.invOther(isP))}</p>
+  </div></div>`;
+}
+function plus30(iso){const d=new Date(iso);d.setDate(d.getDate()+30);return d}
+function viewBye(){
+  if(bye.err)return `<div class="screen"><div class="group authcard"><h2>${esc(U.deleteAcc)}</h2><p class="sub">${U.linkExpired}</p><button class="btn wide" type="button" data-act="byeok">${U.toHome}</button></div></div>`;
+  const until=fmtD(new Date(bye.until));const isP=bye.role==="parent";const nm=bye.name||bye.email;
+  const mine=PROFILE&&PROFILE.role==="parent"&&!bye.self;
+  if(!bye.self)return `<div class="screen"><div class="group authcard"><h2>${esc(U.byeKidT(nm))}</h2><p class="sub">${U.byeKidText}</p><div class="mnote">${esc(U.byeKidUntil(nm,until))}</div><div class="mbtns c"><button class="btn" type="button" data-act="byeok">${mine?U.toKids:U.toHome}</button></div></div></div>`;
+  return `<div class="screen"><div class="group authcard"><h2>${U.byeT(isP)}</h2><p class="sub">${esc(U.byeText(bye.email,isP))}</p><div class="mnote">${U.byeUntil(until,isP)}</div><div class="mbtns c"><button class="btn" type="button" data-act="byeok">${U.toHome}</button></div></div></div>`;
+}
+function viewRestore(){
+  const d=DELETED;const isP=d.role==="parent";
+  return `<div class="screen"><div class="group authcard"><h2>${U.restT}</h2><p class="sub">${esc(U.restText(fmtD(new Date(d.deleted_at)),fmtD(plus30(d.deleted_at)),isP))}</p>
+    ${authMsg?`<p class="msg err" role="status">${esc(authMsg)}</p>`:""}
+    <div class="mbtns c"><button class="btn ghost" type="button" data-act="logout">${U.logout}</button><button class="btn" type="button" data-act="restore">${U.restore}</button></div></div></div>`;
 }
 function viewRole(){
   const meta=(USER&&USER.user_metadata)||{};
@@ -656,7 +779,7 @@ function viewAccount(){
     <div class="sec">${U.changeRole}</div>
     <div class="group"><div class="srow"><span class="sub">${PROFILE.role_changed?U.roleChangedAlready:U.changeOnce}</span>${PROFILE.role_changed?"":`<button class="btn ghost" type="button" data-act="role1">${U.changeRole}: ${esc(other)}</button>`}</div></div>
     <div class="sec">${U.deleteAcc}</div>
-    <div class="group"><div class="srow"><span class="sub">${U.delWarn}</span><button class="btn ghost danger" type="button" data-act="del1">${U.deleteAcc}</button></div></div>
+    <div class="group"><div class="srow"><span class="sub">${U.delWarn}</span><button class="btn ghost danger" type="button" data-act="d1">${U.deleteAcc}</button></div></div>
   </div>`;
 }
 function personRow(p,right){return `<div class="srow"><span><b>${esc(p.name||U.noName)}</b> <span class="sub">${esc(p.email||"")}</span><br><span class="sub">${[p.kind?U[p.kind]:"",seenTxt(p.last_seen)].filter(Boolean).join(" · ")}</span></span>${right||"<span></span>"}</div>`}
@@ -667,7 +790,7 @@ function familyHtml(){
   const act=parents.filter(p=>p.status==="active");const inv=myInvites.filter(i=>i.role==="parent");
   let h=`<div class="sec">${U.family}</div><div class="group">`;
   if(!act.length&&!inv.length)h+=`<div class="srow"><span class="sub">${U.noParents}</span></div>`;
-  h+=act.map(p=>personRow(p)).join("")+inviteRows(inv);
+  h+=act.map(p=>personRow(p,`<button class="btn ghost" type="button" data-act="unl1" data-pid="${p.parent_id}">${U.unlinkBtn}</button>`)).join("")+inviteRows(inv);
   h+=`</div><div class="sec">${U.inviteParent}</div><div class="group">${inviteForm("invparent")}</div>${msgHtml()}`;
   return h;
 }
@@ -711,7 +834,9 @@ function kidExtra(){
   h+=kidParents.map(p=>personRow(p,p.parent_id===USER.id?`<button class="btn ghost" type="button" data-act="unlink" data-pid="${p.parent_id}" data-sid="${sid}">${U.leave}</button>`:amMain&&p.kind==="second"?`<button class="btn ghost" type="button" data-act="unlink" data-pid="${p.parent_id}" data-sid="${sid}">${U.removeP}</button>`:"")).join("");
   h+=inviteRows(myInvites.filter(i=>i.role==="parent"&&i.student_id===sid))+`</div>`;
   if(amMain)h+=`<div class="sec">${U.inviteSecond}</div><div class="group">${inviteForm("invsecond",""," data-sid=\""+sid+"\"")}</div>`;
-  return h+msgHtml();
+  h+=msgHtml();
+  if(amMain)h+=`<div class="sec">${U.kidAccSec}</div><div class="group"><div class="srow"><span class="sub">${U.kidDelWarn}</span><button class="btn ghost danger" type="button" data-act="d1" data-sid="${sid}">${U.deleteAcc}</button></div></div>`;
+  return h;
 }
 function secBadge(title,n,key){return `<div class="sec sec-row"><span class="sec-t">${title}${n?` <span class="badge" aria-label="${esc(U.newN(n))}">${n}</span>`:""}</span>${n?`<button class="link-btn" type="button" data-act="seenreset" data-k="${key}">${U.resetNew}</button>`:""}</div>`}
 function viewKid(){
@@ -731,21 +856,42 @@ function renderModal(){
   document.body.classList.add("modal-open");
   const other=PROFILE&&PROFILE.role==="student"?U.roleP:U.roleS;let h="";
   if(modal.type==="full"){const o=modal.oldest||{};h=`<h2>${hasParent()?U.fullTitleP:U.fullTitle}</h2><p>${U.fullText}</p><div class="mnote"><b>${esc(o.title||"")}</b><br><span class="sub">${o.created_at?fmtD(new Date(o.created_at)):""}</span></div><p class="sub">${U.fullHint}</p><div class="mbtns"><button class="btn ghost" type="button" data-act="fullself">${U.pickSelf}</button><button class="btn" type="button" data-act="fullreplace">${U.saveReplace}</button></div>`}
+  if(modal.type==="invother"){const i=modal.info;const isP=i.role==="parent";const ue=(USER&&USER.email)||"";
+    const who=isP?(i.from_role==="student"?{n:i.from_name,e:i.from_email}:{n:i.student_name,e:""}):{n:i.from_name,e:i.from_email};const nm=(who.n||"").trim()||who.e||"";
+    h=`<h2>${isP?U.otherTitleP:U.otherTitleS}</h2><p>${esc(U.otherText(i.email,ue,isP))}</p>
+    <div class="mnote person"><div class="ava sm">${esc(nm.charAt(0).toUpperCase())}</div><span><b>${esc(nm)}</b>${who.e?` <span class="sub">${esc(who.e)}</span>`:""}<br><span class="sub">${isP?U.otherWillP:U.otherWillS}</span></span></div>
+    ${modal.err?`<p class="msg err">${esc(modal.err)}</p>`:""}
+    <div class="mbtns c"><button class="btn ghost" type="button" data-act="invno">${U.notNow}</button><button class="btn" type="button" data-act="invyes">${U.yesConnect}</button></div>
+    <button class="link-btn mlink" type="button" data-act="invswitch">${esc(U.signOutAs(i.email))}</button>`}
+  if(modal.type==="invrole")h=`<h2>${U.invGoneTitle}</h2><p>${esc(modal.gone?U.invGone:U.roleMismatch(modal.isP))}</p><div class="mbtns c"><button class="btn" type="button" data-act="mclose">${U.ok}</button></div>`;
+  if(modal.type==="unl"){const p=modal.p;h=`<h2>${U.unlinkT}</h2><p>${esc(U.unlinkText(p.name||U.noName,p.email))}</p>${modal.err?`<p class="msg err">${esc(modal.err)}</p>`:""}<div class="mbtns c"><button class="btn ghost" type="button" data-act="mclose">${U.cancel}</button><button class="btn" type="button" data-act="unlgo">${U.unlinkBtn}</button></div>`}
+  if(modal.type==="d1")h=`<p class="step">${U.step(1,3)}</p><h2>${esc(modal.sid?U.del1Kid(modal.name):U.del1Q)}</h2><div class="mbtns c"><button class="btn ghost" type="button" data-act="mclose">${U.no}</button><button class="btn" type="button" data-act="d2">${U.yesNext}</button></div>`;
+  if(modal.type==="d2")h=`<p class="step">${U.step(2,3)}</p><h2>${U.delWhat}</h2><ul class="dlist">${delList(modal).map(x=>`<li>${esc(x)}</li>`).join("")}</ul><p class="sub">${U.d30}</p>${modal.err?`<p class="msg err">${esc(modal.err)}</p>`:""}<div class="mbtns c"><button class="btn ghost" type="button" data-act="mclose">${U.cancel}</button><button class="btn danger" type="button" data-act="dgo">${U.confirm}</button></div>`;
+  if(modal.type==="d3")h=`<p class="step">${U.step(3,3)}</p><h2>${U.del3T}</h2><p>${esc(U.del3Text(modal.email))}</p><p class="sub">${U.del3Kid}</p><div class="mbtns c"><button class="btn" type="button" data-act="mclose">${U.ok}</button></div>`;
   if(modal.type==="ask")h=`<h2>${U.askTitle}</h2><p>${esc(U.askText(modal.p.name,modal.p.email))}</p><div class="mbtns"><button class="btn ghost" type="button" data-act="askno">${U.no}</button><button class="btn" type="button" data-act="askyes">${U.yes}</button></div>`;
   if(modal.type==="role1")h=`<h2>${U.changeRole}</h2><p>${esc(U.roleAsk(other))}</p><div class="mbtns"><button class="btn ghost" type="button" data-act="mclose">${U.no}</button><button class="btn" type="button" data-act="role2">${U.yes}</button></div>`;
-  if(modal.type==="role2"||modal.type==="del"){const ph=modal.type==="del"?U.phraseDel:U.phraseRole;
-    h=`<h2>${modal.type==="del"?U.deleteAcc:U.changeRole}</h2><p>${esc(modal.type==="del"?U.delWarn:U.roleWarn(other))}</p>
+  if(modal.type==="role2"){const ph=U.phraseRole;
+    h=`<h2>${U.changeRole}</h2><p>${esc(U.roleWarn(other))}</p>
       <label class="ctrl"><span>${esc(U.typePhrase(ph))}</span><input class="txt" id="f-phrase" autocomplete="off" autocapitalize="off" spellcheck="false" data-phrase="${esc(ph)}"></label>
       ${modal.err?`<p class="msg err">${esc(modal.err)}</p>`:""}
-      <div class="mbtns"><button class="btn ghost" type="button" data-act="mclose">${U.cancel}</button><button class="btn danger" type="button" id="m-go" data-act="${modal.type==="del"?"delgo":"rolego"}" disabled>${modal.type==="del"?U.doDelete:U.doChange}</button></div>`}
+      <div class="mbtns"><button class="btn ghost" type="button" data-act="mclose">${U.cancel}</button><button class="btn danger" type="button" id="m-go" data-act="rolego" disabled>${U.doChange}</button></div>`}
   const fresh=!el.firstChild;el.innerHTML=`<div class="dialog" role="dialog" aria-modal="true">${h}</div>`;if(fresh&&!reduced()){el.classList.remove("in");el.getBoundingClientRect();el.classList.add("in")}
   const f=document.getElementById("f-phrase");if(f){f.focus();f.addEventListener("paste",e=>e.preventDefault());f.addEventListener("drop",e=>e.preventDefault())}
 }
+// что удалится: для своего аккаунта или для ученика (главный родитель)
+function delList(m){
+  if(m.sid)return [U.dWorks(kidHist.length),U.dProgress,U.dLater].concat(kidParents.length?[U.dParents(kidParents.map(p=>p.name||p.email).join(", "))]:[]);
+  if(PROFILE.role==="student"){const ps=parents.filter(p=>p.status==="active");return [U.dWorks(st.history.length),U.dProgress,U.dLater].concat(ps.length?[U.dParents(ps.map(p=>p.name||p.email).join(", "))]:[])}
+  const ks=kids.filter(k=>k.status==="active");return (ks.length?[U.dKids(ks.map(k=>k.name||k.email).join(", "))]:[]).concat(myInvites.length?[U.dInvites]:[]);
+}
+function delCtx(){G.setLang(st.lang);const topics={};G.TOPICS.forEach(t=>{topics[t.id]={n:G.tr(t.name),c:HEX[TCOL[t.id]||"sky"]}});return {topics,olyTotal:G.OLY.length}}
 function renderMain(){
   G.setLang(st.lang);
   const v=st.view;const m=document.getElementById("main");
   if(authState==="loading"){m.innerHTML=`<p class="empty">${U.loading}</p>`;return}
-  if(authState==="out"){m.innerHTML=viewAuth();return}
+  if(bye){m.innerHTML=viewBye();return}
+  if(authState==="out"){m.innerHTML=pendInv&&invInfo?viewInvite():viewAuth();return}
+  if(authState==="deleted"){m.innerHTML=viewRestore();return}
   if(authState==="role"){m.innerHTML=viewRole();return}
   const isP=PROFILE&&PROFILE.role==="parent";
   m.innerHTML=v==="settings"?viewSettings():v==="account"?viewAccount():v==="faq"?viewFaq():v==="prog"?viewProg():v==="review"?viewReview()
@@ -839,11 +985,23 @@ document.addEventListener("click",e=>{
     if(act==="askyes"||act==="askno"){const p=modal.p;modal=null;renderModal();sb.rpc("answer_parent",{p_parent:p.parent_id,p_yes:act==="askyes"}).then(loadParents);return}
     if(act==="role1"){modal={type:"role1"};renderModal();return}
     if(act==="role2"){modal={type:"role2"};renderModal();return}
-    if(act==="del1"){modal={type:"del"};renderModal();return}
+    if(act==="d1"){modal=a.dataset.sid?{type:"d1",sid:a.dataset.sid,name:(kid&&kid.name)||(kid&&kid.email)||""}:{type:"d1"};renderModal();return}
+    if(act==="d2"){modal.type="d2";renderModal();return}
+    if(act==="dgo"){a.disabled=true;const m=modal;sb.rpc("request_delete",{p_target:m.sid||null,p_ctx:delCtx()}).then(({data,error})=>{if(modal!==m)return;
+      if(error){m.err=errText(error.message);renderModal();return}sendMail();modal={type:"d3",email:data};renderModal()});return}
+    if(act==="byeok"){const toKids=PROFILE&&PROFILE.role==="parent"&&bye&&!bye.self;bye=null;if(toKids){kid=null;st.view="kids";loadKids()}renderAll();return}
+    if(act==="restore"){a.disabled=true;sb.rpc("restore_account").then(({data,error})=>{if(error){authMsg=U.authErr+error.message;renderMain();return}DELETED=null;authMsg="";applyProfile(data)});return}
+    if(act==="invno"){clearInv();modal=null;renderModal();return}
+    if(act==="invswitch"){modal=null;renderModal();sb.auth.signOut().then(()=>{authMsg="";renderAll()});return}
+    if(act==="invyes"){a.disabled=true;const m=modal;const meta=USER.user_metadata||{};
+      sb.rpc("claim_invite",{p_id:pendInv,p_name:meta.full_name||meta.name||""}).then(({data,error})=>{
+        if(error){if(/role_mismatch/.test(error.message)){clearInv();modal={type:"invrole",isP:m.info.role==="parent"}}else if(/invite_gone/.test(error.message)){clearInv();modal={type:"invrole",isP:m.info.role==="parent",gone:true}}else{m.err=errText(error.message);modal=m}renderModal();return}
+        clearInv();modal=null;renderModal();applyProfile(data)});return}
+    if(act==="unl1"){const p=parents.find(x=>x.parent_id===a.dataset.pid);if(!p)return;modal={type:"unl",p};renderModal();return}
+    if(act==="unlgo"){a.disabled=true;const m=modal;sb.rpc("unlink",{p_parent:m.p.parent_id,p_student:USER.id}).then(({error})=>{if(error){m.err=errText(error.message);renderModal();return}
+      sendMail();modal=null;renderModal();loadParents()});return}
     if(act==="rolego"){a.disabled=true;sb.rpc("change_role").then(({data,error})=>{if(error){modal.err=errText(error.message);renderModal();return}
       modal=null;renderModal();LS.del("math7.work."+USER.id);LS.del("math7.hist."+USER.id);LS.del(qKey());st.test=null;st.meta=null;st.history=[];parents=[];kids=[];kid=null;myInvites=[];applyProfile(data)});return}
-    if(act==="delgo"){a.disabled=true;sb.rpc("delete_account").then(({error})=>{if(error){modal.err=errText(error.message);renderModal();return}
-      const id=USER.id;["work","hist","queue","profile"].forEach(k=>LS.del("math7."+k+"."+id));modal=null;renderModal();sb.auth.signOut().then(()=>{st.test=null;st.meta=null;st.view="main";renderAll()})});return}
     if(act==="invparent"||act==="invchild"||act==="invsecond"){const inp=document.getElementById("f-inv-"+act);const em=(inp&&inp.value||"").trim();if(!em)return;a.disabled=true;
       const call=act==="invchild"?sb.rpc("invite_child",{p_email:em}):sb.rpc("invite_parent",{p_email:em,p_student:act==="invsecond"?a.dataset.sid:null});
       call.then(({data,error})=>{linkErr=!!error;linkMsg=error?errText(error.message):data==="invited"?U.okInvited(em):data==="requested"?U.okRequested:U.okLinked;
