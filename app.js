@@ -1,5 +1,7 @@
 (function(){
-const G=window.GEN;
+// генератор выбранного класса; работы хранят свой класс в meta.grade (старые работы — 7 класс)
+function genFor(n){return window.GEN.grade(Number(n)||7)||window.GEN.grade(7)}
+let G=genFor(7);
 const LV={n:"Easy",a:"Medium",o:"Hard"};
 const UI={
  ru:{lap:"Круг",laps:"Круги",start:"Старт",stop:"Стоп",reset:"Сбросить",hint:"Ответ можно писать так: <code>-3,5</code> или <code>-3.5</code>, дробь <code>-7/4</code>, смешанное число <code>2 1/3</code>. Если ответ — бесконечная дробь, пиши обыкновенной дробью или округли до сотых. Несколько ответов — через «;».",title:"Математика, 7 класс",prog:"Программа",settings:"Настройки",profile:"Профиль",
@@ -458,11 +460,11 @@ function seenTxt(ts){if(!ts)return "";const d=new Date(ts),now=new Date();const 
 function applyTheme(){const r=document.documentElement;if(st.theme==="system")r.removeAttribute("data-theme");else r.setAttribute("data-theme",st.theme)}
 
 /* ---------- работа ---------- */
-function buildFrom(meta,lang){G.setLang(lang||st.lang);return G.buildTest({date:parseDate(meta.date),level:meta.level,type:meta.type==="train"?"theme":meta.type,lang:lang||st.lang,seed:meta.seed,seenOly:meta.seen||[],only:meta.only||undefined})}
+function buildFrom(meta,lang){const g=genFor(meta.grade);g.setLang(lang||st.lang);return g.buildTest({date:parseDate(meta.date),level:meta.level,type:meta.type==="train"?"theme":meta.type,lang:lang||st.lang,seed:meta.seed,seenOly:meta.seen||[],only:meta.only||undefined})}
 function newTest(){
   const seed=(Math.random()*4294967295)>>>0;
   const only=st.train;st.train=null;st.workCid=Date.now().toString(36)+Math.random().toString(36).slice(2,8);
-  st.meta={seed,level:st.level,type:only?"train":st.type,date:st.date,seen:st.seen.slice(),only:only||null};
+  st.meta={seed,grade:G.grade,level:st.level,type:only?"train":st.type,date:st.date,seen:st.seen.slice(),only:only||null};
   st.test=buildFrom(st.meta);st.answers={};st.checked=false;st.open={};st.confirming=false;st.elapsed=0;st.blockTime={};st.timeUp=false;st.laps=[];st.lapStart=0;
   if(st.timer==="limit"&&!st.limitTouched)st.limit=st.test.minutes;
   st.running=st.timer!=="off";st.view="main";enter("test");
@@ -481,9 +483,9 @@ function finish(){
   if(st.laps.length&&st.elapsed>st.lapStart){st.laps.push(st.elapsed-st.lapStart);st.lapStart=st.elapsed}
   st.checked=true;st.confirming=false;st.running=false;
   const T=totals(st.test,st.answers);
-  saveResult({ts:Date.now(),asOf:st.meta.date,level:st.meta.level,type:st.meta.type,lang:st.lang,score:T.got,max:T.max,items:T.count,
+  saveResult({ts:Date.now(),grade:st.meta.grade||7,asOf:st.meta.date,level:st.meta.level,type:st.meta.type,lang:st.lang,score:T.got,max:T.max,items:T.count,
     timeSec:st.timer!=="off"?st.elapsed:0,limitSec:st.timer==="limit"?st.limit*60:0,topics:T.topics,oly:st.test.olyIds,olyOk:T.olyOk,
-    meta:{seed:st.meta.seed,date:st.meta.date,level:st.meta.level,type:st.meta.type,seen:st.meta.seen,only:st.meta.only||null},answers:st.answers,blockTime:st.blockTime,laps:st.laps.slice()});
+    meta:{seed:st.meta.seed,grade:st.meta.grade||7,date:st.meta.date,level:st.meta.level,type:st.meta.type,seen:st.meta.seen,only:st.meta.only||null},answers:st.answers,blockTime:st.blockTime,laps:st.laps.slice()});
   enter("score");renderAll();window.scrollTo({top:0,behavior:"smooth"});
 }
 
@@ -516,7 +518,7 @@ function selectHtml(id,vals,cur,label){return `<label class="fld"><span>${label}
 function seenKey(){return "math7.seen."+(USER&&USER.id)+"."+(kid&&kid.student_id)}
 function kidSeen(){return LS.get(seenKey())||{works:0,help:0}}
 function tagsHtml(){const P=posInfo();return `<span class="chip">${esc(P.txt)}</span>${P.cur.map((n,i)=>`<span class="chip now ${tc(P.curIds[i])}">${U.now}: ${esc(n)}</span>`).join("")}`}
-function topicName(id){const t=G.TOPICS.find(x=>x.id===id);if(t)return G.tr(t.name);if(id==="oly")return U.oly;if(id==="proof")return U.proofs;return id}
+function topicName(id){const t=window.GEN.grades().map(genFor).flatMap(g=>g.TOPICS).find(x=>x.id===id);if(t)return G.tr(t.name);if(id==="oly")return U.oly;if(id==="proof")return U.proofs;return id}
 function subhead(title,backTo){return `<div class="subhead"><button class="back" type="button" data-go="${backTo}" aria-label="${esc(U.back)}">${ICON_BACK}</button><h2>${esc(title)}</h2></div>`}
 
 
