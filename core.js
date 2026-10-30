@@ -202,6 +202,9 @@ function parseNum(raw){
   if(/^[+-]?\d{1,3}( \d{3})+([.,]\d+)?$/.test(s))s=s.replace(/ /g,"");
   s=s.replace(/,/g,".");
   if(!s)return NaN;
+  let pm=s.match(/^([+-]?)(\d*)\.(\d*)\((\d+)\)$/);
+  if(pm){const w=+(pm[2]||0),a=pm[3],per=pm[4];const A=a?+a:0,la=a.length,lp=per.length;
+    const num=(+(a+per))-A,den=Math.pow(10,la)*(Math.pow(10,lp)-1);const v=w+num/den;return pm[1]==="-"?-v:v}
   let m=s.match(/^([+-]?)\s*(\d+)\s+(\d+)\s*\/\s*(\d+)$/);
   if(m){if(+m[4]===0)return NaN;const v=+m[2]+(+m[3])/(+m[4]);return m[1]==="-"?-v:v}
   m=s.match(/^([+-]?)\s*(\d*\.?\d+)\s*\/\s*(\d*\.?\d+)$/);
@@ -218,6 +221,14 @@ function closeEnough(x,ans){
   if(ans.round)return Math.abs(x-v)<=0.0051; // бесконечная дробь: можно округлить до сотых
   return false;
 }
+// несократимая дробь: «3/4», «-3/4», смешанное «1 2/3» (если a.mixed), целое — если ответ целый
+function fracOk(raw,a){
+  const s=String(raw).trim().replace(/[−–—]/g,"-");if(Math.abs(parseNum(s)-a.v)>1e-9)return false;
+  if(/^-?\d+$/.test(s))return Number.isInteger(a.v);
+  let m=s.match(/^-?(\d+)\s*\/\s*(\d+)$/);if(m)return gcd(+m[1],+m[2])===1&&+m[2]!==1&&(!a.mixed||+m[1]<+m[2]);
+  m=s.match(/^-?(\d+)\s+(\d+)\s*\/\s*(\d+)$/);if(m)return +m[2]<+m[3]&&gcd(+m[2],+m[3])===1;
+  return false;
+}
 function isFilled(item,val){
   if(item.ans.type==="std")return Array.isArray(val)&&String(val[0]||"").trim()!==""&&String(val[1]||"").trim()!=="";
   if(item.ans.type==="self")return val==="0"||val==="1"||val==="2";
@@ -228,6 +239,7 @@ function score(item,val,pts){ // -> полученные баллы
   if(!isFilled(item,val))return 0;
   if(a.type==="self")return val==="2"?pts:val==="1"?Math.floor(pts/2):0;
   if(a.type==="choice")return val===a.v?pts:0;
+  if(a.type==="frac")return fracOk(val,a)?pts:0;
   if(a.type==="num")return closeEnough(parseNum(val),a)?pts:0;
   if(a.type==="set"){const got=String(val).split(";").map(s=>s.trim()).filter(Boolean).map(parseNum);if(got.some(isNaN))return 0;
     const need=a.vals.slice().sort((x,y)=>x-y),g=got.slice().sort((x,y)=>x-y);if(need.length!==g.length)return 0;
@@ -321,7 +333,7 @@ return {grade,buildTest,score,isFilled,parseNum,TOPICS,PERIODS,schoolPos,covered
 
 const REG={},SUM={};
 function curLang(){return LANG}
-const H={curLang,DENS_A,DENS_N,L,MINUS,N,P,Q,T_ANS,V,ansHtml,decPlaces,decStr,evalE,expAddSub,fracHtml,lcm,numAns,numHtml,opSym,plainOf,q,qh,rDec,rFrac,rInt,renderE,stepList,stepsE,tr};
+const H={curLang,gcd,DENS_A,DENS_N,L,MINUS,N,P,Q,T_ANS,V,ansHtml,decPlaces,decStr,evalE,expAddSub,fracHtml,lcm,numAns,numHtml,opSym,plainOf,q,qh,rDec,rFrac,rInt,renderE,stepList,stepsE,tr};
 root.GEN={H,
   register(n,M){REG[n]=makeGrade(n,M);return REG[n]},
   grade(n){return REG[n]||null},

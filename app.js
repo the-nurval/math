@@ -487,7 +487,7 @@ function newTest(){
   const seed=(Math.random()*4294967295)>>>0;
   const only=st.train;st.train=null;st.workCid=Date.now().toString(36)+Math.random().toString(36).slice(2,8);
   syncGen();const mixG=!only&&mixOn()?availGrades():null;
-  st.meta={seed,grade:mixG?null:(only&&st.progGrade?Number(st.progGrade):G.grade),grades:mixG,level:st.level,type:only?"train":st.type,date:st.date,seen:st.seen.slice(),only:only||null};
+  st.meta={seed,grade:mixG?null:(only&&gradeOfTopic(only[0])||G.grade),grades:mixG,level:st.level,type:only?"train":st.type,date:st.date,seen:st.seen.slice(),only:only||null};
   st.test=buildFrom(st.meta);st.answers={};st.checked=false;st.open={};st.confirming=false;st.elapsed=0;st.blockTime={};st.timeUp=false;st.laps=[];st.lapStart=0;
   if(st.timer==="limit"&&!st.limitTouched)st.limit=st.test.minutes;
   st.running=st.timer!=="off";st.view="main";enter("test");
@@ -521,7 +521,9 @@ function posInfo(){
   return {pos,txt,cur:G.currentTopics(pos).map(t=>G.tr(t.name)),curIds:G.currentTopics(pos).map(t=>t.id)};
 }
 const TCOL={rat:'coral',dist:'teal',pow:'yellow',std:'lilac',pct:'sky',eq:'green',word:'coral',func:'teal',poly:'yellow',prism:'lilac',stat:'sky',r6:'green',oly:'lilac',proof:'sky'};
-function tc(id){return 't-'+(TCOL[id]||'sky')}
+function allTopics(){return window.GEN.grades().map(genFor).flatMap(g=>g.TOPICS.map(t=>Object.assign({grade:g.grade},t)))}
+function gradeOfTopic(id){const t=allTopics().find(x=>x.id===id);return t?t.grade:null}
+function tc(id){if(TCOL[id])return 't-'+TCOL[id];const t=allTopics().find(x=>x.id===id);return 't-'+((t&&t.col)||'sky')}
 
 const GRADES=[5,6,7,8,9],HAS_TOPICS=[7];
 function gradesTitle(){
@@ -534,9 +536,9 @@ function gradesTitle(){
 }
 const ICON_DOWN=`<svg class="chev-d" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>`;
 const ICON_EXIT=`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 16l4-4-4-4M14 12H4"/></svg>`;
-function progTopicsFor(g){return HAS_TOPICS.includes(g)?G.TOPICS.filter(t=>t.id!=="r6"):[]}
+function progTopicsFor(g){const gen=window.GEN.grade(g);return gen?gen.TOPICS.filter(t=>t.start>=0):[]}
 function progDefaultPick(g){const P=posInfo();const ts=progTopicsFor(g);const own=g===Number(st.grade);
-  const o={};ts.forEach(t=>{o[t.id]=own?t.start<P.pos.weeks||G.currentTopics(P.pos).some(c=>c.id===t.id):true});return o}
+  const gen=genFor(g);const o={};ts.forEach(t=>{o[t.id]=own?t.start<P.pos.weeks||gen.currentTopics(P.pos).some(c=>c.id===t.id):true});return o}
 function selectHtml(id,vals,cur,label){return `<label class="fld"><span>${label}</span><span class="selwrap"><select class="txt sel" id="${id}">${vals.map(v=>`<option value="${v}"${String(v)===String(cur)?" selected":""}>${v}</option>`).join("")}</select>${ICON_DOWN}</span></label>`}
 function seenKey(){return "math7.seen."+(USER&&USER.id)+"."+(kid&&kid.student_id)}
 function kidSeen(){return LS.get(seenKey())||{works:0,help:0}}
@@ -655,7 +657,7 @@ function viewFaq(){
   return `<div class="screen">${subhead(U.faq,st.faqBack||"settings")}<div class="group faq" style="margin-top:14px">${U.faqItems.map(([q,a],i)=>`<details ${st.faqOpen===i?"open":""}><summary>${esc(q)}</summary><div class="a">${a}</div></details>`).join("")}</div></div>`;
 }
 function viewProg(){
-  const g=st.progGrade||Number(st.grade)||7;const P=posInfo();const cur=new Set(G.currentTopics(P.pos).map(t=>t.id));
+  const g=st.progGrade||Number(st.grade)||7;const P=posInfo();const cur=new Set(genFor(g).currentTopics(P.pos).map(t=>t.id));
   if(!st.progPick||st.progPick.g!==g)st.progPick={g,pick:progDefaultPick(g)};
   const ts=progTopicsFor(g);const per=w=>G.PERIODS.find(p=>w>=p.w0&&w<p.w0+p.weeks);
   const own=g===Number(st.grade);
@@ -738,7 +740,7 @@ function viewProfile(o){o=o||{};const ro=!!o.readonly;
       ${weak.length&&!ro?`<div class="srow trainrow" style="border-top:1px solid var(--line)"><span class="sub" style="margin:0">${esc(weak.map(topicName).join(", "))}</span><button class="btn sm" type="button" data-act="train" data-only="${weak.join(",")}">${U.trainBtn}</button></div>`:""}</div>`;
   }
   h+=`<div class="sec">${U.timeT}</div><div class="group">${timed.length?`<div class="srow"><span class="k">${U.kTime}</span><b>${fmtTime(avgTime)}</b></div><div class="srow"><span class="k">${U.tPerTask}</span><b>${fmtTime(perTask)}</b></div>${limShare!=null?`<div class="srow"><span class="k">${U.tLimit}</span><b>${limShare}%</b></div>`:""}`:`<div class="srow"><span class="sub" style="margin:0">${U.tNone}</span></div>`}</div>
-   <div class="sec">${U.oly}</div><div class="group"><div class="srow"><span class="k">${U.oly}</span><b>${U.olySolved(olyDone.size,G.OLY.length)}</b></div></div>
+   <div class="sec">${U.oly}</div><div class="group"><div class="srow"><span class="k">${U.oly}</span><b>${U.olySolved(olyDone.size,availGrades().reduce((s,g)=>s+genFor(g).OLY.length,0))}</b></div></div>
    ${secBadge(U.hist,ro?o.newWorks:0,"works")}<div class="group">${n?hist.map((r,i)=>`<button class="hrow" type="button" data-review="${i}" data-src="${ro?"kid":"me"}"><span><span>${fmtD(new Date(r.ts))} · ${esc(U.ty[r.type]||"")} · ${LV[r.level]||""}</span><br><span class="m">${esc(Object.keys(r.topics||{}).filter(x=>x!=="oly"&&x!=="proof").map(topicName).join(", "))}</span></span><span class="s">${r.score}/${r.max}</span>${r.meta?ICON_CHEV:"<span></span>"}</button>`).join(""):`<div class="srow"><span class="sub" style="margin:0">${U.histNone}</span></div>`}</div>
   ${o.extra||""}</div>`;
   return h;
@@ -935,7 +937,7 @@ function delList(m){
   if(PROFILE.role==="student"){const ps=parents.filter(p=>p.status==="active");return [U.dWorks(st.history.length),U.dProgress,U.dLater].concat(ps.length?[U.dParents(ps.map(p=>p.name||p.email).join(", "))]:[])}
   const ks=kids.filter(k=>k.status==="active");return (ks.length?[U.dKids(ks.map(k=>k.name||k.email).join(", "))]:[]).concat(myInvites.length?[U.dInvites]:[]);
 }
-function delCtx(){G.setLang(st.lang);const topics={};G.TOPICS.forEach(t=>{topics[t.id]={n:G.tr(t.name),c:HEX[TCOL[t.id]||"sky"]}});return {topics,olyTotal:G.OLY.length}}
+function delCtx(){G.setLang(st.lang);const topics={};allTopics().forEach(t=>{topics[t.id]={n:G.tr(t.name),c:HEX[TCOL[t.id]||t.col||"sky"]}});return {topics,olyTotal:window.GEN.grades().map(genFor).reduce((s,g)=>s+g.OLY.length,0)}}
 function renderMain(){
   G.setLang(st.lang);
   const v=st.view;const m=document.getElementById("main");
