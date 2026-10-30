@@ -379,12 +379,22 @@ $$;
 -- ---------- Просьба о помощи ----------
 
 drop function if exists public.ask_help(text, text, text);
-create or replace function public.ask_help(p_cid text, p_key text, p_title text) returns void
+drop function if exists public.ask_help(text, text, text, boolean);
+-- Ученик отмечает пример: с родителем — просьба о помощи (письмо), без родителя — «разобрать позже».
+-- Открытых не больше 20. Полон список: без p_replace — ошибка list_full, с p_replace — удаляется самое старое.
+create or replace function public.ask_help(p_cid text, p_key text, p_title text, p_replace boolean default false) returns text
 language plpgsql security definer set search_path = public as $$
-declare me public.profiles; par record;
+declare me public.profiles; par record; n int; sent boolean := false;
 begin
   select * into me from public.profiles where id = auth.uid();
   if me.id is null or me.role <> 'student' then raise exception 'not_student'; end if;
+  if not exists (select 1 from public.help where student_id = me.id and result_cid = p_cid and item_key = p_key and not done) then
+    select count(*) into n from public.help where student_id = me.id and not done;
+    if n >= 20 then
+      if not p_replace then raise exception 'list_full'; end if;
+      delete from public.help where id = (select id from public.help where student_id = me.id and not done order by created_at limit 1);
+    end if;
+  end if;
   insert into public.help (student_id, result_cid, item_key, title)
     values (me.id, p_cid, p_key, left(coalesce(p_title, ''), 200))
     on conflict (student_id, result_cid, item_key) do update set done = false, created_at = now();
@@ -393,8 +403,15 @@ begin
               where l.student_id = me.id and l.status = 'active' loop
     insert into public.outbox (to_email, kind, lang, payload)
       values (par.email, 'help', par.lang, json_build_object('from_name', me.name, 'title', p_title)::jsonb);
+    sent := true;
   end loop;
+  return case when sent then 'sent' else 'saved' end;
 end $$;
+
+-- ученик убирает задание из своего списка
+drop policy if exists help_delete on public.help;
+create policy help_delete on public.help for delete to authenticated
+  using (student_id = auth.uid());
 
 -- ---------- Смена роли (один раз) и удаление аккаунта ----------
 
@@ -450,7 +467,7 @@ begin
     'invite_child(text)', 'invite_parent(text, uuid)', 'cancel_invite(uuid)',
     'answer_parent(uuid, boolean)', 'unlink(uuid, uuid)',
     'my_parents()', 'my_students()', 'student_parents(uuid)',
-    'ask_help(text, text, text)', 'change_role()', 'delete_account()']
+    'ask_help(text, text, text, boolean)', 'change_role()', 'delete_account()']
   loop
     execute format('revoke all on function public.%s from public, anon', f);
     execute format('grant execute on function public.%s to authenticated', f);

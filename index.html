@@ -433,6 +433,9 @@ input.ans{border-radius:8px;border:0;border-bottom:2px solid var(--pen);backgrou
 /* профиль: поля и выход */
 .pcard{grid-template-columns:56px minmax(0,1fr) 200px;align-items:start}
 .pcard .ava{grid-row:auto;margin-top:22px}
+.pcard.ro{align-items:center}
+.pcard.ro .ava{margin-top:0}
+.pcard.ro .out{grid-column:3;grid-row:1;justify-self:end}
 .pfields{display:grid;gap:12px;max-width:292px}
 .pfrow{display:grid;grid-template-columns:160px 120px;gap:12px}
 .fld{display:grid;gap:4px}
@@ -459,6 +462,16 @@ select.sel{height:var(--ctl);box-sizing:border-box;border:0;border-radius:var(--
 .btn:disabled{opacity:.45;cursor:default}
 @media (prefers-reduced-motion:reduce){.gmenu,.week .chip{animation:none}}
 @media (max-width:849px){.pcard{grid-template-columns:56px minmax(0,1fr)}.pcard .out-col{grid-column:1/-1;grid-row:auto;width:auto}.gmenu{width:min(340px,calc(100vw - 32px))}}
+
+/* кнопка у примера: просьба о помощи / разобрать позже — 42, скругление 8 = 20 − 12 */
+.hbtn{width:var(--ctl);height:var(--ctl);flex-shrink:0;display:grid;place-items:center;border:0;border-radius:calc(var(--r-item) - var(--pad-item));cursor:pointer;margin-left:auto;transition:transform var(--dur-release) var(--ease-spring),background-color var(--dur-color) var(--ease-standard)}
+.ansline+.hbtn,.mark+.hbtn{margin-left:0}
+.hbtn:active{transform:scale(.92);transition:transform var(--dur-tap) var(--ease-press)}
+.hbtn.par{background:#fff4e6;color:#c2410c}
+.hbtn.later{background:var(--soft);color:var(--muted)}
+.hbtn.done{background:#e6f6ea;color:#2fa36b;cursor:default}
+.hbtn.done svg{animation:pop var(--dur-pop) var(--ease-pop) both}
+.mnote{background:var(--soft);border-radius:16px;padding:12px 16px}
 [hidden]{display:none!important}
 body{margin:0}
 </style>

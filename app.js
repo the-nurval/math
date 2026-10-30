@@ -204,6 +204,25 @@ const UI4={
   resetNew:"Reset",newN:n=>`new: ${n}`}
 };
 Object.keys(UI).forEach(l=>Object.assign(UI[l],UI4[l]));
+
+const UI5={
+ ru:{hAsk:"Попросить помощи у родителя",hLater:"Разобрать позже",hSent:"Просьба отправлена родителю",hSaved:"Сохранено: разобрать позже",
+  laterSec:"Разобрать позже",myHelpSec:"Мои просьбы о помощи",ofLimit:n=>`${n} из 20 · при переполнении удаляется самое старое`,
+  laterNote:"Когда подключишь родителя, эти задания придут ему как просьбы о помощи.",laterNone:"Пока пусто. Отметь пример кнопкой у поля ответа.",
+  fullTitle:"Список «Разобрать позже» полон",fullTitleP:"Слишком много открытых просьб",fullText:"В списке уже 20 заданий. Если сохранить это задание, самое старое удалится:",
+  fullHint:"Можно самому выбрать, что убрать, в профиле.",pickSelf:"Выбрать самому",saveReplace:"Сохранить, удалить старое",removeIt:"Убрать",workOf:t=>`работа «${t}»`},
+ et:{hAsk:"Palu vanemalt abi",hLater:"Vaata hiljem",hSent:"Palve saadetud vanemale",hSaved:"Salvestatud: vaata hiljem",
+  laterSec:"Vaata hiljem",myHelpSec:"Minu abipalved",ofLimit:n=>`${n} / 20 · kui nimekiri on täis, kustub vanim`,
+  laterNote:"Kui ühendad vanema, saab ta need ülesanded abipalvetena.",laterNone:"Veel tühi. Märgi näide vastusevälja kõrval oleva nupuga.",
+  fullTitle:"Nimekiri «Vaata hiljem» on täis",fullTitleP:"Liiga palju avatud palveid",fullText:"Nimekirjas on juba 20 ülesannet. Kui selle salvestad, kustub vanim:",
+  fullHint:"Võid profiilis ise valida, mida eemaldada.",pickSelf:"Valin ise",saveReplace:"Salvesta, kustuta vanim",removeIt:"Eemalda",workOf:t=>`töö «${t}»`},
+ en:{hAsk:"Ask a parent for help",hLater:"Review later",hSent:"Request sent to your parent",hSaved:"Saved to review later",
+  laterSec:"Review later",myHelpSec:"My help requests",ofLimit:n=>`${n} of 20 · when full, the oldest is removed`,
+  laterNote:"When you connect a parent, these tasks will reach them as help requests.",laterNone:"Empty for now. Mark an example with the button next to the answer field.",
+  fullTitle:"The “Review later” list is full",fullTitleP:"Too many open requests",fullText:"There are already 20 tasks. Saving this one will remove the oldest:",
+  fullHint:"You can choose what to remove yourself in your profile.",pickSelf:"Choose myself",saveReplace:"Save, remove oldest",removeIt:"Remove",workOf:t=>`test “${t}”`}
+};
+Object.keys(UI).forEach(l=>Object.assign(UI[l],UI5[l]));
 const LETTERS={ru:"абвгдежзиклм",et:"abcdefghijkl",en:"abcdefghijkl"};
 const ICON_BACK=`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>`;
 const ICON_PLAY=`<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M8 5.5v13l10-6.5z"/></svg>`;
@@ -227,10 +246,10 @@ let st=Object.assign({lang:"ru",level:"n",type:"theme",date:todayStr(),timer:"of
   history:[],seen:[],train:null,grade:7,year:"2026/27",grades:[7],weekOpen:true,menuOpen:false,progGrade:null,progPick:null,laps:[],lapStart:0,rv:null,faqOpen:null,limitTouched:false},LS.get("math7.prefs")||{});
 let U=UI[st.lang];let activeBlock=null;
 let USER=null,PROFILE=null,authState="loading",sync="ok",authMsg="",authErr=false,linkMsg="",linkErr=false;
-let parents=[],kids=[],kid=null,kidHist=[],kidParents=[],kidHelp=[],myInvites=[],modal=null,helpSent={};
+let parents=[],kids=[],kid=null,kidHist=[],kidParents=[],kidHelp=[],myInvites=[],modal=null,helpSent={},myHelp=[];
 
 function savePrefs(){LS.set("math7.prefs",{lang:st.lang,theme:st.theme})}
-const WORK_KEYS=["lastCid","meta","answers","checked","open","elapsed","blockTime","timeUp","laps","lapStart","timer","limit","type","date","limitTouched","confirming"];
+const WORK_KEYS=["workCid","lastCid","meta","answers","checked","open","elapsed","blockTime","timeUp","laps","lapStart","timer","limit","type","date","limitTouched","confirming"];
 let workT=null;
 function saveWork(){if(!USER||!PROFILE||PROFILE.role!=="student")return;clearTimeout(workT);workT=setTimeout(()=>{const o={};WORK_KEYS.forEach(k=>o[k]=st[k]);LS.set("math7.work."+USER.id,o)},300)}
 function restoreWork(){const o=LS.get("math7.work."+USER.id);if(o&&o.meta){Object.assign(st,o);st.test=buildFrom(st.meta);st.running=!st.checked&&st.timer==="limit"}}
@@ -257,7 +276,7 @@ function applyProfile(p){
   PROFILE=p;authState="in";LS.set("math7.profile."+p.id,p);
   const s=p.settings||{};st.name=p.name||"";["level","theme","lang","grade","year","grades"].forEach(k=>{if(s[k]!=null)st[k]=s[k]});st.seen=p.seen_oly||[];
   U=UI[st.lang];applyTheme();savePrefs();
-  if(p.role==="student"){st.view="main";restoreWork();loadHistory();loadParents()}
+  if(p.role==="student"){st.view="main";restoreWork();loadHistory();loadParents();loadMyHelp()}
   else{st.view="kids";loadKids()}
   loadInvites();
   renderAll();
@@ -290,7 +309,7 @@ async function loadHistory(){
   flushQueue();refreshIf();
 }
 async function saveResult(r){
-  r.cid=Date.now().toString(36)+Math.random().toString(36).slice(2,8);st.lastCid=r.cid;
+  r.cid=st.workCid||(Date.now().toString(36)+Math.random().toString(36).slice(2,8));st.lastCid=r.cid;
   st.seen=Array.from(new Set(st.seen.concat(r.oly||[]))).slice(-200);
   st.history=[r].concat(st.history);
   const q=LS.get(qKey())||[];q.push(r);LS.set(qKey(),q);
@@ -310,6 +329,12 @@ async function flushQueue(){
   flushing=false;refreshIf();
 }
 window.addEventListener("online",flushQueue);
+async function loadMyHelp(){if(!sb||!USER)return;const {data}=await sb.from("help").select("*").eq("student_id",USER.id).eq("done",false).order("created_at");myHelp=data||[];refreshIf()}
+async function askHelp(cid,k,title,replace){
+  const {data,error}=await sb.rpc("ask_help",{p_cid:cid,p_key:k,p_title:title,p_replace:!!replace});
+  if(error){if(/list_full/.test(error.message)){modal={type:"full",cid,k,title,oldest:myHelp[0]};renderModal()}return}
+  if(data==="sent")sendMail();await loadMyHelp();renderMain();
+}
 async function loadParents(){if(!sb)return;const {data}=await sb.rpc("my_parents");parents=data||[];
   const pend=parents.find(p=>p.status==="pending");if(pend&&!modal){modal={type:"ask",p:pend};renderModal()}refreshIf()}
 async function loadKids(){if(!sb)return;const {data}=await sb.rpc("my_students");kids=data||[];if(kid){const k=kids.find(x=>x.student_id===kid.student_id);if(k)kid=k}refreshIf()}
@@ -342,7 +367,7 @@ function applyTheme(){const r=document.documentElement;if(st.theme==="system")r.
 function buildFrom(meta,lang){G.setLang(lang||st.lang);return G.buildTest({date:parseDate(meta.date),level:meta.level,type:meta.type==="train"?"theme":meta.type,lang:lang||st.lang,seed:meta.seed,seenOly:meta.seen||[],only:meta.only||undefined})}
 function newTest(){
   const seed=(Math.random()*4294967295)>>>0;
-  const only=st.train;st.train=null;
+  const only=st.train;st.train=null;st.workCid=Date.now().toString(36)+Math.random().toString(36).slice(2,8);
   st.meta={seed,level:st.level,type:only?"train":st.type,date:st.date,seen:st.seen.slice(),only:only||null};
   st.test=buildFrom(st.meta);st.answers={};st.checked=false;st.open={};st.confirming=false;st.elapsed=0;st.blockTime={};st.timeUp=false;st.laps=[];st.lapStart=0;
   if(st.timer==="limit"&&!st.limitTouched)st.limit=st.test.minutes;
@@ -457,7 +482,8 @@ function sheetHtml(ctx){
       const lbl=b.items.length>1?`<span class="lbl">${LETTERS[st.lang][ii]})</span>`:"";
       const plainQ=it.q.replace(/<[^>]+>/g,"");const isText=/<svg/.test(it.q)||(/[a-zA-Zа-яА-ЯõäöüÕÄÖÜ]{3,}/.test(plainQ)&&plainQ.length>28);
       const mark=ctx.checked&&!self?`<span class="mark">${sc===b.pts?"✓":"✗"}</span>`:"";
-      let row=`<div class="row">${lbl}<span class="expr${isText?" text":""}">${it.q}${!isText&&!it.pre&&it.ans.type==="num"?' <span class="eq">=</span>':""}</span>${self?"":inputFor(it,k,ctx)}${mark}</div>`;
+      const hb=ctx.helpCid?helpBtn(ctx.helpCid,k,`${U.task} ${bi+1}${b.items.length>1?" "+LETTERS[st.lang][ii]+")":""} · ${b.title}`.replace(/<[^>]+>/g,"")):"";
+      let row=`<div class="row">${lbl}<span class="expr${isText?" text":""}">${it.q}${!isText&&!it.pre&&it.ans.type==="num"?' <span class="eq">=</span>':""}</span>${self?"":inputFor(it,k,ctx)}${mark}${hb}</div>`;
       if(self)row+=inputFor(it,k,ctx);
       let res="";
       if(ctx.checked){
@@ -465,8 +491,6 @@ function sheetHtml(ctx){
         if(self)res=`<div class="exp"><p><b>${U.model}:</b></p>${it.exp}</div><div class="selfgrade"><span>${U.selfQ}</span>${U.self.map((l,i)=>`<button class="opt" type="button" data-k="${k}" data-self="${i}" aria-pressed="${v===String(i)}" ${ctx.readonly?"disabled":""}>${l}</button>`).join("")}</div>`;
         else res=`<div class="res">${sc===b.pts?`<span class="right">${U.correctPts(b.pts)}</span>`:`<span class="right">${filled?U.right:U.noAns}: <b>${it.show}</b></span>`}<button class="why" type="button" data-why="${k}" aria-expanded="${open}">${open?U.hide:U.why}</button></div>${open?`<div class="exp">${it.exp}${it.alt?`<div class="alt"><b>${U.alt}.</b> ${it.alt}</div>`:""}</div>`:""}`;
       }
-      if(ctx.checked&&ctx.helpCid){const hk=ctx.helpCid+"|"+k;const ttl=`${U.task} ${bi+1}${b.items.length>1?" "+LETTERS[st.lang][ii]+")":""} · ${b.title}`.replace(/<[^>]+>/g,"");
-        res+=`<div class="helprow">${helpSent[hk]?`<span class="sub">${U.helpSent}</span>`:`<button class="btn ghost sm" type="button" data-act="help" data-cid="${ctx.helpCid}" data-hk="${k}" data-title="${esc(ttl)}">${U.helpBtn}</button>`}</div>`}
       h+=`<div class="${cls}${ctx.focus===k?" focus":""}" id="it-${k}">${row}${res}</div>`;
     });
     h+=`</div></div>`;
@@ -488,7 +512,7 @@ function viewMain(){
     <div class="row2"><button class="btn" type="button" data-act="new">${U.create}</button></div>
   </section>${weekHtml()}`;
   if(!st.test)h+=`<p class="empty">${U.noTest}</p>`;
-  else h+=sheetHtml({helpCid:st.checked&&parents.some(p=>p.status==="active")?st.lastCid:null,test:st.test,meta:st.meta,answers:st.answers,checked:st.checked,open:st.open,blockTime:st.blockTime,timeSec:st.timer!=="off"?st.elapsed:0,timeUp:st.timeUp,laps:st.laps});
+  else h+=sheetHtml({helpCid:st.checked?(st.lastCid||st.workCid):(st.workCid||null),test:st.test,meta:st.meta,answers:st.answers,checked:st.checked,open:st.open,blockTime:st.blockTime,timeSec:st.timer!=="off"?st.elapsed:0,timeUp:st.timeUp,laps:st.laps});
   return h;
 }
 function viewSettings(){
@@ -576,7 +600,7 @@ function viewProfile(o){o=o||{};const ro=!!o.readonly;
   const nm=ro?(o.name||""):st.name;const initial=(nm||"").trim().charAt(0).toUpperCase()||"?";
   let h=`<div class="screen">${subhead(o.title||U.profile,o.back||"main")}
    <div class="group" style="margin-top:12px">
-    <div class="pcard"><div class="ava" id="ava">${esc(initial)}</div>
+    <div class="pcard${ro?" ro":""}"><div class="ava" id="ava">${esc(initial)}</div>
       ${ro?`<div><b style="font-size:1.1rem">${esc(nm||U.noName)}</b><br><span class="sub">${U.title}${o.level&&LV[o.level]?" · "+LV[o.level]:""} · ${U.year} ${y0}</span></div><div class="out"><button class="btn ghost" type="button" data-go="prog">${U.prog}</button></div>`
       :`<div class="pfields"><label class="fld"><span>${U.name}</span><input class="txt" id="f-name" value="${esc(st.name)}" placeholder="${esc(U.namePh)}" autocomplete="off"></label>
         <div class="pfrow">${selectHtml("f-year",["2026/27","2027/28"],st.year,U.yearLbl)}${selectHtml("f-grade",GRADES,st.grade,U.gradeLbl)}</div></div>
@@ -601,7 +625,7 @@ function viewReview(){
   const r=(fromKid?kidHist.slice().sort((a,b)=>b.ts-a.ts):sortedHist())[st.rv?st.rv.i:-1];
   if(!r||!r.meta){st.view=fromKid?"kid":"profile";return fromKid?viewKid():viewProfile(studentProfileOpts())}
   const test=buildFrom(r.meta);
-  return `<div class="screen">${subhead(`${U.review} ${fmtD(new Date(r.ts))}`,fromKid?"kid":"profile")}${sheetHtml({helpCid:!fromKid&&r.cid&&parents.some(p=>p.status==="active")?r.cid:null,focus:st.rv.focus,test,meta:r.meta,answers:r.answers||{},checked:true,open:st.rv.open||{},blockTime:r.blockTime||{},timeSec:r.timeSec||0,laps:r.laps||[],readonly:true})}</div>`;
+  return `<div class="screen">${subhead(`${U.review} ${fmtD(new Date(r.ts))}`,fromKid?"kid":"profile")}${sheetHtml({helpCid:!fromKid&&r.cid?r.cid:null,focus:st.rv.focus,test,meta:r.meta,answers:r.answers||{},checked:true,open:st.rv.open||{},blockTime:r.blockTime||{},timeSec:r.timeSec||0,laps:r.laps||[],readonly:true})}</div>`;
 }
 
 const ICON_G=`<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z"/><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path fill="#FBBC05" d="M6.4 14c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.4H3.1a10 10 0 0 0 0 9.2z"/><path fill="#EA4335" d="M12 6c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3.1 7.4L6.4 10C7.2 7.7 9.4 6 12 6z"/></svg>`;
@@ -647,7 +671,27 @@ function familyHtml(){
   h+=`</div><div class="sec">${U.inviteParent}</div><div class="group">${inviteForm("invparent")}</div>${msgHtml()}`;
   return h;
 }
-function studentProfileOpts(){return {extra:familyHtml()}}
+
+const ICON_HAND=`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V12M11 11.5v-2a1.5 1.5 0 0 1 3 0V12M14 10.5a1.5 1.5 0 0 1 3 0V12M17 11.5a1.5 1.5 0 0 1 3 0V16a6 6 0 0 1-6 6h-2a6 6 0 0 1-5-2.7L4.3 15.6a1.6 1.6 0 0 1 2.6-1.9L8 15"/></svg>`;
+const ICON_BOOK=`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/></svg>`;
+const ICON_OK=`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`;
+function hasParent(){return parents.some(p=>p.status==="active")}
+function helpBtn(cid,k,title){
+  if(!PROFILE||PROFILE.role!=="student")return "";
+  const done=myHelp.some(x=>x.result_cid===cid&&x.item_key===k);const par=hasParent();
+  const lbl=done?(par?U.hSent:U.hSaved):(par?U.hAsk:U.hLater);
+  return `<button class="hbtn ${done?"done":par?"par":"later"}" type="button" data-act="help" data-cid="${esc(cid)}" data-hk="${k}" data-title="${esc(title)}" aria-label="${esc(lbl)}" title="${esc(lbl)}">${done?ICON_OK:par?ICON_HAND:ICON_BOOK}</button>`;
+}
+function laterHtml(){
+  const par=hasParent();const hs=sortedHist();
+  let h=`<div class="sec sec-row"><span>${par?U.myHelpSec:U.laterSec}</span><span class="sub">${U.ofLimit(myHelp.length)}</span></div><div class="group" id="later">`;
+  if(!myHelp.length)h+=`<div class="srow"><span class="sub">${U.laterNone}</span></div>`;
+  myHelp.slice().reverse().forEach(x=>{const r=hs.find(r=>r.cid===x.result_cid);const wt=r?Object.keys(r.topics||{}).filter(t=>t!=="oly"&&t!=="proof").map(topicName)[0]:"";
+    h+=`<div class="srow"><span><b>${esc(x.title)}</b><br><span class="sub">${fmtD(new Date(x.created_at))}${wt?" · "+esc(U.workOf(wt)):""}</span></span><span class="tline">${r?`<button class="btn ghost" type="button" data-act="myhelpopen" data-cid="${esc(x.result_cid)}" data-hk="${esc(x.item_key)}">${U.helpOpen}</button>`:""}<button class="btn ghost" type="button" data-act="myhelpdel" data-id="${x.id}">${U.removeIt}</button></span></div>`});
+  h+=`</div>`;if(!par)h+=`<p class="sub below">${U.laterNote}</p>`;
+  return h;
+}
+function studentProfileOpts(){return {extra:laterHtml()+familyHtml()}}
 function viewKids(){
   let h=`<div class="screen"><div class="subhead"><h2>${U.kidsTitle}</h2></div><div class="group">`;
   const inv=myInvites.filter(i=>i.role==="student");
@@ -686,6 +730,7 @@ function renderModal(){
   if(!el){el=document.createElement("div");el.id="modal";el.className="overlay";document.body.appendChild(el)}
   document.body.classList.add("modal-open");
   const other=PROFILE&&PROFILE.role==="student"?U.roleP:U.roleS;let h="";
+  if(modal.type==="full"){const o=modal.oldest||{};h=`<h2>${hasParent()?U.fullTitleP:U.fullTitle}</h2><p>${U.fullText}</p><div class="mnote"><b>${esc(o.title||"")}</b><br><span class="sub">${o.created_at?fmtD(new Date(o.created_at)):""}</span></div><p class="sub">${U.fullHint}</p><div class="mbtns"><button class="btn ghost" type="button" data-act="fullself">${U.pickSelf}</button><button class="btn" type="button" data-act="fullreplace">${U.saveReplace}</button></div>`}
   if(modal.type==="ask")h=`<h2>${U.askTitle}</h2><p>${esc(U.askText(modal.p.name,modal.p.email))}</p><div class="mbtns"><button class="btn ghost" type="button" data-act="askno">${U.no}</button><button class="btn" type="button" data-act="askyes">${U.yes}</button></div>`;
   if(modal.type==="role1")h=`<h2>${U.changeRole}</h2><p>${esc(U.roleAsk(other))}</p><div class="mbtns"><button class="btn ghost" type="button" data-act="mclose">${U.no}</button><button class="btn" type="button" data-act="role2">${U.yes}</button></div>`;
   if(modal.type==="role2"||modal.type==="del"){const ph=modal.type==="del"?U.phraseDel:U.phraseRole;
@@ -805,7 +850,14 @@ document.addEventListener("click",e=>{
         if(!error)sendMail();loadInvites();if(PROFILE.role==="student")loadParents();else{loadKids();if(kid)loadKidExtra(kid.student_id)}renderMain()});return}
     if(act==="uninvite"){sb.rpc("cancel_invite",{p_id:a.dataset.id}).then(loadInvites);return}
     if(act==="unlink"){sb.rpc("unlink",{p_parent:a.dataset.pid,p_student:a.dataset.sid}).then(()=>{if(a.dataset.pid===USER.id&&kid&&kid.student_id===a.dataset.sid){kid=null;st.view="kids"}loadKids();if(kid)loadKidExtra(kid.student_id);renderMain()});return}
-    if(act==="help"){a.disabled=true;const hk=a.dataset.cid+"|"+a.dataset.hk;sb.rpc("ask_help",{p_cid:a.dataset.cid,p_key:a.dataset.hk,p_title:a.dataset.title}).then(({error})=>{if(!error){helpSent[hk]=true;sendMail()}else a.disabled=false;renderMain()});return}
+    if(act==="help"){const cid=a.dataset.cid,k=a.dataset.hk;if(myHelp.some(x=>x.result_cid===cid&&x.item_key===k))return;
+      if(myHelp.length>=20){modal={type:"full",cid,k,title:a.dataset.title,oldest:myHelp[0]};renderModal();return}
+      a.disabled=true;askHelp(cid,k,a.dataset.title,false);return}
+    if(act==="fullreplace"){const m=modal;modal=null;renderModal();askHelp(m.cid,m.k,m.title,true);return}
+    if(act==="fullself"){modal=null;renderModal();st.view="profile";renderMain();renderBar();setTimeout(()=>{const el=document.getElementById("later");if(el)el.scrollIntoView({block:"center"})},60);return}
+    if(act==="myhelpdel"){sb.from("help").delete().eq("id",a.dataset.id).then(loadMyHelp);return}
+    if(act==="myhelpopen"){const i=sortedHist().findIndex(r=>r.cid===a.dataset.cid);if(i<0)return;const k=a.dataset.hk;st.rv={i,src:"me",open:{[k]:true},focus:k};st.view="review";renderMain();renderBar();
+      setTimeout(()=>{const el=document.getElementById("it-"+k);if(el)el.scrollIntoView({block:"center"})},50);return}
     if(act==="helpopen"){const list=kidHist.slice().sort((x,y)=>y.ts-x.ts);const i=list.findIndex(r=>r.cid===a.dataset.cid);if(i<0)return;
       const k=a.dataset.hk;st.rv={i,src:"kid",open:{[k]:true},focus:k};st.view="review";renderMain();renderBar();
       setTimeout(()=>{const el=document.getElementById("it-"+k);if(el)el.scrollIntoView({block:"center"})},50);return}
