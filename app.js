@@ -231,6 +231,12 @@ const UI7={
  en:{sumBtn:"Summary",sumOf:n=>`Summary · Grade ${n}`,sMain:"Key points",sEx:"Example",sAlt:"Another way",sErr:"Common mistakes",sAns:"Answer",close:"Close",mixT:"Mix grades"}
 };
 Object.keys(UI).forEach(l=>Object.assign(UI[l],UI7[l]));
+const UI8={
+ ru:{hideSet:"Скрыть настройки",showSet:"Показать настройки",expand:"Развернуть",normalView:"Обычный вид",mixed:"Вперемешку"},
+ et:{hideSet:"Peida seaded",showSet:"Näita seadeid",expand:"Laienda",normalView:"Tavavaade",mixed:"Segamini"},
+ en:{hideSet:"Hide settings",showSet:"Show settings",expand:"Expand",normalView:"Normal view",mixed:"Mixed"}
+};
+Object.keys(UI).forEach(l=>Object.assign(UI[l],UI8[l]));
 const UI6={
  ru:{invLead:(w,isP,sn)=>isP?(sn?`Вы будете видеть успехи ученика ${sn} и сможете помочь с трудными заданиями.`:"Ваш ребёнок решает контрольные по математике и хочет, чтобы вы видели его результаты и могли помочь с трудными заданиями.")
     :`Решай контрольные по математике, а ${w} будет видеть твои успехи и сможет помочь с трудными заданиями.`,
@@ -338,7 +344,7 @@ let pendInv=LS.get("math7.invite"),invInfo=null,delTok=null,bye=null,DELETED=nul
 function clearInv(){pendInv=null;invInfo=null;LS.del("math7.invite")}
 const HEX={coral:"#f46b57",yellow:"#f5c84c",teal:"#5ec2b7",lilac:"#9b97f2",sky:"#6fa8f5",green:"#7ccb8e"};
 
-function savePrefs(){LS.set("math7.prefs",{lang:st.lang,theme:st.theme})}
+function savePrefs(){LS.set("math7.prefs",{lang:st.lang,theme:st.theme,headMode:st.headMode})}
 const WORK_KEYS=["workCid","lastCid","meta","answers","checked","open","elapsed","blockTime","timeUp","laps","lapStart","timer","limit","type","date","limitTouched","confirming"];
 let workT=null;
 function saveWork(){if(!USER||!PROFILE||PROFILE.role!=="student")return;clearTimeout(workT);workT=setTimeout(()=>{const o={};WORK_KEYS.forEach(k=>o[k]=st[k]);LS.set("math7.work."+USER.id,o)},300)}
@@ -585,7 +591,7 @@ function sheetHtml(ctx){
   const t=ctx.test,T=totals(t,ctx.answers),m=ctx.meta;
   const topics=(m.only&&m.only.length?m.only:t.cur).map(topicName).join(" · ");
   const timed=ctx.timeSec>0;
-  let h=`<section class="sheet"><div class="sheet-head"><div><h2>${esc(topics)}</h2><p class="sub">${U.ty[m.type]} · ${LV[m.level]} · ${fmtD(parseDate(m.date))} · ${U.maxpts} ${T.max} ${U.pts}</p></div>`;
+  let h=`<section class="sheet"><div class="sheet-head"><div class="sh-top"><div><h2>${esc(topics)}</h2><p class="sub">${U.ty[m.type]} · ${LV[m.level]} · ${fmtD(parseDate(m.date))} · ${U.maxpts} ${T.max} ${U.pts}</p></div>${ctx.focusBtn?`<button class="pill-btn" type="button" data-act="focus">${st.focus?U.normalView+ICON_SHRINK:U.expand+ICON_EXPAND}</button>`:""}</div>`;
   h+=`<p class="hint">${U.hint}</p>`;
   if(ctx.checked){
     const pct=T.max?Math.round(T.got/T.max*100):0;
@@ -621,23 +627,40 @@ function sheetHtml(ctx){
 
 /* ---------- экраны ---------- */
 function weekHtml(){const P=posInfo();const n=P.cur.length;
-  return `<section class="week" id="week"><div class="week-h"><span class="week-t">${esc(P.txt)}</span>${n?`<button class="pill-btn" type="button" data-act="weektoggle" aria-expanded="${st.weekOpen}">${st.weekOpen?U.weekHide:U.weekShow(n)}${ICON_DOWN}</button>`:""}</div>
+  const wt=P.pos.before?U.before:P.pos.after&&P.pos.weeks>=35?U.after:`${U.week} ${Math.min(35,P.pos.weeks+(P.pos.inBreak?0:1))} ${U.of} 35`;
+  return `<section class="week" id="week"><div class="week-h"><span class="week-t">${esc(wt)}</span>${n?`<button class="pill-btn" type="button" data-act="weektoggle" aria-expanded="${st.weekOpen}">${st.weekOpen?U.weekHide:U.weekShow(n)}${ICON_DOWN}</button>`:""}</div>
   ${st.weekOpen&&n?`<div class="tags" id="tags">${P.cur.map((nm,i)=>`<span class="chip now ${tc(P.curIds[i])}" style="--d:${i*50}ms">${U.now}: ${esc(nm)}</span>`).join("")}</div>`:""}</section>`}
 const ICON_SHUF=`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h4v4M4 20l16-16M20 16v4h-4M15 15l5 5M4 4l5 5"/></svg>`;
 const ICON_BOOK2=`<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/></svg>`;
+const ICON_UP=`<svg class="chev-d" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>`;
+const ICON_EXPAND=`<svg class="icn-up" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>`;
+const ICON_SHRINK=`<svg class="icn-up" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>`;
+// элементы шапки — общие для развёрнутого (A) и свёрнутого (B) вида
+function hDate(){return `<input type="date" id="f-date" value="${st.date}" aria-label="${esc(U.date)}">`}
+function hTimer(){return `<div class="tline">${seg("timer",["off","watch","limit"],st.timer,U.tm)}<input class="num" type="number" id="f-limit" min="5" max="240" step="5" value="${st.limit}" aria-label="${U.min}" ${st.timer==="limit"?"":"disabled"}><span class="unit${st.timer==="limit"?"":" off"}">${U.min}</span></div>`}
+function hGrade(avail){const mix=mixOn();return `<div class="tline gline"><span class="${mix?"segdis":""}">${seg("workGrade",avail.map(String),String(workGrade()),Object.fromEntries(avail.map(n=>[String(n),String(n)])))}</span><button class="mixbtn" type="button" aria-pressed="${mix}" data-act="mixtoggle">${ICON_SHUF}<span>${U.mixT}</span></button></div>`}
+function hType(){return `<div class="tline">${seg("type",["theme","period"],st.type,U.ty)}</div>`}
+function headA(avail,multi){
+  const row=(k,v)=>`<div class="hsrow"><span class="hk">${k}</span><div>${v}</div></div>`;
+  return `<section class="head head-a">${row(U.date,hDate())}${row(U.timer,hTimer())}${multi?row(U.gradeLbl,hGrade(avail)):""}${row(U.type,hType())}
+    <div class="hfoot"><button class="btn" type="button" data-act="new">${U.create}</button><button class="pill-btn" type="button" data-act="headmode" data-m="compact">${U.hideSet}${ICON_UP}</button></div></section>`;
+}
+function headB(avail,multi){
+  const pop=st.pop;const chip=(k,label,body)=>`<div class="fwrap"><button class="fchip" type="button" data-act="pop" data-p="${k}" aria-expanded="${pop===k}">${esc(label)}${ICON_DOWN}</button>${pop===k?`<div class="hpop" role="dialog">${body}</div>`:""}</div>`;
+  const tl=st.timer==="limit"?`${U.tm.limit} · ${st.limit} ${U.min}`:U.tm[st.timer];
+  const gl=mixOn()?`${U.mixed}: ${avail.join(", ")}`:U.gradeN(workGrade());
+  return `<section class="head head-b"><div class="fchips">
+    ${chip("date",fmtD(parseDate(st.date)),`<span class="hk">${U.date}</span>${hDate()}`)}
+    ${chip("timer",tl,`<span class="hk">${U.timer}</span>${hTimer()}`)}
+    ${multi?chip("grade",gl,`<span class="hk">${U.gradeLbl}</span>${hGrade(avail)}`):""}
+    ${chip("type",U.ty[st.type],`<span class="hk">${U.type}</span>${hType()}`)}</div>
+    <div class="fright"><button class="ib-soft" type="button" data-act="headmode" data-m="full" aria-label="${esc(U.showSet)}" title="${esc(U.showSet)}">${ICON_DOWN}</button><button class="btn" type="button" data-act="new">${U.create}</button></div></section>`;
+}
 function viewMain(){
   syncGen();const avail=availGrades(),multi=avail.length>1;
-  let h=`<section class="head">
-    <div class="ctrls">
-      <label class="ctrl"><span>${U.date}</span><input type="date" id="f-date" value="${st.date}"></label>
-      <div class="ctrl"><span>${U.timer}</span><div class="tline">${seg("timer",["off","watch","limit"],st.timer,U.tm)}<input class="num" type="number" id="f-limit" min="5" max="240" step="5" value="${st.limit}" aria-label="${U.min}" ${st.timer==="limit"?"":"disabled"}><span class="unit${st.timer==="limit"?"":" off"}">${U.min}</span>${multi?`<button class="mixbtn" type="button" role="switch" aria-checked="${mixOn()}" data-act="mixtoggle">${ICON_SHUF}<span>${U.mixT}</span><i class="sw"></i></button>`:""}</div></div>
-      ${multi&&!mixOn()?`<div class="ctrl full"><span>${U.gradeLbl}</span><div class="tline">${seg("workGrade",avail.map(String),String(workGrade()),Object.fromEntries(avail.map(n=>[String(n),U.gradeN(n)])))}</div></div>`:""}
-      <div class="ctrl full"><span>${U.type}</span><div class="tline">${seg("type",["theme","period"],st.type,U.ty)}</div></div>
-    </div>
-    <div class="row2"><button class="btn" type="button" data-act="new">${U.create}</button></div>
-  </section>${weekHtml()}`;
+  let h=st.focus&&st.test?"":`${st.headMode==="compact"?headB(avail,multi):headA(avail,multi)}${weekHtml()}`;
   if(!st.test)h+=`<p class="empty">${U.noTest}</p>`;
-  else h+=sheetHtml({helpCid:st.checked?(st.lastCid||st.workCid):(st.workCid||null),test:st.test,meta:st.meta,answers:st.answers,checked:st.checked,open:st.open,blockTime:st.blockTime,timeSec:st.timer!=="off"?st.elapsed:0,timeUp:st.timeUp,laps:st.laps});
+  else h+=sheetHtml({focusBtn:true,helpCid:st.checked?(st.lastCid||st.workCid):(st.workCid||null),test:st.test,meta:st.meta,answers:st.answers,checked:st.checked,open:st.open,blockTime:st.blockTime,timeSec:st.timer!=="off"?st.elapsed:0,timeUp:st.timeUp,laps:st.laps});
   return h;
 }
 function viewSettings(){
@@ -741,7 +764,7 @@ function viewProfile(o){o=o||{};const ro=!!o.readonly;
   }
   h+=`<div class="sec">${U.timeT}</div><div class="group">${timed.length?`<div class="srow"><span class="k">${U.kTime}</span><b>${fmtTime(avgTime)}</b></div><div class="srow"><span class="k">${U.tPerTask}</span><b>${fmtTime(perTask)}</b></div>${limShare!=null?`<div class="srow"><span class="k">${U.tLimit}</span><b>${limShare}%</b></div>`:""}`:`<div class="srow"><span class="sub" style="margin:0">${U.tNone}</span></div>`}</div>
    <div class="sec">${U.oly}</div><div class="group"><div class="srow"><span class="k">${U.oly}</span><b>${U.olySolved(olyDone.size,availGrades().reduce((s,g)=>s+genFor(g).OLY.length,0))}</b></div></div>
-   ${secBadge(U.hist,ro?o.newWorks:0,"works")}<div class="group">${n?hist.map((r,i)=>`<button class="hrow" type="button" data-review="${i}" data-src="${ro?"kid":"me"}"><span><span>${fmtD(new Date(r.ts))} · ${esc(U.ty[r.type]||"")} · ${LV[r.level]||""}</span><br><span class="m">${esc(Object.keys(r.topics||{}).filter(x=>x!=="oly"&&x!=="proof").map(topicName).join(", "))}</span></span><span class="s">${r.score}/${r.max}</span>${r.meta?ICON_CHEV:"<span></span>"}</button>`).join(""):`<div class="srow"><span class="sub" style="margin:0">${U.histNone}</span></div>`}</div>
+   ${secBadge(U.hist,ro?o.newWorks:0,"works")}<div class="group">${n?hist.map((r,i)=>`<button class="hsrow" type="button" data-review="${i}" data-src="${ro?"kid":"me"}"><span><span>${fmtD(new Date(r.ts))} · ${esc(U.ty[r.type]||"")} · ${LV[r.level]||""}</span><br><span class="m">${esc(Object.keys(r.topics||{}).filter(x=>x!=="oly"&&x!=="proof").map(topicName).join(", "))}</span></span><span class="s">${r.score}/${r.max}</span>${r.meta?ICON_CHEV:"<span></span>"}</button>`).join(""):`<div class="srow"><span class="sub" style="margin:0">${U.histNone}</span></div>`}</div>
   ${o.extra||""}</div>`;
   return h;
 }
@@ -1006,6 +1029,7 @@ setInterval(()=>{
 /* ---------- события ---------- */
 document.addEventListener("click",e=>{
   if(st.menuOpen&&!e.target.closest("#gwrap")){st.menuOpen=false;renderNav()}
+  if(st.pop&&!e.target.closest(".fwrap")){st.pop=null;if(st.view==="main")renderMain()}
   const go=e.target.closest("[data-go]");
   if(go){let to=go.dataset.go;const isP=PROFILE&&PROFILE.role==="parent";
     if(isP&&to==="main")to="kids";if(isP&&to==="profile")to="me";
@@ -1025,7 +1049,7 @@ document.addEventListener("click",e=>{
     renderMain();renderBar();return}
   const a=e.target.closest("[data-act]");
   if(a){const act=a.dataset.act;
-    if(act==="new"){newTest();return}
+    if(act==="new"){st.pop=null;newTest();return}
     if(act==="gmenu"){st.menuOpen=!st.menuOpen;renderNav();return}
     if(act==="weektoggle"){st.weekOpen=!st.weekOpen;const w=document.getElementById("week");if(w)w.outerHTML=weekHtml();return}
     if(act==="trainpick"){const ids=Object.keys(st.progPick.pick).filter(k=>st.progPick.pick[k]);if(!ids.length)return;st.train=ids;st.view="main";newTest();return}
@@ -1040,6 +1064,9 @@ document.addEventListener("click",e=>{
     if(act==="role1"){modal={type:"role1"};renderModal();return}
     if(act==="role2"){modal={type:"role2"};renderModal();return}
     if(act==="mixtoggle"){st.mix=!mixOn();saveProfile();renderMain();return}
+    if(act==="headmode"){st.headMode=a.dataset.m;st.pop=null;savePrefs();renderMain();return}
+    if(act==="pop"){st.pop=st.pop===a.dataset.p?null:a.dataset.p;renderMain();return}
+    if(act==="focus"){st.focus=!st.focus;st.pop=null;renderMain();window.scrollTo({top:0,behavior:reduced()?"auto":"smooth"});return}
     if(act==="sum"){openSum(Number(a.dataset.g),a.dataset.t);return}
     if(act==="sumclose"){closeSum();return}
     if(act==="d1"){modal=a.dataset.sid?{type:"d1",sid:a.dataset.sid,name:(kid&&kid.name)||(kid&&kid.email)||""}:{type:"d1"};renderModal();return}
@@ -1114,6 +1141,7 @@ document.addEventListener("change",e=>{
   if(t.dataset.pick&&st.progPick){st.progPick.pick[t.dataset.pick]=t.checked;renderBar();return}
   if(t.id==="f-year"){st.year=t.value;saveProfile();return}
   if(t.id==="f-grade"){st.grade=Number(t.value);saveProfile();return}
+  if(t.id==="f-date"&&st.headMode==="compact"&&st.view==="main"){renderMain();return}
 });
 // Enter в поле = нажать кнопку этого поля (приглашение, ссылка для входа, подтверждение фразой)
 document.addEventListener("keydown",e=>{
