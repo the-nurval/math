@@ -1058,6 +1058,15 @@ document.addEventListener("change",e=>{
   if(t.id==="f-year"){st.year=t.value;saveProfile();return}
   if(t.id==="f-grade"){st.grade=Number(t.value);saveProfile();return}
 });
+// Enter в поле = нажать кнопку этого поля (приглашение, ссылка для входа, подтверждение фразой)
+document.addEventListener("keydown",e=>{
+  if(e.key!=="Enter"||e.isComposing||e.shiftKey)return;const t=e.target;if(!t||t.tagName!=="INPUT")return;
+  let b=null;
+  if(t.id&&t.id.startsWith("f-inv-"))b=t.closest(".srow")&&t.closest(".srow").querySelector("[data-act]");
+  else if(t.id==="f-email")b=document.querySelector('[data-act="magic"]');
+  else if(t.id==="f-phrase")b=document.getElementById("m-go");
+  if(b&&!b.disabled){e.preventDefault();b.click()}
+});
 document.addEventListener("focusin",e=>{const b=e.target.closest("[data-block]");if(b&&st.view==="main")activeBlock=Number(b.dataset.block)});
 
 applyTheme();renderAll();initAuth();
