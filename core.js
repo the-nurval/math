@@ -319,12 +319,15 @@ function buildTest(opts){
 return {grade,buildTest,score,isFilled,parseNum,TOPICS,PERIODS,schoolPos,coveredTopics,currentTopics,TPL,OLY,PROOFS,setLang,tr,hashStr,Q,mkR};
 }
 
-const REG={};
+const REG={},SUM={};
 function curLang(){return LANG}
 const H={curLang,DENS_A,DENS_N,L,MINUS,N,P,Q,T_ANS,V,ansHtml,decPlaces,decStr,evalE,expAddSub,fracHtml,lcm,numAns,numHtml,opSym,plainOf,q,qh,rDec,rFrac,rInt,renderE,stepList,stepsE,tr};
 root.GEN={H,
   register(n,M){REG[n]=makeGrade(n,M);return REG[n]},
   grade(n){return REG[n]||null},
   grades(){return Object.keys(REG).map(Number).sort((a,b)=>a-b)},
+  // конспекты тем: GEN.summaries(n, {topicId: {ru:{t,main,ex,alt,err}, et:…, en:…}})
+  summaries(n,S){SUM[n]=Object.assign(SUM[n]||{},S)},
+  summary(n,id){const s=SUM[n]&&SUM[n][id];return s?(s[LANG]||s.ru):null},
   score,isFilled,parseNum,PERIODS,schoolPos,setLang,tr,hashStr,Q,mkR};
 })(typeof window!=="undefined"?window:globalThis);

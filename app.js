@@ -225,6 +225,12 @@ const UI5={
   fullHint:"You can choose what to remove yourself in your profile.",pickSelf:"Choose myself",saveReplace:"Save, remove oldest",removeIt:"Remove",workOf:t=>`test “${t}”`}
 };
 Object.keys(UI).forEach(l=>Object.assign(UI[l],UI5[l]));
+const UI7={
+ ru:{sumBtn:"Конспект",sumOf:n=>`Конспект · ${n} класс`,sMain:"Главное",sEx:"Пример",sAlt:"Другой способ",sErr:"Частые ошибки",sAns:"Ответ",close:"Закрыть",mixT:"Смешивать классы"},
+ et:{sumBtn:"Konspekt",sumOf:n=>`Konspekt · ${n}. klass`,sMain:"Põhiline",sEx:"Näide",sAlt:"Teine võimalus",sErr:"Levinud vead",sAns:"Vastus",close:"Sulge",mixT:"Klassid segamini"},
+ en:{sumBtn:"Summary",sumOf:n=>`Summary · Grade ${n}`,sMain:"Key points",sEx:"Example",sAlt:"Another way",sErr:"Common mistakes",sAns:"Answer",close:"Close",mixT:"Mix grades"}
+};
+Object.keys(UI).forEach(l=>Object.assign(UI[l],UI7[l]));
 const UI6={
  ru:{invLead:(w,isP,sn)=>isP?(sn?`Вы будете видеть успехи ученика ${sn} и сможете помочь с трудными заданиями.`:"Ваш ребёнок решает контрольные по математике и хочет, чтобы вы видели его результаты и могли помочь с трудными заданиями.")
     :`Решай контрольные по математике, а ${w} будет видеть твои успехи и сможет помочь с трудными заданиями.`,
@@ -370,7 +376,7 @@ async function checkInvite(u,prof){
 }
 function applyProfile(p){
   PROFILE=p;authState="in";LS.set("math7.profile."+p.id,p);
-  const s=p.settings||{};st.name=p.name||"";["level","theme","lang","grade","year","grades"].forEach(k=>{if(s[k]!=null)st[k]=s[k]});st.seen=p.seen_oly||[];
+  const s=p.settings||{};st.name=p.name||"";["level","theme","lang","grade","year","grades","mix","workGrade"].forEach(k=>{if(s[k]!=null)st[k]=s[k]});st.seen=p.seen_oly||[];
   U=UI[st.lang];applyTheme();savePrefs();
   if(p.role==="student"){st.view="main";restoreWork();loadHistory();loadParents();loadMyHelp()}
   else{st.view="kids";loadKids()}
@@ -390,7 +396,7 @@ function saveProfile(){
   savePrefs();if(!PROFILE||!sb)return;
   clearTimeout(profT);
   profT=setTimeout(async()=>{
-    const upd={name:st.name,settings:{level:st.level,theme:st.theme,lang:st.lang,grade:st.grade,year:st.year,grades:st.grades},seen_oly:st.seen.slice(-200)};
+    const upd={name:st.name,settings:{level:st.level,theme:st.theme,lang:st.lang,grade:st.grade,year:st.year,grades:st.grades,mix:st.mix,workGrade:st.workGrade},seen_oly:st.seen.slice(-200)};
     Object.assign(PROFILE,upd);LS.set("math7.profile."+PROFILE.id,PROFILE);
     await sb.from("profiles").update(upd).eq("id",PROFILE.id);
   },600);
@@ -460,11 +466,28 @@ function seenTxt(ts){if(!ts)return "";const d=new Date(ts),now=new Date();const 
 function applyTheme(){const r=document.documentElement;if(st.theme==="system")r.removeAttribute("data-theme");else r.setAttribute("data-theme",st.theme)}
 
 /* ---------- работа ---------- */
-function buildFrom(meta,lang){const g=genFor(meta.grade);g.setLang(lang||st.lang);return g.buildTest({date:parseDate(meta.date),level:meta.level,type:meta.type==="train"?"theme":meta.type,lang:lang||st.lang,seed:meta.seed,seenOly:meta.seen||[],only:meta.only||undefined})}
+// классы, по которым уже есть задания, из отмеченных в меню
+function availGrades(){const has=window.GEN.grades();const a=st.grades.map(Number).filter(n=>has.includes(n));return a.length?a:[has.includes(Number(st.grade))?Number(st.grade):has[0]]}
+function workGrade(){const a=availGrades();const w=Number(st.workGrade);return a.includes(w)?w:a.includes(Number(st.grade))?Number(st.grade):a[0]}
+function mixOn(){return !!st.mix&&availGrades().length>1}
+function syncGen(){G=genFor(mixOn()?availGrades()[0]:workGrade())}
+// работа из нескольких классов: блоки по очереди из каждого класса, задания со звёздочкой — одного класса
+function buildMixed(meta,lang){
+  const tests=meta.grades.map((n,i)=>{const g=genFor(n);g.setLang(lang);const t=g.buildTest({date:parseDate(meta.date),level:meta.level,type:meta.type==="train"?"theme":meta.type,lang,seed:(meta.seed+i*7919)>>>0,seenOly:meta.seen||[]});t.blocks.forEach(b=>b.grade=n);return t});
+  const reg=tests.map(t=>t.blocks.filter(b=>!b.star)),stars=tests.map(t=>t.blocks.filter(b=>b.star));
+  const target=meta.level==="o"?0:meta.type==="period"?28:18;const out=[];let i=0,n=0;
+  while(n<target&&reg.some(r=>r.length)){const r=reg[i++%reg.length];if(!r.length)continue;const b=r.shift();out.push(b);n+=b.items.length}
+  let st2=stars[meta.seed%stars.length];if(meta.level==="o"){st2=[];let j=0;while(st2.length<7&&stars.some(x=>x.length)){const x=stars[j++%stars.length];if(x.length)st2.push(x.shift())}}
+  const blocks=out.concat(st2);
+  return {pos:tests[0].pos,cov:[].concat(...tests.map(t=>t.cov)),cur:[].concat(...tests.map(t=>t.cur)),blocks,minutes:tests[0].minutes,
+    max:blocks.reduce((s,b)=>s+b.items.length*b.pts,0),olyIds:blocks.filter(b=>b.tpl==="oly"||b.tpl==="proof").flatMap(b=>b.items.map(i=>i.olyId))};
+}
+function buildFrom(meta,lang){if(meta.grades&&meta.grades.length>1)return buildMixed(meta,lang||st.lang);const g=genFor(meta.grade);g.setLang(lang||st.lang);return g.buildTest({date:parseDate(meta.date),level:meta.level,type:meta.type==="train"?"theme":meta.type,lang:lang||st.lang,seed:meta.seed,seenOly:meta.seen||[],only:meta.only||undefined})}
 function newTest(){
   const seed=(Math.random()*4294967295)>>>0;
   const only=st.train;st.train=null;st.workCid=Date.now().toString(36)+Math.random().toString(36).slice(2,8);
-  st.meta={seed,grade:G.grade,level:st.level,type:only?"train":st.type,date:st.date,seen:st.seen.slice(),only:only||null};
+  syncGen();const mixG=!only&&mixOn()?availGrades():null;
+  st.meta={seed,grade:mixG?null:(only&&st.progGrade?Number(st.progGrade):G.grade),grades:mixG,level:st.level,type:only?"train":st.type,date:st.date,seen:st.seen.slice(),only:only||null};
   st.test=buildFrom(st.meta);st.answers={};st.checked=false;st.open={};st.confirming=false;st.elapsed=0;st.blockTime={};st.timeUp=false;st.laps=[];st.lapStart=0;
   if(st.timer==="limit"&&!st.limitTouched)st.limit=st.test.minutes;
   st.running=st.timer!=="off";st.view="main";enter("test");
@@ -485,7 +508,7 @@ function finish(){
   const T=totals(st.test,st.answers);
   saveResult({ts:Date.now(),grade:st.meta.grade||7,asOf:st.meta.date,level:st.meta.level,type:st.meta.type,lang:st.lang,score:T.got,max:T.max,items:T.count,
     timeSec:st.timer!=="off"?st.elapsed:0,limitSec:st.timer==="limit"?st.limit*60:0,topics:T.topics,oly:st.test.olyIds,olyOk:T.olyOk,
-    meta:{seed:st.meta.seed,grade:st.meta.grade||7,date:st.meta.date,level:st.meta.level,type:st.meta.type,seen:st.meta.seen,only:st.meta.only||null},answers:st.answers,blockTime:st.blockTime,laps:st.laps.slice()});
+    meta:{seed:st.meta.seed,grade:st.meta.grade||7,grades:st.meta.grades||null,date:st.meta.date,level:st.meta.level,type:st.meta.type,seen:st.meta.seen,only:st.meta.only||null},answers:st.answers,blockTime:st.blockTime,laps:st.laps.slice()});
   enter("score");renderAll();window.scrollTo({top:0,behavior:"smooth"});
 }
 
@@ -569,7 +592,7 @@ function sheetHtml(ctx){
   }
   t.blocks.forEach((b,bi)=>{
     const p=T.per[bi];
-    h+=`<div class="task" data-block="${bi}"><div class="task-h"><h3>${bi+1}${b.star?'<span class="star">*</span>':""}. ${esc(b.title)}</h3><span class="pts">${b.items.length>1?U.ptsEach(b.pts):U.ptsOne(b.pts)}</span>${ctx.checked&&timed&&ctx.blockTime[bi]?`<span class="tm">${fmtTime(ctx.blockTime[bi])}</span>`:""}${ctx.checked?`<span class="got">${p.g}/${p.m}</span>`:""}</div>`;
+    h+=`<div class="task" data-block="${bi}"><div class="task-h"><h3>${bi+1}${b.star?'<span class="star">*</span>':""}. ${esc(b.title)}</h3><span class="pts">${b.items.length>1?U.ptsEach(b.pts):U.ptsOne(b.pts)}</span>${window.GEN.summary(b.grade||m.grade||7,b.topic)?`<button class="sumbtn" type="button" data-act="sum" data-g="${b.grade||m.grade||7}" data-t="${esc(b.topic)}">${ICON_BOOK2}<span>${U.sumBtn}</span></button>`:""}${ctx.checked&&timed&&ctx.blockTime[bi]?`<span class="tm">${fmtTime(ctx.blockTime[bi])}</span>`:""}${ctx.checked?`<span class="got">${p.g}/${p.m}</span>`:""}</div>`;
     if(b.intro)h+=`<div class="intro">${b.intro}</div>`;
     h+=`<div class="items">`;
     b.items.forEach((it,ii)=>{
@@ -598,11 +621,15 @@ function sheetHtml(ctx){
 function weekHtml(){const P=posInfo();const n=P.cur.length;
   return `<section class="week" id="week"><div class="week-h"><span class="week-t">${esc(P.txt)}</span>${n?`<button class="pill-btn" type="button" data-act="weektoggle" aria-expanded="${st.weekOpen}">${st.weekOpen?U.weekHide:U.weekShow(n)}${ICON_DOWN}</button>`:""}</div>
   ${st.weekOpen&&n?`<div class="tags" id="tags">${P.cur.map((nm,i)=>`<span class="chip now ${tc(P.curIds[i])}" style="--d:${i*50}ms">${U.now}: ${esc(nm)}</span>`).join("")}</div>`:""}</section>`}
+const ICON_SHUF=`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h4v4M4 20l16-16M20 16v4h-4M15 15l5 5M4 4l5 5"/></svg>`;
+const ICON_BOOK2=`<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/></svg>`;
 function viewMain(){
+  syncGen();const avail=availGrades(),multi=avail.length>1;
   let h=`<section class="head">
     <div class="ctrls">
       <label class="ctrl"><span>${U.date}</span><input type="date" id="f-date" value="${st.date}"></label>
-      <div class="ctrl"><span>${U.timer}</span><div class="tline">${seg("timer",["off","watch","limit"],st.timer,U.tm)}<input class="num" type="number" id="f-limit" min="5" max="240" step="5" value="${st.limit}" aria-label="${U.min}" ${st.timer==="limit"?"":"disabled"}><span class="unit${st.timer==="limit"?"":" off"}">${U.min}</span></div></div>
+      <div class="ctrl"><span>${U.timer}</span><div class="tline">${seg("timer",["off","watch","limit"],st.timer,U.tm)}<input class="num" type="number" id="f-limit" min="5" max="240" step="5" value="${st.limit}" aria-label="${U.min}" ${st.timer==="limit"?"":"disabled"}><span class="unit${st.timer==="limit"?"":" off"}">${U.min}</span>${multi?`<button class="mixbtn" type="button" role="switch" aria-checked="${mixOn()}" data-act="mixtoggle">${ICON_SHUF}<span>${U.mixT}</span><i class="sw"></i></button>`:""}</div></div>
+      ${multi&&!mixOn()?`<div class="ctrl full"><span>${U.gradeLbl}</span><div class="tline">${seg("workGrade",avail.map(String),String(workGrade()),Object.fromEntries(avail.map(n=>[String(n),U.gradeN(n)])))}</div></div>`:""}
       <div class="ctrl full"><span>${U.type}</span><div class="tline">${seg("type",["theme","period"],st.type,U.ty)}</div></div>
     </div>
     <div class="row2"><button class="btn" type="button" data-act="new">${U.create}</button></div>
@@ -880,6 +907,28 @@ function renderModal(){
   const fresh=!el.firstChild;el.innerHTML=`<div class="dialog" role="dialog" aria-modal="true">${h}</div>`;if(fresh&&!reduced()){el.classList.remove("in");el.getBoundingClientRect();el.classList.add("in")}
   const f=document.getElementById("f-phrase");if(f){f.focus();f.addEventListener("paste",e=>e.preventDefault());f.addEventListener("drop",e=>e.preventDefault())}
 }
+/* ---------- конспект темы: панель справа поверх работы ---------- */
+let sumOpen=null;
+function sumHtml(g,id){
+  const s=window.GEN.summary(g,id);if(!s)return "";
+  return `<div class="sum-h"><span class="sum-k ${tc(id)}"><i></i>${esc(U.sumOf(g))}</span><button class="ib" type="button" data-act="sumclose" aria-label="${esc(U.close)}"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <h2 id="sum-t">${esc(s.t)}</h2>
+    <h3>${U.sMain}</h3><ul>${s.main.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+    <h3>${U.sEx}</h3><div class="sum-ex"><b>${esc(s.ex.q)}</b>${s.ex.s.map((x,i)=>`<span>${i+1}) ${esc(x)}</span>`).join("")}<b>${U.sAns}: ${esc(s.ex.a)}</b></div>
+    ${s.alt?`<h3>${U.sAlt}</h3><p>${esc(s.alt)}</p>`:""}${s.err?`<h3>${U.sErr}</h3><p>${esc(s.err)}</p>`:""}`;
+}
+function openSum(g,id){
+  sumOpen={g,id};let el=document.getElementById("sumdrawer");if(el)el.remove();
+  el=document.createElement("div");el.id="sumdrawer";el.className="sum-ov";
+  el.innerHTML=`<aside class="sum" role="dialog" aria-modal="true" aria-labelledby="sum-t">${sumHtml(g,id)}</aside>`;
+  document.body.appendChild(el);document.body.classList.add("modal-open");
+  if(!reduced()){el.getBoundingClientRect();el.classList.add("in")}else el.classList.add("in");
+  const b=el.querySelector('[data-act="sumclose"]');if(b)b.focus();
+}
+function closeSum(){const el=document.getElementById("sumdrawer");sumOpen=null;if(!el)return;document.body.classList.remove("modal-open");
+  if(reduced()){el.remove();return}el.classList.remove("in");el.classList.add("out");setTimeout(()=>el.remove(),260)}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&sumOpen)closeSum()});
+document.addEventListener("click",e=>{if(sumOpen&&e.target.id==="sumdrawer")closeSum()});
 // что удалится: для своего аккаунта или для ученика (главный родитель)
 function delList(m){
   if(m.sid)return [U.dWorks(kidHist.length),U.dProgress,U.dLater].concat(kidParents.length?[U.dParents(kidParents.map(p=>p.name||p.email).join(", "))]:[]);
@@ -967,6 +1016,7 @@ document.addEventListener("click",e=>{
     if(k==="lang"){U=UI[v];if(st.meta)st.test=buildFrom(st.meta,v);saveProfile();savePrefs();renderAll();return}
     if(k==="theme"){applyTheme();saveProfile()}
     if(k==="level")saveProfile();
+    if(k==="workGrade"){saveProfile();syncGen()}
     if(k==="progGrade"){st.progGrade=Number(v);st.progPick=null;st[k]=v;renderMain();renderBar();return}
     if(k==="timer"&&st.test&&!st.checked)st.running=v!=="off";
     if(k==="type"&&!st.limitTouched)st.limit=v==="period"?90:45;
@@ -987,6 +1037,9 @@ document.addEventListener("click",e=>{
     if(act==="askyes"||act==="askno"){const p=modal.p;modal=null;renderModal();sb.rpc("answer_parent",{p_parent:p.parent_id,p_yes:act==="askyes"}).then(loadParents);return}
     if(act==="role1"){modal={type:"role1"};renderModal();return}
     if(act==="role2"){modal={type:"role2"};renderModal();return}
+    if(act==="mixtoggle"){st.mix=!mixOn();saveProfile();renderMain();return}
+    if(act==="sum"){openSum(Number(a.dataset.g),a.dataset.t);return}
+    if(act==="sumclose"){closeSum();return}
     if(act==="d1"){modal=a.dataset.sid?{type:"d1",sid:a.dataset.sid,name:(kid&&kid.name)||(kid&&kid.email)||""}:{type:"d1"};renderModal();return}
     if(act==="d2"){modal.type="d2";renderModal();return}
     if(act==="dgo"){a.disabled=true;const m=modal;sb.rpc("request_delete",{p_target:m.sid||null,p_ctx:delCtx()}).then(({data,error})=>{if(modal!==m)return;
@@ -1055,7 +1108,7 @@ document.addEventListener("input",e=>{
 });
 document.addEventListener("change",e=>{
   const t=e.target;
-  if(t.dataset.grade){const n=Number(t.dataset.grade);st.grades=t.checked?Array.from(new Set(st.grades.concat(n))).sort((a,b)=>a-b):st.grades.filter(x=>x!==n);saveProfile();renderNav();return}
+  if(t.dataset.grade){const n=Number(t.dataset.grade);st.grades=t.checked?Array.from(new Set(st.grades.concat(n))).sort((a,b)=>a-b):st.grades.filter(x=>x!==n);saveProfile();renderNav();if(st.view==="main")renderMain();return}
   if(t.dataset.pick&&st.progPick){st.progPick.pick[t.dataset.pick]=t.checked;renderBar();return}
   if(t.id==="f-year"){st.year=t.value;saveProfile();return}
   if(t.id==="f-grade"){st.grade=Number(t.value);saveProfile();return}
