@@ -1,0 +1,164 @@
+/* Шапка: выпадающий список классов, дата и таймер, учебная неделя */
+/* ===== Перенос с холста ===== */
+/* шапка: предмет и классы — выпадающий список */
+.gwrap {
+  position: relative;
+  align-self: center;
+}
+.ttl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--ctl);
+  padding: 0 16px;
+  margin-left: -16px;
+  border-radius: var(--r-ctl);
+  transition: background-color var(--dur-color) var(--ease-standard);
+}
+.ttl:hover,
+.ttl[aria-expanded="true"] {
+  background: #e4ebf3;
+}
+.chev-d {
+  flex-shrink: 0;
+  transition: transform var(--dur-move) var(--ease-spring-soft);
+}
+[aria-expanded="true"] > .chev-d {
+  transform: rotate(180deg);
+}
+.gmenu {
+  position: absolute;
+  z-index: 20;
+  top: calc(var(--ctl) + 8px);
+  left: -16px;
+  width: 340px;
+  box-sizing: border-box;
+  background: var(--panel);
+  border-radius: 24px;
+  padding: 8px;
+  box-shadow:
+    0 24px 64px rgba(19, 32, 59, 0.16),
+    0 2px 6px rgba(19, 32, 59, 0.06);
+  display: grid;
+  gap: 2px;
+  transform-origin: top left;
+  animation: menuIn var(--dur-surface) var(--ease-surface) both;
+}
+@keyframes menuIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.gm-t {
+  margin: 8px 16px 4px;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.gm-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  padding: 4px 8px 4px 16px;
+  border-radius: 16px;
+}
+.gm-row.on {
+  background: var(--soft);
+}
+.gm-row label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.gm-row input,
+.pick input {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--ink);
+}
+.link-btn {
+  border: 0;
+  background: transparent;
+  padding: 8px 12px;
+  font: 700 0.9rem var(--f-body);
+  color: var(--pen);
+  cursor: pointer;
+  border-radius: 12px;
+}
+.link-btn:hover {
+  background: var(--soft);
+}
+/* шапка главной: дата слева, таймер справа */
+.ctrls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px 32px;
+}
+.ctrls .full {
+  width: 100%;
+}
+.row2 {
+  display: flex;
+}
+/* модуль «учебная неделя и темы» */
+.week {
+  margin-top: 16px;
+  background: var(--panel);
+  border-radius: var(--r-card);
+  padding: 12px 12px 12px 24px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 12px;
+}
+.week-h {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 42px;
+}
+.week-t {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.pill-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--soft);
+  color: var(--ink);
+  font: 700 0.88rem var(--f-body);
+  cursor: pointer;
+}
+.week .tags {
+  justify-content: flex-start;
+  padding-bottom: 4px;
+}
+.week .chip {
+  animation: chipIn var(--dur-move) var(--ease-spring-soft) both;
+  animation-delay: var(--d, 0ms);
+}
+@keyframes chipIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

@@ -1,0 +1,57 @@
+/* Программа: выбор тем для тренировки */
+/* программа: выбор тем */
+.prog li {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.pick {
+  display: grid;
+  grid-template-columns: 20px 92px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  cursor: pointer;
+}
+.pick .wk {
+  font-size: 0.82rem;
+}
+.prog li > span.st::before {
+  display: none !important;
+}
+.pick > span:nth-child(3)::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--tc);
+  margin-right: 10px;
+  vertical-align: 1px;
+}
+.sec-row {
+  padding-right: var(--pad-card);
+}
+.sec-row .link-btn {
+  margin-right: -12px;
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gmenu,
+  .week .chip {
+    animation: none;
+  }
+}
+@media (max-width: 849px) {
+  .pcard {
+    grid-template-columns: 56px minmax(0, 1fr);
+  }
+  .pcard .out-col {
+    grid-column: 1/-1;
+    grid-row: auto;
+    width: auto;
+  }
+  .gmenu {
+    width: min(340px, calc(100vw - 32px));
+  }
+}

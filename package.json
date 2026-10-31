@@ -1,0 +1,15 @@
+{
+  "name": "math-check",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/generator.test.js",
+    "test:ui": "node --test tests/ui.test.js",
+    "snapshot": "UPDATE_SNAPSHOT=1 node --test tests/generator.test.js",
+    "format": "prettier --write \"src/**/*.js\" \"generator/**/*.js\" \"tests/**/*.js\" \"css/*.css\""
+  },
+  "devDependencies": {
+    "playwright-core": "1.56.1",
+    "prettier": "3.4.2"
+  }
+}

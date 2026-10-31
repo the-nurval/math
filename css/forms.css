@@ -1,0 +1,159 @@
+/* Поля и подписи над ними; поля профиля и выход */
+/* подписи над полями — на линии текста поля; названия блоков — на линии текста карточек */
+.ctrl > span {
+  padding-left: 16px;
+}
+.ctrl:has(.seg) > span {
+  padding-left: 15px;
+}
+.sec {
+  margin-left: var(--pad-card);
+}
+.msg,
+.sub.below {
+  margin: 12px 0 0 var(--pad-card);
+}
+.authcard .msg,
+.dialog .msg {
+  margin: 0;
+}
+.sec-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 28px;
+}
+.sec-row .sub {
+  font-weight: 500;
+}
+.sec-t {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sec .badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  box-sizing: border-box;
+  border-radius: 11px;
+  background: var(--red);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 800;
+  line-height: 1;
+}
+/* профиль: поля и выход */
+.pcard {
+  grid-template-columns: 56px minmax(0, 1fr) 200px;
+  align-items: start;
+}
+.pcard .ava {
+  grid-row: auto;
+  margin-top: 16px;
+}
+.pcard.ro {
+  align-items: center;
+}
+.pcard.ro .ava {
+  margin-top: 0;
+}
+.pcard.ro .out {
+  grid-column: 3;
+  grid-row: 1;
+  justify-self: end;
+}
+.pfields {
+  display: grid;
+  gap: 12px;
+  max-width: 292px;
+}
+.pfrow {
+  display: grid;
+  grid-template-columns: 160px 120px;
+  gap: 12px;
+}
+.fld {
+  display: grid;
+  gap: 4px;
+}
+.fld > span:first-child {
+  padding-left: 16px;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.fld .txt {
+  width: 100%;
+}
+.pfields input.txt {
+  max-width: none;
+}
+.selwrap {
+  position: relative;
+  display: block;
+}
+select.sel {
+  height: var(--ctl);
+  box-sizing: border-box;
+  border: 0;
+  border-radius: var(--r-ctl);
+  background: var(--soft);
+  font: 600 1rem var(--f-body);
+  color: var(--ink);
+}
+.sel {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  padding: 0 44px 0 16px !important;
+  font-weight: 600;
+  cursor: pointer;
+}
+.selwrap .chev-d {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  margin-top: -10px;
+  pointer-events: none;
+  color: var(--ink);
+}
+.pcard .out-col {
+  grid-column: 3;
+  grid-row: 1;
+  display: grid;
+  gap: 8px;
+  width: 200px;
+}
+.out-col .sub {
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.btn.exit {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #dfe9fd;
+  border-color: transparent;
+  color: #2a55b8;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .btn.exit {
+    background: #24304a;
+    color: #8fb0ff;
+  }
+}
+:root[data-theme="dark"] .btn.exit {
+  background: #24304a;
+  color: #8fb0ff;
+}
+.heat-x {
+  margin: 8px 0 0;
+  font-size: 0.82rem;
+}

@@ -1,0 +1,78 @@
+/* Нижняя панель работы: прогресс, часы, кнопки таймера, подтверждение */
+.bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bar);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  z-index: 5;
+  scrollbar-gutter: stable;
+}
+.bar-in {
+  max-width: 820px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.progress {
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.clock {
+  font: 600 1rem var(--f-mono);
+  color: var(--ink);
+}
+.clock.low {
+  color: var(--red);
+}
+.clock.paused {
+  color: var(--muted);
+}
+.tctl {
+  display: flex;
+  gap: 8px;
+}
+.tbtn {
+  width: var(--ctl);
+  height: var(--ctl);
+  box-sizing: border-box;
+  border: 1px solid var(--line);
+  border-radius: var(--r-ctl);
+  background: var(--paper);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.tbtn:hover {
+  background: var(--soft);
+}
+.tbtn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.lapinfo {
+  font-variant-numeric: tabular-nums;
+}
+.btns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.confirm {
+  color: var(--red);
+}

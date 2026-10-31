@@ -1,0 +1,46 @@
+/* Узкие экраны и уменьшенное движение для экранов выше */
+@media (max-width: 849px) {
+  .row2 {
+    grid-template-columns: 1fr;
+  }
+  .tags {
+    justify-content: flex-start;
+  }
+  .trainrow {
+    grid-template-columns: 1fr !important;
+  }
+  .trainrow .btn {
+    justify-self: start;
+  }
+}
+@media (max-width: 519px) {
+  .ctrls {
+    grid-template-columns: 1fr;
+  }
+  .expr {
+    flex: 1 1 calc(100% - 2.6em);
+  }
+  .ansline {
+    flex-basis: 100%;
+  }
+  .lbl {
+    min-width: auto;
+  }
+  .kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .kpi:nth-child(3) {
+    border-left: 0;
+  }
+  .kpi:nth-child(n + 3) {
+    border-top: 1px solid var(--line);
+  }
+  .trow {
+    grid-template-columns: minmax(0, 1fr) 60px 3em 1.4em;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .item {
+    transition: border-color 0.2s;
+  }
+}

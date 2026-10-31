@@ -1,0 +1,124 @@
+/* Сетка страницы, токены цвета и размеров, базовые элементы */
+/* Сетка Stretch по правилам Zippun: контент по центру до 820 px, отступы кратны 4 (8/12/16/24/32), высота контролов 42 px (44 на телефоне), скругления по правилу вложенных радиусов (внутренний = внешний − отступ, шаг 4): контролы 12; карточка 28 = 12 + отступ 16 (одинаковый для текста и контролов); переключатель 12 → 2 → 10; диалог 24; задание в листе 20 = поле 8 + отступ 12; телефон до 850 px */
+:root {
+  --bg: #e9edf2;
+  --paper: #fbfcfd;
+  --grid: #dfe7f0;
+  --margin: #efb9b9;
+  --panel: #ffffff;
+  --soft: #f2f5f8;
+  --ink: #1d2533;
+  --muted: #5d6878;
+  --line: #cfd8e3;
+  --pen: #2348b8;
+  --pen-soft: #e6ecfb;
+  --red: #cc2f2f;
+  --green: #1f8a4c;
+  --amber: #a86a00;
+  --h0: #e4e9f0;
+  --h1: #bccbf0;
+  --h2: #7d98e0;
+  --h3: #2348b8;
+  --bar: #ffffffee;
+  --seg-track: #eef1f0;
+  --seg-thumb: #ffffff;
+  --ctl: 42px;
+  --r-ctl: 12px;
+  --r-card: 28px;
+  --r-dlg: 24px;
+  --r-item: 20px;
+  --r-in: 8px;
+  --pad-card: 16px;
+  --pad-item: 12px;
+  --f-body: "Golos Text", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-hand: "Caveat", "Comic Sans MS", cursive;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12161d;
+    --paper: #1a2029;
+    --grid: #222a35;
+    --margin: #4a2a2e;
+    --panel: #1d242e;
+    --soft: #232b36;
+    --ink: #e6eaf0;
+    --muted: #97a2b2;
+    --line: #2e3846;
+    --pen: #8fb0ff;
+    --pen-soft: #24304a;
+    --red: #ff7a72;
+    --green: #5fd394;
+    --amber: #f0b44c;
+    --h0: #262e3a;
+    --h1: #33456e;
+    --h2: #5576c0;
+    --h3: #9db8ff;
+    --bar: #1a2029ee;
+    --seg-track: #232b36;
+    --seg-thumb: #3a4555;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12161d;
+  --paper: #1a2029;
+  --grid: #222a35;
+  --margin: #4a2a2e;
+  --panel: #1d242e;
+  --soft: #232b36;
+  --ink: #e6eaf0;
+  --muted: #97a2b2;
+  --line: #2e3846;
+  --pen: #8fb0ff;
+  --pen-soft: #24304a;
+  --red: #ff7a72;
+  --green: #5fd394;
+  --amber: #f0b44c;
+  --h0: #262e3a;
+  --h1: #33456e;
+  --h2: #5576c0;
+  --h3: #9db8ff;
+  --bar: #1a2029ee;
+  --seg-track: #232b36;
+  --seg-thumb: #3a4555;
+  color-scheme: dark;
+}
+@media (max-width: 849px) {
+  :root {
+    --ctl: 44px;
+  }
+}
+
+/* место под полосу прокрутки зарезервировано всегда, чтобы экраны не сдвигались; сама полоса не выделяется */
+html {
+  scrollbar-gutter: stable;
+  scrollbar-color: var(--line) transparent;
+  background: var(--bg);
+}
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 16px;
+  line-height: 1.5;
+}
+button {
+  font-family: var(--f-body);
+  color: inherit;
+}
+button:focus-visible,
+input:focus-visible,
+summary:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--pen);
+  outline-offset: 2px;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  z-index: 10;
+  background: var(--panel);
+}

@@ -1,0 +1,283 @@
+/* Классы и смешивание, конспект темы, шапка работы (развёрнутая и свёрнутая) */
+/* классы: выбор и смешивание; конспект темы */
+.mixbtn {
+  height: var(--ctl);
+  border: 0;
+  border-radius: var(--r-ctl);
+  background: var(--soft);
+  color: var(--ink);
+  font: 700 0.95rem var(--f-body);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background var(--dur-color) var(--ease-standard);
+}
+.mixbtn[aria-pressed="true"] {
+  background: #d9e2ee;
+}
+:root[data-theme="dark"] .mixbtn[aria-pressed="true"] {
+  background: #2b3a55;
+}
+.segdis {
+  opacity: 0.45;
+  pointer-events: none;
+  transition: opacity var(--dur-color) var(--ease-standard);
+}
+/* шапка работы: A — развёрнутая (список настроек), B — свёрнутая (строка фильтров) */
+.head.head-a {
+  padding: 12px 0;
+  display: block;
+}
+.hsrow {
+  display: grid;
+  grid-template-columns: 136px minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  margin: 0 24px;
+  padding: 12px 0;
+}
+.hsrow + .hsrow {
+  border-top: 1px solid var(--line);
+}
+.hk {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.hfoot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin: 0 24px;
+  padding: 16px 0 12px;
+  border-top: 1px solid var(--line);
+}
+.gline {
+  gap: 40px;
+}
+.gline .seg button {
+  min-width: 44px;
+}
+.head.head-b {
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  position: relative;
+}
+.fchips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.fwrap {
+  position: relative;
+}
+.fchip {
+  height: 42px;
+  padding: 0 12px 0 16px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--soft);
+  color: var(--ink);
+  font: 700 0.95rem var(--f-body);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.fchip[aria-expanded="true"] {
+  background: var(--line);
+}
+.fright {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.head-b .btn {
+  border-radius: 16px;
+}
+.ib-soft {
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--soft);
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.hpop {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 30;
+  background: var(--panel);
+  border-radius: 24px;
+  padding: 16px;
+  box-shadow:
+    0 24px 64px rgba(19, 32, 59, 0.16),
+    0 2px 6px rgba(19, 32, 59, 0.06);
+  display: grid;
+  gap: 12px;
+  min-width: 240px;
+  animation: dlgIn var(--dur-surface) var(--ease-surface) both;
+}
+.hpop .hk {
+  padding-left: 16px;
+  font-size: 0.88rem;
+}
+.hpop .gline {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+.sh-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+.pill-btn,
+.mixbtn,
+.fchip,
+.btn {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+svg.icn-up {
+  transform: translateY(-1px);
+}
+.sumbtn {
+  margin-left: auto;
+  align-self: center;
+  height: 36px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--soft);
+  color: var(--ink);
+  font: 700 0.85rem var(--f-body);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px 0 12px;
+  cursor: pointer;
+}
+.sumbtn + .got {
+  margin-left: 12px;
+}
+.sum-ov {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(15, 20, 30, 0.25);
+  opacity: 0;
+  transition: opacity var(--dur-surface) var(--ease-standard);
+}
+.sum-ov.in {
+  opacity: 1;
+}
+.sum-ov.out {
+  opacity: 0;
+  transition-duration: var(--dur-exit);
+}
+.sum {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(460px, 100%);
+  box-sizing: border-box;
+  background: var(--panel);
+  border-radius: 28px 0 0 28px;
+  padding: 24px;
+  box-shadow: -24px 0 64px rgba(19, 32, 59, 0.18);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transform: translateX(100%);
+  transition: transform var(--dur-surface) var(--ease-surface);
+}
+.sum-ov.in .sum {
+  transform: none;
+}
+.sum-ov.out .sum {
+  transform: translateX(100%);
+  transition: transform var(--dur-exit) var(--ease-exit);
+}
+.sum-h {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.sum-k {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+.sum-k i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--tc);
+}
+.sum .ib {
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 21px;
+  background: var(--soft);
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.sum h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  line-height: 1.25;
+}
+.sum h3 {
+  margin: 8px 0 0;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+.sum ul {
+  margin: 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 4px;
+  font-size: 0.95rem;
+}
+.sum p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+.sum-ex {
+  background: var(--soft);
+  border-radius: 16px;
+  padding: 12px 16px;
+  display: grid;
+  gap: 4px;
+  font-size: 0.95rem;
+}
+[hidden] {
+  display: none !important;
+}
+body {
+  margin: 0;
+}

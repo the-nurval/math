@@ -1,0 +1,138 @@
+/* Экраны настроек, вопросов и программы: заголовок, группы строк, FAQ, уровни, список недель */
+/* экраны настроек, FAQ, программы, профиля — та же ширина, что и главная */
+.subhead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px -8px;
+  min-height: var(--ctl);
+}
+.subhead h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.2;
+}
+.back {
+  width: var(--ctl);
+  height: var(--ctl);
+  border: 0;
+  background: transparent;
+  border-radius: var(--r-ctl);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.back:hover {
+  background: var(--soft);
+}
+.sec {
+  margin: 24px 0 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.group {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  overflow: hidden;
+}
+.srow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px 12px;
+  align-items: center;
+  padding: var(--pad-card);
+  min-height: 56px;
+  box-sizing: border-box;
+}
+.srow + .srow {
+  border-top: 1px solid var(--line);
+}
+.srow .k {
+  color: var(--muted);
+}
+.srow.link {
+  cursor: pointer;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font: inherit;
+}
+.srow.link:hover {
+  background: var(--soft);
+}
+.chev {
+  width: 20px;
+  height: 20px;
+  color: var(--muted);
+}
+.faq details {
+  border-top: 1px solid var(--line);
+}
+.faq details:first-child {
+  border-top: 0;
+}
+.faq summary {
+  padding: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.faq summary::-webkit-details-marker {
+  display: none;
+}
+.faq summary::after {
+  content: "+";
+  color: var(--muted);
+}
+.faq details[open] summary::after {
+  content: "−";
+}
+.faq .a {
+  padding: 0 16px 16px;
+  font-size: 0.95rem;
+}
+.faq .a p {
+  margin: 0 0 8px;
+}
+.faq code {
+  font-family: var(--f-mono);
+  font-size: 0.82rem;
+  color: var(--pen);
+}
+.lvl {
+  display: grid;
+  grid-template-columns: 5.2em minmax(0, 1fr);
+  gap: 4px 12px;
+  margin: 8px 0;
+}
+
+.prog {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.prog li {
+  display: grid;
+  grid-template-columns: 3.6em minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: var(--pad-card);
+  font-size: 0.95rem;
+}
+.prog li + li {
+  border-top: 1px solid var(--line);
+}
+.prog .wk {
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.25;
+}

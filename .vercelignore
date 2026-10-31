@@ -1,0 +1,11 @@
+# Служебные файлы: лежат в репозитории, но на сайт не выкладываются
+CLAUDE.md
+DESIGN.md
+README.md
+docs
+supabase
+tests
+package.json
+package-lock.json
+.prettierrc.json
+node_modules

@@ -1,0 +1,101 @@
+/* Кнопка помощи у примера; приглашение, удаление, восстановление */
+/* кнопка у примера: просьба о помощи / разобрать позже — 42, скругление 8 = 20 − 12 */
+.hbtn {
+  width: var(--ctl);
+  height: var(--ctl);
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: calc(var(--r-item) - var(--pad-item));
+  cursor: pointer;
+  margin-left: auto;
+  transition:
+    transform var(--dur-release) var(--ease-spring),
+    background-color var(--dur-color) var(--ease-standard);
+}
+.ansline + .hbtn,
+.mark + .hbtn {
+  margin-left: 0;
+}
+.hbtn:active {
+  transform: scale(0.92);
+  transition: transform var(--dur-tap) var(--ease-press);
+}
+.hbtn.par {
+  background: #fff4e6;
+  color: #c2410c;
+}
+.hbtn.later {
+  background: var(--soft);
+  color: var(--muted);
+}
+.hbtn.done {
+  background: #e6f6ea;
+  color: #2fa36b;
+  cursor: default;
+}
+.hbtn.done svg {
+  animation: pop var(--dur-pop) var(--ease-pop) both;
+}
+.mnote {
+  background: var(--soft);
+  border-radius: 16px;
+  padding: 12px 16px;
+}
+/* приглашение, удаление, восстановление */
+.mbtns.c {
+  justify-content: center;
+}
+.dialog .step {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+.dlist {
+  margin: 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 4px;
+  font-size: 0.95rem;
+}
+.ava.sm {
+  width: 48px;
+  height: 48px;
+  font-size: 1.2rem;
+  grid-row: auto;
+  background: var(--t-coral);
+  color: #c2410c;
+  flex-shrink: 0;
+}
+.dialog .ava.sm {
+  width: 40px;
+  height: 40px;
+  font-size: 1rem;
+}
+.inviter,
+.mnote.person {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.invite .ctrl {
+  margin-top: 4px;
+}
+.invite h2 {
+  margin-top: 4px;
+  font-size: 1.6rem;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+.sub.small {
+  font-size: 0.82rem;
+  padding: 0 16px;
+}
+.mlink {
+  justify-self: center;
+}
+.authcard .mbtns {
+  margin-top: 4px;
+}
