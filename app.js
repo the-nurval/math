@@ -566,8 +566,10 @@ function placeThumbs(){
     const key=sg.dataset.seg+"|"+(sg.closest("[id]")||{}).id;const x=on.offsetLeft,w=on.offsetWidth;
     const prev=segPos[key];segPos[key]=x;
     th.style.width=w+"px";th.style.opacity="1";
-    if(prev!=null&&prev!==x&&!reduced()){th.style.transition="none";th.style.transform=`translateX(${prev}px)`;th.getBoundingClientRect();th.style.transition="";}
-    th.style.transform=`translateX(${x}px)`;
+    // новая подложка (экран перерисован) встаёт на прошлое место без анимации, едет только изменившаяся
+    const from=prev!=null&&!reduced()?prev:x;
+    if(th.dataset.x!==String(from)){th.style.transition="none";th.style.transform=`translateX(${from}px)`;th.getBoundingClientRect();th.style.transition=""}
+    th.dataset.x=x;th.style.transform=`translateX(${x}px)`;
   });
 }
 let enterNext=null;
