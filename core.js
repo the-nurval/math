@@ -3,7 +3,6 @@
    Без DOM — тестируется в node. */
 (function (root) {
 "use strict";
-"use strict";
 
 /* ---------- RNG ---------- */
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
@@ -331,12 +330,21 @@ function buildTest(opts){
 return {grade,buildTest,score,isFilled,parseNum,TOPICS,PERIODS,schoolPos,coveredTopics,currentTopics,TPL,OLY,PROOFS,setLang,tr,hashStr,Q,mkR};
 }
 
-const REG={},SUM={};
+const REG={},REGP={},SUM={};
+// программа класса: «school» — школьный порядок (start), «prog» — прогрессивный (startP); тема без своего поля в этой программе не входит
+function forProgram(list,p){const k=p==="prog"?"startP":"start";
+  return list.filter(t=>t[k]!=null).map(t=>Object.assign({},t,{start:t[k]})).sort((a,b)=>a.start-b.start)}
 function curLang(){return LANG}
 const H={curLang,gcd,DENS_A,DENS_N,L,MINUS,N,P,Q,T_ANS,V,ansHtml,decPlaces,decStr,evalE,expAddSub,fracHtml,lcm,numAns,numHtml,opSym,plainOf,q,qh,rDec,rFrac,rInt,renderE,stepList,stepsE,tr};
 root.GEN={H,
-  register(n,M){REG[n]=makeGrade(n,M);return REG[n]},
-  grade(n){return REG[n]||null},
+  register(n,M){
+    if(!M.TOPICS.some(t=>t.startP!=null)){REG[n]=makeGrade(n,M);REG[n].program="school";return REG[n]}
+    REG[n]=makeGrade(n,Object.assign({},M,{TOPICS:forProgram(M.TOPICS,"school")}));REG[n].program="school";
+    REGP[n]=makeGrade(n,Object.assign({},M,{TOPICS:forProgram(M.TOPICS,"prog")}));REGP[n].program="prog";
+    return REG[n]},
+  // grade(n, "prog") — прогрессивная программа, если она у класса есть; иначе школьная
+  grade(n,p){return (p==="prog"&&REGP[n])||REG[n]||null},
+  hasProgram(n){return !!REGP[n]},
   grades(){return Object.keys(REG).map(Number).sort((a,b)=>a-b)},
   // конспекты тем: GEN.summaries(n, {topicId: {ru:{t,main,ex,alt,err}, et:…, en:…}})
   summaries(n,S){SUM[n]=Object.assign(SUM[n]||{},S)},

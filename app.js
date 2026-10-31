@@ -1,6 +1,8 @@
 (function(){
 // генератор выбранного класса; работы хранят свой класс в meta.grade (старые работы — 7 класс)
-function genFor(n){return window.GEN.grade(Number(n)||7)||window.GEN.grade(7)}
+// программа (settings.program): «school» по умолчанию или «prog»; работа хранит свою в meta.program
+let PROG="school";
+function genFor(n,p){return window.GEN.grade(Number(n)||7,p||PROG)||window.GEN.grade(7)}
 let G=genFor(7);
 const LV={n:"Easy",a:"Medium",o:"Hard"};
 const UI={
@@ -17,7 +19,7 @@ const UI={
   alt:"Другой способ",yourProof:"Запиши доказательство (проверяется по образцу)",model:"Образец решения",selfQ:"Сравни со своим и оцени:",
   self:["Не доказал","Частично","Полностью"],task:"Задание",time:"время",timeUp:"Время вышло — работа проверена автоматически.",
   secWork:"Работа",secLook:"Внешний вид",secHelp:"Помощь",theme:"Тема",th:{system:"Как в системе",light:"Светлая",dark:"Тёмная"},
-  levelsWhat:"Что значат уровни",faq:"Вопросы и ответы",
+  levelsWhat:"Что значат уровни",program:"Программа",progs:{school:"Школьная",prog:"Прогрессивная"},faq:"Вопросы и ответы",
   progTitle:"Программа 7 класса",stDone:"пройдено",stNow:"идёт",stNext:"впереди",wk:"нед.",
   name:"Имя ученика",nameParent:"Имя родителя",namePh:"Как зовут ученика",grade:"7 класс",year:"учебный год",
   kWorks:"работ",kAvg:"средний результат",kStreak:"дней подряд",kTime:"в среднем на работу",
@@ -48,7 +50,7 @@ const UI={
   alt:"Teine võimalus",yourProof:"Kirjuta tõestus (kontrollitakse näidise järgi)",model:"Näidislahendus",selfQ:"Võrdle enda omaga ja hinda:",
   self:["Ei tõestanud","Osaliselt","Täielikult"],task:"Ülesanne",time:"aeg",timeUp:"Aeg sai läbi — töö kontrolliti automaatselt.",
   secWork:"Töö",secLook:"Välimus",secHelp:"Abi",theme:"Teema",th:{system:"Nagu süsteemis",light:"Hele",dark:"Tume"},
-  levelsWhat:"Mida tasemed tähendavad",faq:"Küsimused ja vastused",
+  levelsWhat:"Mida tasemed tähendavad",program:"Programm",progs:{school:"Kooli",prog:"Süvendatud"},faq:"Küsimused ja vastused",
   progTitle:"7. klassi õppekava",stDone:"läbitud",stNow:"käsil",stNext:"ees",wk:"näd",
   name:"Õpilase nimi",nameParent:"Lapsevanema nimi",namePh:"Õpilase nimi",grade:"7. klass",year:"õppeaasta",
   kWorks:"tööd",kAvg:"keskmine tulemus",kStreak:"päeva järjest",kTime:"keskmiselt töö kohta",
@@ -79,7 +81,7 @@ const UI={
   alt:"Another way",yourProof:"Write your proof (checked against a model)",model:"Model solution",selfQ:"Compare with yours and rate it:",
   self:["Not proved","Partly","Fully"],task:"Task",time:"time",timeUp:"Time is up — the test was checked automatically.",
   secWork:"Test",secLook:"Appearance",secHelp:"Help",theme:"Theme",th:{system:"System",light:"Light",dark:"Dark"},
-  levelsWhat:"What the levels mean",faq:"Questions and answers",
+  levelsWhat:"What the levels mean",program:"Programme",progs:{school:"School",prog:"Advanced"},faq:"Questions and answers",
   progTitle:"Grade 7 curriculum",stDone:"done",stNow:"in progress",stNext:"ahead",wk:"wk",
   name:"Student's name",nameParent:"Parent's name",namePh:"Student's name",grade:"Grade 7",year:"school year",
   kWorks:"tests",kAvg:"average score",kStreak:"days in a row",kTime:"average per test",
@@ -332,7 +334,8 @@ const sb=(window.supabase&&CFG.url)?window.supabase.createClient(CFG.url,CFG.key
 const LS={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
 let st=Object.assign({lang:"ru",level:"n",type:"theme",date:todayStr(),timer:"off",limit:45,theme:"system",name:"",view:"main",
   test:null,meta:null,answers:{},checked:false,open:{},confirming:false,elapsed:0,blockTime:{},running:false,timeUp:false,
-  history:[],seen:[],train:null,grade:7,year:"2026/27",grades:[7],weekOpen:true,menuOpen:false,progGrade:null,progPick:null,laps:[],lapStart:0,rv:null,faqOpen:null,limitTouched:false},LS.get("math7.prefs")||{});
+  history:[],seen:[],train:null,grade:7,year:"2026/27",grades:[7],weekOpen:true,menuOpen:false,progGrade:null,progPick:null,laps:[],lapStart:0,rv:null,faqOpen:null,limitTouched:false,program:"school"},LS.get("math7.prefs")||{});
+PROG=st.program;
 let U=UI[st.lang];let activeBlock=null;
 let USER=null,PROFILE=null,authState="loading",sync="ok",authMsg="",authErr=false,linkMsg="",linkErr=false;
 let parents=[],kids=[],kid=null,kidHist=[],kidParents=[],kidHelp=[],myInvites=[],modal=null,helpSent={},myHelp=[];
@@ -382,7 +385,7 @@ async function checkInvite(u,prof){
 }
 function applyProfile(p){
   PROFILE=p;authState="in";LS.set("math7.profile."+p.id,p);
-  const s=p.settings||{};st.name=p.name||"";["level","theme","lang","grade","year","grades","mix","workGrade"].forEach(k=>{if(s[k]!=null)st[k]=s[k]});st.seen=p.seen_oly||[];
+  const s=p.settings||{};st.name=p.name||"";["level","theme","lang","grade","year","grades","mix","workGrade","program"].forEach(k=>{if(s[k]!=null)st[k]=s[k]});PROG=st.program;st.seen=p.seen_oly||[];
   U=UI[st.lang];applyTheme();savePrefs();
   if(p.role==="student"){st.view="main";restoreWork();loadHistory();loadParents();loadMyHelp()}
   else{st.view="kids";loadKids()}
@@ -402,7 +405,7 @@ function saveProfile(){
   savePrefs();if(!PROFILE||!sb)return;
   clearTimeout(profT);
   profT=setTimeout(async()=>{
-    const upd={name:st.name,settings:{level:st.level,theme:st.theme,lang:st.lang,grade:st.grade,year:st.year,grades:st.grades,mix:st.mix,workGrade:st.workGrade},seen_oly:st.seen.slice(-200)};
+    const upd={name:st.name,settings:{level:st.level,theme:st.theme,lang:st.lang,grade:st.grade,year:st.year,grades:st.grades,mix:st.mix,workGrade:st.workGrade,program:st.program},seen_oly:st.seen.slice(-200)};
     Object.assign(PROFILE,upd);LS.set("math7.profile."+PROFILE.id,PROFILE);
     await sb.from("profiles").update(upd).eq("id",PROFILE.id);
   },600);
@@ -479,7 +482,7 @@ function mixOn(){return !!st.mix&&availGrades().length>1}
 function syncGen(){G=genFor(mixOn()?availGrades()[0]:workGrade())}
 // работа из нескольких классов: блоки по очереди из каждого класса, задания со звёздочкой — одного класса
 function buildMixed(meta,lang){
-  const tests=meta.grades.map((n,i)=>{const g=genFor(n);g.setLang(lang);const t=g.buildTest({date:parseDate(meta.date),level:meta.level,type:meta.type==="train"?"theme":meta.type,lang,seed:(meta.seed+i*7919)>>>0,seenOly:meta.seen||[]});t.blocks.forEach(b=>b.grade=n);return t});
+  const tests=meta.grades.map((n,i)=>{const g=genFor(n,meta.program||"school");g.setLang(lang);const t=g.buildTest({date:parseDate(meta.date),level:meta.level,type:meta.type==="train"?"theme":meta.type,lang,seed:(meta.seed+i*7919)>>>0,seenOly:meta.seen||[]});t.blocks.forEach(b=>b.grade=n);return t});
   const reg=tests.map(t=>t.blocks.filter(b=>!b.star)),stars=tests.map(t=>t.blocks.filter(b=>b.star));
   const target=meta.level==="o"?0:meta.type==="period"?28:18;const out=[];let i=0,n=0;
   while(n<target&&reg.some(r=>r.length)){const r=reg[i++%reg.length];if(!r.length)continue;const b=r.shift();out.push(b);n+=b.items.length}
@@ -488,12 +491,12 @@ function buildMixed(meta,lang){
   return {pos:tests[0].pos,cov:[].concat(...tests.map(t=>t.cov)),cur:[].concat(...tests.map(t=>t.cur)),blocks,minutes:tests[0].minutes,
     max:blocks.reduce((s,b)=>s+b.items.length*b.pts,0),olyIds:blocks.filter(b=>b.tpl==="oly"||b.tpl==="proof").flatMap(b=>b.items.map(i=>i.olyId))};
 }
-function buildFrom(meta,lang){if(meta.grades&&meta.grades.length>1)return buildMixed(meta,lang||st.lang);const g=genFor(meta.grade);g.setLang(lang||st.lang);return g.buildTest({date:parseDate(meta.date),level:meta.level,type:meta.type==="train"?"theme":meta.type,lang:lang||st.lang,seed:meta.seed,seenOly:meta.seen||[],only:meta.only||undefined})}
+function buildFrom(meta,lang){if(meta.grades&&meta.grades.length>1)return buildMixed(meta,lang||st.lang);const g=genFor(meta.grade,meta.program||"school");g.setLang(lang||st.lang);return g.buildTest({date:parseDate(meta.date),level:meta.level,type:meta.type==="train"?"theme":meta.type,lang:lang||st.lang,seed:meta.seed,seenOly:meta.seen||[],only:meta.only||undefined})}
 function newTest(){
   const seed=(Math.random()*4294967295)>>>0;
   const only=st.train;st.train=null;st.workCid=Date.now().toString(36)+Math.random().toString(36).slice(2,8);
   syncGen();const mixG=!only&&mixOn()?availGrades():null;
-  st.meta={seed,grade:mixG?null:(only&&gradeOfTopic(only[0])||G.grade),grades:mixG,level:st.level,type:only?"train":st.type,date:st.date,seen:st.seen.slice(),only:only||null};
+  st.meta={seed,grade:mixG?null:(only&&gradeOfTopic(only[0])||G.grade),grades:mixG,level:st.level,type:only?"train":st.type,date:st.date,seen:st.seen.slice(),only:only||null,program:st.program};
   st.test=buildFrom(st.meta);st.answers={};st.checked=false;st.open={};st.confirming=false;st.elapsed=0;st.blockTime={};st.timeUp=false;st.laps=[];st.lapStart=0;
   if(st.timer==="limit"&&!st.limitTouched)st.limit=st.test.minutes;
   st.running=st.timer!=="off";st.view="main";enter("test");
@@ -514,7 +517,7 @@ function finish(){
   const T=totals(st.test,st.answers);
   saveResult({ts:Date.now(),grade:st.meta.grade||7,asOf:st.meta.date,level:st.meta.level,type:st.meta.type,lang:st.lang,score:T.got,max:T.max,items:T.count,
     timeSec:st.timer!=="off"?st.elapsed:0,limitSec:st.timer==="limit"?st.limit*60:0,topics:T.topics,oly:st.test.olyIds,olyOk:T.olyOk,
-    meta:{seed:st.meta.seed,grade:st.meta.grade||7,grades:st.meta.grades||null,date:st.meta.date,level:st.meta.level,type:st.meta.type,seen:st.meta.seen,only:st.meta.only||null},answers:st.answers,blockTime:st.blockTime,laps:st.laps.slice()});
+    meta:{seed:st.meta.seed,grade:st.meta.grade||7,grades:st.meta.grades||null,date:st.meta.date,level:st.meta.level,type:st.meta.type,seen:st.meta.seen,only:st.meta.only||null,program:st.meta.program||"school"},answers:st.answers,blockTime:st.blockTime,laps:st.laps.slice()});
   enter("score");renderAll();window.scrollTo({top:0,behavior:"smooth"});
 }
 
@@ -527,7 +530,7 @@ function posInfo(){
   return {pos,txt,cur:G.currentTopics(pos).map(t=>G.tr(t.name)),curIds:G.currentTopics(pos).map(t=>t.id)};
 }
 const TCOL={rat:'coral',dist:'teal',pow:'yellow',std:'lilac',pct:'sky',eq:'green',word:'coral',func:'teal',poly:'yellow',prism:'lilac',stat:'sky',r6:'green',oly:'lilac',proof:'sky'};
-function allTopics(){return window.GEN.grades().map(genFor).flatMap(g=>g.TOPICS.map(t=>Object.assign({grade:g.grade},t)))}
+function allTopics(){const seen=new Set();return window.GEN.grades().flatMap(n=>[genFor(n,"school"),genFor(n,"prog")]).flatMap(g=>g.TOPICS.map(t=>Object.assign({grade:g.grade},t))).filter(t=>!seen.has(t.id)&&seen.add(t.id))}
 function gradeOfTopic(id){const t=allTopics().find(x=>x.id===id);return t?t.grade:null}
 function tc(id){if(TCOL[id])return 't-'+TCOL[id];const t=allTopics().find(x=>x.id===id);return 't-'+((t&&t.col)||'sky')}
 
@@ -542,14 +545,14 @@ function gradesTitle(){
 }
 const ICON_DOWN=`<svg class="chev-d" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>`;
 const ICON_EXIT=`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 16l4-4-4-4M14 12H4"/></svg>`;
-function progTopicsFor(g){const gen=window.GEN.grade(g);return gen?gen.TOPICS.filter(t=>t.start>=0):[]}
+function progTopicsFor(g){const gen=window.GEN.grade(g)&&genFor(g);return gen?gen.TOPICS.filter(t=>t.start>=0):[]}
 function progDefaultPick(g){const P=posInfo();const ts=progTopicsFor(g);const own=g===Number(st.grade);
   const gen=genFor(g);const o={};ts.forEach(t=>{o[t.id]=own?t.start<P.pos.weeks||gen.currentTopics(P.pos).some(c=>c.id===t.id):true});return o}
 function selectHtml(id,vals,cur,label){return `<label class="fld"><span>${label}</span><span class="selwrap"><select class="txt sel" id="${id}">${vals.map(v=>`<option value="${v}"${String(v)===String(cur)?" selected":""}>${v}</option>`).join("")}</select>${ICON_DOWN}</span></label>`}
 function seenKey(){return "math7.seen."+(USER&&USER.id)+"."+(kid&&kid.student_id)}
 function kidSeen(){return LS.get(seenKey())||{works:0,help:0}}
 function tagsHtml(){const P=posInfo();return `<span class="chip">${esc(P.txt)}</span>${P.cur.map((n,i)=>`<span class="chip now ${tc(P.curIds[i])}">${U.now}: ${esc(n)}</span>`).join("")}`}
-function topicName(id){const t=window.GEN.grades().map(genFor).flatMap(g=>g.TOPICS).find(x=>x.id===id);if(t)return G.tr(t.name);if(id==="oly")return U.oly;if(id==="proof")return U.proofs;return id}
+function topicName(id){const t=allTopics().find(x=>x.id===id);if(t)return G.tr(t.name);if(id==="oly")return U.oly;if(id==="proof")return U.proofs;return id}
 function subhead(title,backTo){return `<div class="subhead"><button class="back" type="button" data-go="${backTo}" aria-label="${esc(U.back)}">${ICON_BACK}</button><h2>${esc(title)}</h2></div>`}
 
 
@@ -667,6 +670,7 @@ function viewSettings(){
   return `<div class="screen">${subhead(U.settings,"main")}
     <div class="sec">${U.secWork}</div>
     <div class="group"><div class="srow"><span class="k">${U.level}</span>${seg("level",["n","a","o"],st.level,LV,"sm")}</div>
+      <div class="srow"><span class="k">${U.program}</span>${seg("program",["school","prog"],st.program,U.progs,"sm")}</div>
       <button class="srow link" type="button" data-go="faq" data-faq="0"><span>${U.levelsWhat}</span>${ICON_CHEV}</button></div>
     <div class="sec">${U.secLook}</div>
     <div class="group"><div class="srow"><span class="k">${U.theme}</span>${seg("theme",["system","light","dark"],st.theme,U.th,"sm")}</div></div>
@@ -960,7 +964,7 @@ function delList(m){
   if(PROFILE.role==="student"){const ps=parents.filter(p=>p.status==="active");return [U.dWorks(st.history.length),U.dProgress,U.dLater].concat(ps.length?[U.dParents(ps.map(p=>p.name||p.email).join(", "))]:[])}
   const ks=kids.filter(k=>k.status==="active");return (ks.length?[U.dKids(ks.map(k=>k.name||k.email).join(", "))]:[]).concat(myInvites.length?[U.dInvites]:[]);
 }
-function delCtx(){G.setLang(st.lang);const topics={};allTopics().forEach(t=>{topics[t.id]={n:G.tr(t.name),c:HEX[TCOL[t.id]||t.col||"sky"]}});return {topics,olyTotal:window.GEN.grades().map(genFor).reduce((s,g)=>s+g.OLY.length,0)}}
+function delCtx(){G.setLang(st.lang);const topics={};allTopics().forEach(t=>{topics[t.id]={n:G.tr(t.name),c:HEX[TCOL[t.id]||t.col||"sky"]}});return {topics,olyTotal:window.GEN.grades().map(n=>genFor(n)).reduce((s,g)=>s+g.OLY.length,0)}}
 function renderMain(){
   G.setLang(st.lang);
   const v=st.view;const m=document.getElementById("main");
@@ -1043,6 +1047,7 @@ document.addEventListener("click",e=>{
     if(k==="theme"){applyTheme();saveProfile()}
     if(k==="level")saveProfile();
     if(k==="workGrade"){saveProfile();syncGen()}
+    if(k==="program"){PROG=v;saveProfile();syncGen()}
     if(k==="progGrade"){st.progGrade=Number(v);st.progPick=null;st[k]=v;renderMain();renderBar();return}
     if(k==="timer"&&st.test&&!st.checked)st.running=v!=="off";
     if(k==="type"&&!st.limitTouched)st.limit=v==="period"?90:45;
