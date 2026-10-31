@@ -8,6 +8,7 @@ export default {
   title: "Математика, 7 класс",
   prog: "Программа",
   settings: "Настройки",
+  langLbl: "Язык",
   profile: "Профиль",
   date: "Дата",
   timer: "Таймер",

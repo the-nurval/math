@@ -61,7 +61,7 @@
 }
 .score .big {
   font-family: var(--f-hand);
-  color: var(--red);
+  color: var(--red-text);
   font-size: 2.2rem;
   line-height: 1;
 }
@@ -115,7 +115,7 @@
   font-variant-numeric: tabular-nums;
 }
 .task-h .star {
-  color: var(--red);
+  color: var(--red-text);
   font-weight: 700;
 }
 .task-h .got {

@@ -32,6 +32,7 @@ export const st = Object.assign(
     grades: [7],
     weekOpen: true,
     menuOpen: false,
+    langOpen: false,
     progGrade: null,
     progPick: null,
     laps: [],

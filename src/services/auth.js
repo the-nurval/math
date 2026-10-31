@@ -145,6 +145,8 @@ export function applyProfile(p) {
       if (s[k] != null) st[k] = s[k];
     },
   );
+  // классы в навбаре не выбирались — показываем свой класс из профиля
+  if (s.grades == null) st.grades = [Number(st.grade)];
   st.seen = p.seen_oly || [];
   useLang(st.lang);
   applyTheme();

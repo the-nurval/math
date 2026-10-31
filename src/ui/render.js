@@ -11,10 +11,12 @@ import { viewProg } from "../screens/program.js";
 import { viewFaq, viewSettings } from "../screens/settings.js";
 import { session, st } from "../state.js";
 import { renderBar } from "./bar.js";
-import { placeThumbs, seg } from "./controls.js";
+import { placeThumbs } from "./controls.js";
 import { ICON_DOWN } from "./icons.js";
 import { runEnter } from "./motion.js";
 import { G, GRADES, gradesTitle } from "../work/grades.js";
+
+const LANGS = { ru: "Русский", et: "Eesti", en: "English" };
 
 export function renderMain() {
   G.setLang(st.lang);
@@ -89,13 +91,19 @@ export function renderNav() {
     gm.innerHTML = `<p class="gm-t">${U.gradesPick}</p>${GRADES.map(n => `<div class="gm-row${st.grades.includes(n) ? " on" : ""}"><label><input type="checkbox" data-grade="${n}"${st.grades.includes(n) ? " checked" : ""}>${U.gradeN(n)}${n === Number(st.grade) ? ` · ${U.mine}` : ""}</label><button class="link-btn" type="button" data-go="prog" data-pg="${n}">${U.prog}</button></div>`).join("")}`;
   document.getElementById("ib-set").setAttribute("aria-label", U.settings);
   document.getElementById("ib-prof").setAttribute("aria-label", U.profile);
-  document.getElementById("langsw").innerHTML = seg(
-    "lang",
-    ["ru", "et", "en"],
-    st.lang,
-    { ru: "RU", et: "ET", en: "EN" },
-    "sm",
-  );
+  const lb = document.getElementById("lbtn");
+  lb.innerHTML = `<span>${st.lang.toUpperCase()}</span>${ICON_DOWN}`;
+  lb.setAttribute("aria-label", U.langLbl);
+  lb.setAttribute("aria-expanded", String(st.langOpen));
+  const lm = document.getElementById("lmenu");
+  lm.hidden = !st.langOpen;
+  if (st.langOpen)
+    lm.innerHTML = Object.entries(LANGS)
+      .map(
+        ([v, nm]) =>
+          `<button type="button" role="menuitemradio" data-set="lang" data-v="${v}" aria-checked="${st.lang === v}">${nm}</button>`,
+      )
+      .join("");
   requestAnimationFrame(placeThumbs);
   const inApp = session.authState === "in";
   ["ib-set", "ib-prof"].forEach(id => {

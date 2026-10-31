@@ -2,7 +2,7 @@ export default {
   faqItems: [
     [
       "Mida tähendavad tasemed Easy, Medium, Hard",
-      `<div class="lvl"><b>Easy</b><span>Kooli tase: ülesanded nagu tavalises kontrolltöös, lõpus üks tärnülesanne.</span><b>Medium</b><span>Arvud ja avaldised on keerulisemad, rohkem murde, absoluutväärtuse ja parameetriga ülesanded. Kaks tärnülesannet ja üks tõestus.</span><b>Hard</b><span>Olümpiaadiülesanded loogikale ja ebatavalisele mõtlemisele läbitud teemadel, lisaks tõestus. 60 minutit.</span></div><p>Taset saab muuta seadetes.</p>`,
+      `<div class="lvl"><b>Easy</b><span>Kooli tase: ülesanded nagu tavalises kontrolltöös, lõpus üks tärnülesanne.</span><b>Medium</b><span>Samad teemad, kuid arvud ja avaldised on keerulisemad. Lõpus kaks tärnülesannet ja üks tõestus.</span><b>Hard</b><span>Kuus olümpiaadiülesannet loogikale ja ebatavalisele vaatele läbitud teemadel, üks tõestus ja kõrgendatud raskusega ülesanne käesoleval teemal (kaks osa). 60 minutit.</span></div><p>Taset saab muuta seadetes.</p>`,
     ],
     [
       "Millised teemad tulevad töösse",
@@ -10,7 +10,7 @@ export default {
     ],
     [
       "Kuidas vastust kirjutada",
-      "<p>Kümnendmurd: <code>-3,5</code> või <code>-3.5</code>. Harilik murd: <code>-7/4</code>. Segaarv: <code>2 1/3</code>.</p><p>Lõpmatu kümnendmurru korral kirjuta harilik murd või ümarda sajandikeni. Mitu vastust eralda «;».</p>",
+      "<p>Kümnendmurd: <code>-3,5</code> või <code>-3.5</code>. Harilik murd: <code>-7/4</code>. Segaarv: <code>2 1/3</code>.</p><p>Lõpmatu murd: harilik murd <code>1/3</code>, perioodiga <code>0,(3)</code> või sajandikeni ümardatult <code>0,33</code>. Kui ülesanne palub kirjutada kümnendmurru, siis ainult perioodiga.</p><p>Mitu vastust eralda semikooloniga: <code>-1,5; 0,3</code>. Järjekord pole oluline. Koma eraldajaks ei sobi: see eraldab murdosa.</p>",
     ],
     [
       "Mille poolest erinevad teemakontroll ja perioodi kokkuvõte",

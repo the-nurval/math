@@ -104,7 +104,7 @@ export function viewProfile(o) {
       }</div>
     <div class="kpis"><div class="kpi"><b>${n}</b><span>${U.kWorks}</span></div><div class="kpi"><b>${n ? avg + "%" : "—"}</b><span>${U.kAvg}</span></div><div class="kpi"><b>${streak}</b><span>${U.kStreak}</span></div><div class="kpi"><b>${avgTime ? fmtTime(avgTime) : "—"}</b><span>${U.kTime}</span></div></div>
    </div>
-   ${ro ? "" : `<p class="sub below">${session.sync === "ok" ? U.synced : U.offline}</p>`}
+   ${ro || session.sync === "ok" ? "" : `<p class="sub below">${U.offline}</p>`}
    <div class="sec">${U.act}</div><div class="group"><div class="chartbox">${heatSvg(hist)}</div></div>
    <div class="sec">${U.trend}</div><div class="group"><div class="chartbox">${trendSvg(hist)}</div></div>`;
   if (rows.length) {

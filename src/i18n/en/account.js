@@ -25,7 +25,6 @@ export default {
   active: "connected",
   pending: "asks to see your progress",
   logout: "Sign out",
-  synced: "Progress is saved on the server.",
   offline:
     "No connection to the server. Results are saved on this device and will be sent when you're back online.",
   kidsTitle: "Students",

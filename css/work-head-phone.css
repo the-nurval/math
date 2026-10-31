@@ -1,0 +1,74 @@
+/* Шапка работы и заголовок листа на телефоне: всё помещается в ширину блока */
+@media (max-width: 599px) {
+  /* развёрнутый вид: название настройки над ней, переключатели на всю ширину */
+  .hsrow {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+  .head-a .seg {
+    width: 100%;
+    height: auto;
+    min-height: var(--ctl);
+  }
+  .head-a .seg button {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 4px 6px;
+    font-size: 0.84rem;
+    line-height: 1.15;
+    white-space: normal;
+  }
+  .head-a .gline {
+    gap: 12px;
+  }
+  .head-a .gline > span {
+    width: 100%;
+  }
+  .head-a input[type="date"] {
+    width: 100%;
+    max-width: 100%;
+  }
+  .hfoot {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  /* свёрнутый вид: фильтры, под ними кнопки; окошко выбора — на ширину блока */
+  .head.head-b {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .fright {
+    justify-content: flex-start;
+  }
+  .fwrap {
+    position: static;
+  }
+  .hpop {
+    left: 12px;
+    right: 12px;
+    min-width: 0;
+  }
+  .hpop .seg {
+    width: 100%;
+    height: auto;
+    min-height: var(--ctl);
+  }
+  .hpop .seg button {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 4px 6px;
+    font-size: 0.84rem;
+    line-height: 1.15;
+    white-space: normal;
+  }
+
+  .week-h {
+    flex-wrap: wrap;
+  }
+
+  /* заголовок листа: кнопка «Развернуть» переносится под название */
+  .sh-top {
+    flex-wrap: wrap;
+  }
+}

@@ -8,6 +8,7 @@ export default {
   title: "Matemaatika, 7. klass",
   prog: "Õppekava",
   settings: "Seaded",
+  langLbl: "Keel",
   profile: "Profiil",
   date: "Kuupäev",
   timer: "Taimer",

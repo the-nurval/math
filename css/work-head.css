@@ -17,10 +17,7 @@
   transition: background var(--dur-color) var(--ease-standard);
 }
 .mixbtn[aria-pressed="true"] {
-  background: #d9e2ee;
-}
-:root[data-theme="dark"] .mixbtn[aria-pressed="true"] {
-  background: #2b3a55;
+  background: var(--fill-on);
 }
 .segdis {
   opacity: 0.45;

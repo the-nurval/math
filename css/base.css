@@ -22,6 +22,8 @@
   --bar: #ffffffee;
   --seg-track: #eef1f0;
   --seg-thumb: #ffffff;
+  --fill: #e4ebf3;
+  --fill-on: #d9e2ee;
   --ctl: 42px;
   --r-ctl: 12px;
   --r-card: 28px;
@@ -57,6 +59,15 @@
     --bar: #1a2029ee;
     --seg-track: #232b36;
     --seg-thumb: #3a4555;
+    --t-coral: #3d2723;
+    --t-yellow: #3a3220;
+    --t-teal: #1d3532;
+    --t-lilac: #2b2a48;
+    --t-sky: #1f2f48;
+    --t-green: #1f3627;
+    --fill: #2a3442;
+    --fill-on: #33425a;
+    --red-text: #ff7a72;
     color-scheme: dark;
   }
 }
@@ -82,6 +93,15 @@
   --bar: #1a2029ee;
   --seg-track: #232b36;
   --seg-thumb: #3a4555;
+  --t-coral: #3d2723;
+  --t-yellow: #3a3220;
+  --t-teal: #1d3532;
+  --t-lilac: #2b2a48;
+  --t-sky: #1f2f48;
+  --t-green: #1f3627;
+  --fill: #2a3442;
+  --fill-on: #33425a;
+  --red-text: #ff7a72;
   color-scheme: dark;
 }
 @media (max-width: 849px) {

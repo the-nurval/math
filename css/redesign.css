@@ -8,9 +8,11 @@
   --soft: #f3f7fb;
   --grid: #edf2f8;
   --ink: #13203b;
-  --muted: #6b7a90;
+  --muted: #5b6a80;
+  --red-text: #c2410c;
+  --bar: rgba(255, 255, 255, 0.85);
   --line: #e3eaf2;
-  --pen: #3b6fe0;
+  --pen: #3466d8;
   --pen-soft: #eaf1fd;
   --red: #f15523;
   --green: #2fa36b;
@@ -178,7 +180,7 @@ input.txt {
 }
 .item {
   border: 0;
-  background: #fff;
+  background: var(--paper);
   box-shadow: 0 2px 8px rgba(19, 32, 59, 0.06);
 }
 .item.ok {
@@ -207,10 +209,11 @@ input.ans {
 .faq details {
   border-color: var(--line);
 }
+/* плашки прижаты к краям карточки: отступ 8 → радиус 28 − 8 = 20; текст на линии +24 */
 .kpis {
   border-top: 0;
-  gap: 12px;
-  padding: 0 var(--pad-card) var(--pad-card);
+  gap: 8px;
+  padding: 0 8px 8px;
 }
 .kpi {
   background: var(--soft);
@@ -266,7 +269,7 @@ input.ans {
   background: var(--t-green);
 }
 .bar {
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--bar);
   border-top: 0;
   box-shadow: 0 -8px 24px rgba(19, 32, 59, 0.05);
 }

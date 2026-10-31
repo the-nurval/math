@@ -25,7 +25,6 @@ export default {
   active: "ühendatud",
   pending: "palub ligipääsu edusammudele",
   logout: "Logi välja",
-  synced: "Edusammud on serveris salvestatud.",
   offline:
     "Ühendus serveriga puudub. Tulemused on selles seadmes salvestatud ja saadetakse, kui ühendus taastub.",
   kidsTitle: "Õpilased",

@@ -8,6 +8,7 @@ export default {
   title: "Maths, Grade 7",
   prog: "Curriculum",
   settings: "Settings",
+  langLbl: "Language",
   profile: "Profile",
   date: "Date",
   timer: "Timer",

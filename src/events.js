@@ -24,6 +24,10 @@ export function bindEvents() {
       st.menuOpen = false;
       renderNav();
     }
+    if (st.langOpen && !e.target.closest("#lwrap")) {
+      st.langOpen = false;
+      renderNav();
+    }
     if (st.pop && !e.target.closest(".fwrap")) {
       st.pop = null;
       if (st.view === "main") renderMain();
@@ -35,6 +39,10 @@ export function bindEvents() {
     }
     const s = e.target.closest("[data-set]");
     if (s) {
+      if (st.langOpen && s.closest("#lmenu")) {
+        st.langOpen = false;
+        renderNav();
+      }
       changeSetting(s);
       return;
     }
@@ -160,8 +168,12 @@ export function bindEvents() {
       return;
     }
     if (t.id === "f-grade") {
+      const was = Number(st.grade);
       st.grade = Number(t.value);
+      // тренировался только в своём классе — переходит вместе с ним
+      if (st.grades.length === 1 && st.grades[0] === was) st.grades = [st.grade];
       saveProfile();
+      renderNav();
       return;
     }
     if (t.id === "f-date" && st.headMode === "compact" && st.view === "main") {

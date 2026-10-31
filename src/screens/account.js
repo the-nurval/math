@@ -10,9 +10,9 @@ export function viewAccount() {
   return `<div class="screen">${subhead(U.accountSec, "settings")}
     <div class="group" style="margin-top:12px"><div class="srow"><span><span class="k">${esc((session.user && session.user.email) || "")}</span><br><span class="sub">${U.roleNow(session.profile.role)}</span></span><button class="btn ghost" type="button" data-act="logout">${U.logout}</button></div></div>
     <div class="sec">${U.changeRole}</div>
-    <div class="group"><div class="srow"><span class="sub">${session.profile.role_changed ? U.roleChangedAlready : U.changeOnce}</span>${session.profile.role_changed ? "" : `<button class="btn ghost" type="button" data-act="role1">${U.changeRole}: ${esc(other)}</button>`}</div></div>
+    <div class="group"><div class="srow stack"><span class="sub">${session.profile.role_changed ? U.roleChangedAlready : U.changeOnce}</span>${session.profile.role_changed ? "" : `<button class="btn ghost" type="button" data-act="role1">${U.changeRole}: ${esc(other)}</button>`}</div></div>
     <div class="sec">${U.deleteAcc}</div>
-    <div class="group"><div class="srow"><span class="sub">${U.delWarn}</span><button class="btn ghost danger" type="button" data-act="d1">${U.deleteAcc}</button></div></div>
+    <div class="group"><div class="srow stack"><span class="sub">${U.delWarn}</span><button class="btn ghost danger" type="button" data-act="d1">${U.deleteAcc}</button></div></div>
   </div>`;
 }
 

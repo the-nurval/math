@@ -137,13 +137,13 @@ input.num {
   width: 5.5em;
 }
 input.num:disabled {
-  opacity: 0.45;
+  opacity: 0.7;
 }
 .unit {
   color: var(--muted);
 }
 .unit.off {
-  opacity: 0.45;
+  opacity: 0.8;
 }
 
 /* шапка главной */

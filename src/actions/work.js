@@ -18,6 +18,12 @@ export const workActions = {
   },
   gmenu(a) {
     st.menuOpen = !st.menuOpen;
+    st.langOpen = false;
+    renderNav();
+  },
+  lmenu(a) {
+    st.langOpen = !st.langOpen;
+    st.menuOpen = false;
     renderNav();
   },
   weektoggle(a) {
