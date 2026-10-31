@@ -28,19 +28,23 @@
     width: 100%;
     max-width: 100%;
   }
-  /* нижняя строка в обоих видах одинаковая и прижата к углам (отступ 12 → радиус 16):
-     «Новая работа» слева, кнопка сворачивания справа на том же месте */
+  /* всё в карточке на двух линиях: левая и правая в 24 px от края. Нижняя строка в обоих видах
+     одинаковая: «Новая работа» слева, кнопка сворачивания справа на том же месте. Элементы свободные — «таблетки» */
   .head.head-a {
-    padding-bottom: 12px;
+    padding-bottom: 16px;
   }
   .hfoot {
-    margin: 0 12px;
-    padding: 12px 0 0;
+    margin: 0 24px;
+    padding: 16px 0 0;
     border-top: 0;
   }
   .hfoot .btn,
-  .head-b .btn {
-    border-radius: 16px;
+  .head-b .btn,
+  .head-b .fchip,
+  .head-b .ib-soft,
+  .hidebtn,
+  .week .pill-btn {
+    border-radius: var(--r-ctl);
   }
   .hidebtn {
     width: 42px;
@@ -55,6 +59,10 @@
   .head.head-b {
     flex-direction: column;
     align-items: stretch;
+    padding: 16px 24px;
+  }
+  .week {
+    padding: 16px 24px;
   }
   .fright {
     justify-content: space-between;
@@ -66,8 +74,8 @@
     position: static;
   }
   .hpop {
-    left: 12px;
-    right: 12px;
+    left: 24px;
+    right: 24px;
     min-width: 0;
   }
   .hpop .seg {
