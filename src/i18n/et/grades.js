@@ -7,7 +7,7 @@ export default {
   yearLbl: "Õppeaasta",
   gradeLbl: "Klass",
   weekHide: "Peida teemad",
-  weekShow: n => `Nädala teemad · ${n}`,
+  weekShow: n => `Teemad · ${n}`,
   progGrade: "Klass",
   progMine:
     "Õppekava on valitud profiilis märgitud klassi järgi. Võid valida teise klassi ja märkida teemad, mida harjutada.",

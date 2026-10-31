@@ -7,7 +7,7 @@ export default {
   yearLbl: "School year",
   gradeLbl: "Grade",
   weekHide: "Hide topics",
-  weekShow: n => `Topics this week · ${n}`,
+  weekShow: n => `Topics · ${n}`,
   progGrade: "Grade",
   progMine:
     "The curriculum follows the grade in your profile. You can pick another grade and tick the topics you want to practise.",
