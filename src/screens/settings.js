@@ -2,17 +2,19 @@
 import { LV, U } from "../i18n/index.js";
 import { esc } from "../lib/format.js";
 import { st } from "../state.js";
-import { seg, subhead } from "../ui/controls.js";
+import { pick, subhead } from "../ui/controls.js";
+import { LANGS } from "../ui/render.js";
 import { ICON_CHEV } from "../ui/icons.js";
 
 export function viewSettings() {
   return `<div class="screen">${subhead(U.settings, "main")}
     <div class="sec">${U.secWork}</div>
-    <div class="group"><div class="srow"><span class="k">${U.level}</span>${seg("level", ["n", "a", "o"], st.level, LV, "sm")}</div>
-      <div class="srow"><span class="k">${U.program}</span>${seg("program", ["school", "prog"], st.program, U.progs, "sm")}</div>
+    <div class="group">${pick(U.level, 'data-sel="level"', ["n", "a", "o"], st.level, LV)}
+      ${pick(U.program, 'data-sel="program"', ["school", "prog"], st.program, U.progs)}
       <button class="srow link" type="button" data-go="faq" data-faq="0"><span>${U.levelsWhat}</span>${ICON_CHEV}</button></div>
     <div class="sec">${U.secLook}</div>
-    <div class="group"><div class="srow"><span class="k">${U.theme}</span>${seg("theme", ["system", "light", "dark"], st.theme, U.th, "sm")}</div></div>
+    <div class="group">${pick(U.theme, 'data-sel="theme"', ["system", "light", "dark"], st.theme, U.th)}
+      ${pick(U.langLbl, 'data-sel="lang"', Object.keys(LANGS), st.lang, LANGS)}</div>
     <div class="sec">${U.secHelp}</div>
     <div class="group"><button class="srow link" type="button" data-go="faq"><span>${U.faq}</span>${ICON_CHEV}</button></div>
     <div class="sec">${U.accountSec}</div>

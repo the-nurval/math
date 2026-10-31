@@ -1,4 +1,4 @@
-// Общие элементы: переключатель (сегменты), список выбора, заголовок экрана.
+// Общие элементы: переключатель (сегменты), строка выбора, заголовок экрана.
 import { U } from "../i18n/index.js";
 import { esc } from "../lib/format.js";
 import { ICON_BACK, ICON_DOWN } from "./icons.js";
@@ -8,8 +8,12 @@ export function seg(name, vals, cur, labels, cls) {
   return `<div class="seg${cls ? " " + cls : ""}" role="group" data-seg="${name}"><span class="thumb" aria-hidden="true"></span>${vals.map(v => `<button type="button" data-set="${name}" data-v="${v}" aria-pressed="${cur === v}">${labels[v]}</button>`).join("")}</div>`;
 }
 
-export function selectHtml(id, vals, cur, label) {
-  return `<label class="fld"><span>${label}</span><span class="selwrap"><select class="txt sel" id="${id}">${vals.map(v => `<option value="${v}"${String(v) === String(cur) ? " selected" : ""}>${v}</option>`).join("")}</select>${ICON_DOWN}</span></label>`;
+// строка списка «подпись — значение»: прозрачный список выбора лежит поверх всей строки
+export function pick(label, attr, vals, cur, labels) {
+  const lb = labels || {};
+  const nm = v => esc(String(lb[v] ?? v));
+  const on = vals.find(v => String(v) === String(cur));
+  return `<label class="srow selrow"><span>${esc(label)}</span><span class="pv">${on == null ? "" : nm(on)}${ICON_DOWN}</span><select ${attr} aria-label="${esc(label)}">${vals.map(v => `<option value="${v}"${String(v) === String(cur) ? " selected" : ""}>${nm(v)}</option>`).join("")}</select></label>`;
 }
 
 export function subhead(title, backTo) {

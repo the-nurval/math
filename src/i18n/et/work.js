@@ -70,6 +70,7 @@ export default {
   namePh: "Õpilase nimi",
   grade: "7. klass",
   year: "õppeaasta",
+  sumSec: "Kokkuvõte",
   kWorks: "tööd",
   kAvg: "keskmine tulemus",
   kStreak: "päeva järjest",

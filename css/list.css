@@ -1,0 +1,176 @@
+/* Списки «подпись — значение»: настройки, профиль, развёрнутая шапка работы.
+   Подпись слева, значение серым справа, выбор — меню по стрелке; тонкие линии от +24 до −24 px */
+:root {
+  --r-card: 16px;
+}
+.sec {
+  margin: 24px 0 8px var(--pad-card);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.group + .group {
+  margin-top: 12px;
+}
+.srow {
+  position: relative;
+  padding: 12px var(--pad-card);
+  min-height: 56px;
+  font-size: 0.95rem;
+}
+.srow.stack {
+  padding-block: 16px;
+}
+.srow + .srow,
+.head-a > .srow + .srow {
+  border-top: 0;
+}
+.srow + .srow::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: var(--pad-card);
+  right: var(--pad-card);
+  border-top: 1px solid var(--line);
+}
+.srow .k {
+  color: var(--ink);
+}
+.srow > b {
+  justify-self: end;
+  color: var(--muted);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+/* выбор: значение и стрелка справа, сам список прозрачный поверх всей строки */
+.srow.selrow {
+  cursor: pointer;
+}
+.srow.selrow:hover,
+.srow.selrow:focus-within {
+  background: var(--soft);
+}
+.srow.selrow:focus-within {
+  outline: 2px solid var(--pen);
+  outline-offset: -2px;
+}
+.pv {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.pv svg {
+  width: 18px;
+  height: 18px;
+}
+.srow.selrow select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  font-size: 16px;
+  appearance: none;
+  -webkit-appearance: none;
+}
+/* поле прямо в строке: без подложки, текст справа */
+.srow input.inl,
+.head-a input[type="date"] {
+  justify-self: end;
+  width: 100%;
+  max-width: 220px;
+  height: 40px;
+  padding: 0 0 0 8px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  font: 600 1rem var(--f-body);
+  text-align: right;
+}
+.srow input.inl:focus {
+  outline: 0;
+  color: var(--ink);
+}
+.srow:has(input.inl:focus) {
+  background: var(--soft);
+}
+.head-a input[type="date"] {
+  max-width: 180px;
+  justify-content: flex-end;
+}
+.head-a input[type="date"]::-webkit-date-and-time-value {
+  text-align: right;
+}
+.head-a input.num {
+  justify-self: end;
+}
+.ico-l {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+/* заголовок группы с пояснением справа: пояснение обычным текстом */
+.sec .sub {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+/* профиль: аватар, имя и почта */
+.pcard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px var(--pad-card);
+}
+.pcard .ava {
+  margin: 0;
+  flex: none;
+}
+.pid {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: grid;
+}
+.pid b {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.pid .sub {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* шапка работы: строки как в списке, внизу кнопки на тех же линиях */
+.head.head-a {
+  padding: 4px 0 0;
+}
+.head-a .hfoot {
+  margin: 0 var(--pad-card);
+  padding: 16px 0 24px;
+  border-top: 1px solid var(--line);
+}
+.head-a .gline {
+  justify-self: end;
+}
+@media (max-width: 599px) {
+  .head-a .gline {
+    justify-self: stretch;
+  }
+  .head-a .hfoot {
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+  }
+}
+/* учебная неделя: кнопка на правой линии, как в шапке */
+.week {
+  padding: 16px var(--pad-card);
+}

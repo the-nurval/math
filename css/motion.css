@@ -180,17 +180,6 @@
 .overlay.out .dialog {
   animation: dlgOut var(--dur-exit) var(--ease-exit) both;
 }
-/* выход заметнее: в карточке профиля */
-.pcard {
-  grid-template-columns: 56px minmax(0, 1fr) auto;
-}
-.pcard .out {
-  grid-column: 3;
-  grid-row: 1 / span 2;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
 
 /* навбар: логотип спокойный, монохромный; фон с размытием, чтобы при прокрутке ничего не сливалось */
 .nav {

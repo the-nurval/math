@@ -70,6 +70,7 @@ export default {
   namePh: "Student's name",
   grade: "Grade 7",
   year: "school year",
+  sumSec: "Summary",
   kWorks: "tests",
   kAvg: "average score",
   kStreak: "days in a row",

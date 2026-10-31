@@ -6,10 +6,12 @@ import { secBadge, studentProfileOpts } from "../family/parts.js";
 import { sheetHtml } from "../main/sheet.js";
 import { heatSvg, trendSvg } from "./charts.js";
 import { family, session, st } from "../../state.js";
-import { selectHtml, subhead } from "../../ui/controls.js";
+import { pick, subhead } from "../../ui/controls.js";
 import { ICON_CHEV, ICON_EXIT } from "../../ui/icons.js";
 import { GRADES, availGrades, genFor, tc, topicName } from "../../work/grades.js";
 import { buildFrom } from "../../work/test.js";
+
+const cap = t => t.charAt(0).toUpperCase() + t.slice(1);
 
 export function sortedHist() {
   return st.history.slice().sort((a, b) => b.ts - a.ts);
@@ -93,17 +95,27 @@ export function viewProfile(o) {
   const nm = ro ? o.name || "" : st.name;
   const initial = (nm || "").trim().charAt(0).toUpperCase() || "?";
   let h = `<div class="screen">${subhead(o.title || U.profile, o.back || "main")}
-   <div class="group" style="margin-top:12px">
-    <div class="pcard${ro ? " ro" : ""}"><div class="ava" id="ava">${esc(initial)}</div>
-      ${
-        ro
-          ? `<div><b style="font-size:1.1rem">${esc(nm || U.noName)}</b><br><span class="sub">${U.title}${o.level && LV[o.level] ? " · " + LV[o.level] : ""} · ${U.year} ${y0}</span></div><div class="out"><button class="btn ghost" type="button" data-go="prog">${U.prog}</button></div>`
-          : `<div class="pfields"><label class="fld"><span>${U.name}</span><input class="txt" id="f-name" value="${esc(st.name)}" placeholder="${esc(U.namePh)}" autocomplete="off"></label>
-        <div class="pfrow">${selectHtml("f-year", ["2026/27", "2027/28"], st.year, U.yearLbl)}${selectHtml("f-grade", GRADES, st.grade, U.gradeLbl)}</div></div>
-        <div class="out out-col"><span class="sub" title="${esc((session.user && session.user.email) || "")}">${esc((session.user && session.user.email) || "")}</span><button class="btn exit" type="button" data-act="logout">${ICON_EXIT}<span>${U.logout}</span></button></div>`
-      }</div>
-    <div class="kpis"><div class="kpi"><b>${n}</b><span>${U.kWorks}</span></div><div class="kpi"><b>${n ? avg + "%" : "—"}</b><span>${U.kAvg}</span></div><div class="kpi"><b>${streak}</b><span>${U.kStreak}</span></div><div class="kpi"><b>${avgTime ? fmtTime(avgTime) : "—"}</b><span>${U.kTime}</span></div></div>
-   </div>
+   <div class="group" style="margin-top:12px"><div class="pcard"><div class="ava" id="ava">${esc(initial)}</div>
+    <div class="pid"><b id="pname">${esc(nm || U.noName)}</b><span class="sub">${
+      ro
+        ? `${U.title}${o.level && LV[o.level] ? " · " + LV[o.level] : ""} · ${U.year} ${y0}`
+        : esc((session.user && session.user.email) || "")
+    }</span></div>${ro ? `<button class="btn ghost" type="button" data-go="prog">${U.prog}</button>` : ""}</div></div>
+   ${
+     ro
+       ? ""
+       : `<div class="group"><label class="srow"><span>${U.name}</span><input class="txt inl" id="f-name" value="${esc(st.name)}" placeholder="${esc(U.namePh)}" autocomplete="off"></label>
+    ${pick(U.yearLbl, 'id="f-year"', ["2026/27", "2027/28"], st.year)}${pick(U.gradeLbl, 'id="f-grade"', GRADES, st.grade)}</div>`
+   }
+   <div class="sec">${U.sumSec}</div><div class="group">${[
+     [U.kWorks, n],
+     [U.kAvg, n ? avg + "%" : "—"],
+     [U.kStreak, streak],
+     [U.kTime, avgTime ? fmtTime(avgTime) : "—"],
+   ]
+     .map(([k, v]) => `<div class="srow"><span>${cap(k)}</span><b>${v}</b></div>`)
+     .join("")}</div>
+   ${ro ? "" : `<div class="group"><button class="srow link" type="button" data-act="logout"><span class="ico-l">${ICON_EXIT}${U.logout}</span></button></div>`}
    ${ro || session.sync === "ok" ? "" : `<p class="sub below">${U.offline}</p>`}
    <div class="sec">${U.act}</div><div class="group"><div class="chartbox">${heatSvg(hist)}</div></div>
    <div class="sec">${U.trend}</div><div class="group"><div class="chartbox">${trendSvg(hist)}</div></div>`;

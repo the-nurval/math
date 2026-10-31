@@ -2,7 +2,7 @@
 import { U } from "../../i18n/index.js";
 import { esc, fmtD, parseDate } from "../../lib/format.js";
 import { st } from "../../state.js";
-import { seg } from "../../ui/controls.js";
+import { pick, seg } from "../../ui/controls.js";
 import { ICON_DOWN, ICON_SHUF, ICON_UP } from "../../ui/icons.js";
 import { mixOn, posInfo, tc, workGrade } from "../../work/grades.js";
 
@@ -36,9 +36,21 @@ function hType() {
   return `<div class="tline">${seg("type", ["theme", "period"], st.type, U.ty)}</div>`;
 }
 
+// классы и «вперемешку» — пункты одного списка выбора
+function gradeLabels(avail) {
+  return Object.fromEntries(
+    avail.map(n => [n, U.gradeN(n)]).concat([["mix", `${U.mixed}: ${avail.join(", ")}`]]),
+  );
+}
+
+// развёрнутый вид — список «подпись — значение», как в настройках
 export function headA(avail, multi) {
-  const row = (k, v) => `<div class="hsrow"><span class="hk">${k}</span><div>${v}</div></div>`;
-  return `<section class="head head-a">${row(U.date, hDate())}${row(U.timer, hTimer())}${multi ? row(U.gradeLbl, hGrade(avail)) : ""}${row(U.type, hType())}
+  const lim = st.timer === "limit";
+  return `<section class="head head-a"><label class="srow"><span>${U.date}</span>${hDate()}</label>
+    ${pick(U.timer, 'data-sel="timer"', ["off", "watch", "limit"], st.timer, U.tm)}
+    ${lim ? `<label class="srow"><span>${U.tm.limit}, ${U.min}</span><input class="num" type="number" id="f-limit" min="5" max="240" step="5" value="${st.limit}" aria-label="${U.min}"></label>` : ""}
+    ${multi ? pick(U.gradeLbl, 'data-sel="workGrade"', avail.concat("mix"), mixOn() ? "mix" : workGrade(), gradeLabels(avail)) : ""}
+    ${pick(U.type, 'data-sel="type"', ["theme", "period"], st.type, U.ty)}
     <div class="hfoot"><button class="btn" type="button" data-act="new">${U.create}</button><button class="pill-btn hidebtn" type="button" data-act="headmode" data-m="compact" aria-label="${esc(U.hideSet)}"><span>${U.hideSet}</span>${ICON_UP}</button></div></section>`;
 }
 

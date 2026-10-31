@@ -16,7 +16,7 @@ import { ICON_DOWN } from "./icons.js";
 import { runEnter } from "./motion.js";
 import { G, GRADES, gradesTitle } from "../work/grades.js";
 
-const LANGS = { ru: "Русский", et: "Eesti", en: "English" };
+export const LANGS = { ru: "Русский", et: "Eesti", en: "English" };
 
 export function renderMain() {
   G.setLang(st.lang);

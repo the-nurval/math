@@ -209,27 +209,6 @@ input.ans {
 .faq details {
   border-color: var(--line);
 }
-/* плашки прижаты к краям карточки: отступ 8 → радиус 28 − 8 = 20; текст на линии +24 */
-.kpis {
-  border-top: 0;
-  gap: 8px;
-  padding: 0 8px 8px;
-}
-.kpi {
-  background: var(--soft);
-  border-radius: 20px;
-  padding: 16px;
-}
-.kpi + .kpi {
-  border-left: 0;
-}
-.kpi b {
-  font-size: 1.6rem;
-  font-weight: 800;
-}
-.pcard {
-  padding: var(--pad-card);
-}
 .trow .meter,
 .meter {
   height: 10px;

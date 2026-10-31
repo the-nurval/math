@@ -1,4 +1,5 @@
 // Обработка событий страницы: клики (переходы, настройки, действия), ввод ответов, Enter, фокус.
+import { U } from "./i18n/index.js";
 import { weekHtml } from "./screens/main/header.js";
 import { saveProfile } from "./services/auth.js";
 import { openKid } from "./services/family.js";
@@ -13,6 +14,7 @@ import { familyActions } from "./actions/family.js";
 import { timerActions } from "./actions/timer.js";
 import { workActions } from "./actions/work.js";
 import { closeModal } from "./ui/modal.js";
+import { syncGen } from "./work/grades.js";
 import { renderScreen } from "./ui/render.js";
 
 // все действия кнопок data-act по разделам
@@ -142,11 +144,25 @@ export function bindEvents() {
       st.name = e.target.value;
       const av = document.getElementById("ava");
       if (av) av.textContent = (st.name || "").trim().charAt(0).toUpperCase() || "?";
+      const pn = document.getElementById("pname");
+      if (pn) pn.textContent = st.name.trim() || U.noName;
       saveProfile();
     }
   });
   document.addEventListener("change", e => {
     const t = e.target;
+    if (t.dataset.sel === "workGrade") {
+      st.mix = t.value === "mix";
+      if (!st.mix) st.workGrade = t.value;
+      saveProfile();
+      syncGen();
+      renderMain();
+      return;
+    }
+    if (t.dataset.sel) {
+      changeSetting({ dataset: { set: t.dataset.sel, v: t.value } });
+      return;
+    }
     if (t.dataset.grade) {
       const n = Number(t.dataset.grade);
       st.grades = t.checked

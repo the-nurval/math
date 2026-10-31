@@ -43,14 +43,6 @@
   }
 }
 @media (max-width: 849px) {
-  .pcard {
-    grid-template-columns: 56px minmax(0, 1fr);
-  }
-  .pcard .out-col {
-    grid-column: 1/-1;
-    grid-row: auto;
-    width: auto;
-  }
   .gmenu {
     width: min(340px, calc(100vw - 32px));
   }

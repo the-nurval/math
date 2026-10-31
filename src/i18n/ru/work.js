@@ -70,6 +70,7 @@ export default {
   namePh: "Как зовут ученика",
   grade: "7 класс",
   year: "учебный год",
+  sumSec: "Итоги",
   kWorks: "работ",
   kAvg: "средний результат",
   kStreak: "дней подряд",
