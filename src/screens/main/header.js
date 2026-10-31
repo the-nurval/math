@@ -39,7 +39,7 @@ function hType() {
 export function headA(avail, multi) {
   const row = (k, v) => `<div class="hsrow"><span class="hk">${k}</span><div>${v}</div></div>`;
   return `<section class="head head-a">${row(U.date, hDate())}${row(U.timer, hTimer())}${multi ? row(U.gradeLbl, hGrade(avail)) : ""}${row(U.type, hType())}
-    <div class="hfoot"><button class="btn" type="button" data-act="new">${U.create}</button><button class="pill-btn" type="button" data-act="headmode" data-m="compact">${U.hideSet}${ICON_UP}</button></div></section>`;
+    <div class="hfoot"><button class="btn" type="button" data-act="new">${U.create}</button><button class="pill-btn hidebtn" type="button" data-act="headmode" data-m="compact" aria-label="${esc(U.hideSet)}"><span>${U.hideSet}</span>${ICON_UP}</button></div></section>`;
 }
 
 export function headB(avail, multi) {

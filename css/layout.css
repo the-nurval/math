@@ -91,7 +91,12 @@
 }
 .seg button {
   flex: 1 1 auto;
-  height: 100%;
+  height: auto;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   padding: 0 12px;
   border: 0;
   border-radius: calc(var(--r-ctl) - 2px);
@@ -132,6 +137,17 @@ input.txt {
   border-radius: var(--r-ctl);
   padding: 0 12px;
   min-width: 0;
+}
+/* Safari на iPhone: дата по левому краю и по центру высоты, как в остальных полях */
+input[type="date"] {
+  -webkit-appearance: none;
+  appearance: none;
+  display: flex;
+  align-items: center;
+}
+input[type="date"]::-webkit-date-and-time-value {
+  margin: 0;
+  text-align: left;
 }
 input.num {
   width: 5.5em;
