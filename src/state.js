@@ -14,6 +14,7 @@ export const st = Object.assign(
     theme: "system",
     name: "",
     view: "main",
+    psec: null, // открытый раздел профиля (итоги, история…), null — список разделов
     test: null,
     meta: null,
     answers: {},

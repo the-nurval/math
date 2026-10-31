@@ -179,6 +179,7 @@ export const familyActions = {
   fullself(a) {
     closeModal();
     st.view = "profile";
+    st.psec = "later";
     renderScreen();
     setTimeout(() => {
       const el = document.getElementById("later");

@@ -2,7 +2,7 @@
 import { LV, U } from "../../i18n/index.js";
 import { dayKey, esc, fmtD, fmtTime } from "../../lib/format.js";
 import { viewKid } from "../family/kids.js";
-import { secBadge, studentProfileOpts } from "../family/parts.js";
+import { studentProfileOpts } from "../family/parts.js";
 import { sheetHtml } from "../main/sheet.js";
 import { heatSvg, trendSvg } from "./charts.js";
 import { family, session, st } from "../../state.js";
@@ -94,57 +94,138 @@ export function viewProfile(o) {
   })();
   const nm = ro ? o.name || "" : st.name;
   const initial = (nm || "").trim().charAt(0).toUpperCase() || "?";
-  let h = `<div class="screen">${subhead(o.title || U.profile, o.back || "main")}
-   <div class="group" style="margin-top:12px"><div class="pcard"><div class="ava" id="ava">${esc(initial)}</div>
-    <div class="pid"><b id="pname">${esc(nm || U.noName)}</b><span class="sub">${
-      ro
-        ? `${U.title}${o.level && LV[o.level] ? " · " + LV[o.level] : ""} · ${U.year} ${y0}`
-        : esc((session.user && session.user.email) || "")
-    }</span></div>${ro ? `<button class="btn ghost" type="button" data-go="prog">${U.prog}</button>` : ""}</div></div>
-   ${
-     ro
-       ? ""
-       : `<div class="group"><label class="srow"><span>${U.name}</span><input class="txt inl" id="f-name" value="${esc(st.name)}" placeholder="${esc(U.namePh)}" autocomplete="off"></label>
+  const email = (session.user && session.user.email) || "";
+  const msg = t => `<div class="srow"><span class="sub" style="margin:0">${t}</span></div>`;
+  const grp = inner => `<div class="group">${inner}</div>`;
+  const kv = (k, v) => `<div class="srow"><span>${k}</span><b>${v}</b></div>`;
+  const total = availGrades().reduce((s, g) => s + genFor(g).OLY.length, 0);
+  // разделы профиля: в корне — строки-ссылки, внутри — содержимое (заголовок экрана = название)
+  const secs = [
+    {
+      k: "sum",
+      g: U.grpProgress,
+      t: U.sumSec,
+      v: n,
+      html: grp(
+        kv(cap(U.kWorks), n) +
+          kv(cap(U.kAvg), n ? avg + "%" : "—") +
+          kv(cap(U.kStreak), streak) +
+          kv(cap(U.kTime), avgTime ? fmtTime(avgTime) : "—"),
+      ),
+    },
+    {
+      k: "act",
+      g: U.grpProgress,
+      t: U.act,
+      html: grp(`<div class="chartbox">${heatSvg(hist)}</div>`),
+    },
+    {
+      k: "trend",
+      g: U.grpProgress,
+      t: U.trend,
+      html: grp(`<div class="chartbox">${trendSvg(hist)}</div>`),
+    },
+  ];
+  if (rows.length)
+    secs.push({
+      k: "topics",
+      g: U.grpProgress,
+      t: U.topics,
+      v: weak.length || "",
+      html: grp(
+        rows
+          .map(
+            r =>
+              `<div class="trow ${tc(r.id)}${r.p < 70 ? " weak" : ""}"><span>${esc(topicName(r.id))}${r.p < 70 ? `<span class="tag-weak">${U.weak}</span>` : ""}</span><div class="meter"><i style="width:${r.p}%"></i></div><span class="pc">${r.p}%</span><span class="arrow ${r.arr}" title="${esc(U.cmp)}">${r.sym}</span></div>`,
+          )
+          .join("") +
+          (weak.length && !ro
+            ? `<div class="srow trainrow"><span class="sub" style="margin:0">${esc(weak.map(topicName).join(", "))}</span><button class="btn sm" type="button" data-act="train" data-only="${weak.join(",")}">${U.trainBtn}</button></div>`
+            : ""),
+      ),
+    });
+  secs.push(
+    {
+      k: "time",
+      g: U.grpProgress,
+      t: U.timeT,
+      html: grp(
+        timed.length
+          ? kv(U.kTime, fmtTime(avgTime)) +
+              kv(U.tPerTask, fmtTime(perTask)) +
+              (limShare != null ? kv(U.tLimit, limShare + "%") : "")
+          : msg(U.tNone),
+      ),
+    },
+    {
+      k: "oly",
+      g: U.grpProgress,
+      t: U.oly,
+      v: `${olyDone.size} ${U.of} ${total}`,
+      html: grp(kv(U.oly, U.olySolved(olyDone.size, total))),
+    },
+    {
+      k: "hist",
+      g: U.grpTasks,
+      t: U.hist,
+      v: n,
+      badge: ro ? o.newWorks : 0,
+      html:
+        (ro && o.newWorks
+          ? `<p class="sub below"><button class="link-btn" type="button" data-act="seenreset" data-k="works">${U.resetNew}</button></p>`
+          : "") +
+        grp(
+          n
+            ? hist
+                .map(
+                  (r, i) =>
+                    `<button class="hsrow" type="button" data-review="${i}" data-src="${ro ? "kid" : "me"}"><span><span>${fmtD(new Date(r.ts))} · ${esc(U.ty[r.type] || "")} · ${LV[r.level] || ""}</span><br><span class="m">${esc(
+                      Object.keys(r.topics || {})
+                        .filter(x => x !== "oly" && x !== "proof")
+                        .map(topicName)
+                        .join(", "),
+                    )}</span></span><span class="s">${r.score}/${r.max}</span>${r.meta ? ICON_CHEV : "<span></span>"}</button>`,
+                )
+                .join("")
+            : msg(U.histNone),
+        ),
+    },
+    ...(o.sections || []),
+  );
+  const cur = secs.find(x => x.k === st.psec);
+  const me = !ro && st.psec === "me";
+  if (cur || me) {
+    const back = `${o.back === "kids" ? "kid" : "profile"}`;
+    return `<div class="screen">${subhead(me ? nm || U.noName : cur.t, back)}<div class="psec">${
+      me
+        ? `<div class="group"><div class="pcard col"><div class="ava lg" id="ava">${esc(initial)}</div><span class="sub">${esc(email)}</span></div></div>
+    <div class="group"><label class="srow"><span>${U.name}</span><input class="txt inl" id="f-name" value="${esc(st.name)}" placeholder="${esc(U.namePh)}" autocomplete="off"></label>
     ${pick(U.yearLbl, 'id="f-year"', ["2026/27", "2027/28"], st.year)}${pick(U.gradeLbl, 'id="f-grade"', GRADES, st.grade)}</div>`
-   }
-   <div class="sec">${U.sumSec}</div><div class="group">${[
-     [U.kWorks, n],
-     [U.kAvg, n ? avg + "%" : "—"],
-     [U.kStreak, streak],
-     [U.kTime, avgTime ? fmtTime(avgTime) : "—"],
-   ]
-     .map(([k, v]) => `<div class="srow"><span>${cap(k)}</span><b>${v}</b></div>`)
-     .join("")}</div>
-   ${ro ? "" : `<div class="group"><button class="srow link" type="button" data-act="logout"><span class="ico-l">${ICON_EXIT}${U.logout}</span></button></div>`}
-   ${ro || session.sync === "ok" ? "" : `<p class="sub below">${U.offline}</p>`}
-   <div class="sec">${U.act}</div><div class="group"><div class="chartbox">${heatSvg(hist)}</div></div>
-   <div class="sec">${U.trend}</div><div class="group"><div class="chartbox">${trendSvg(hist)}</div></div>`;
-  if (rows.length) {
-    h += `<div class="sec">${U.topics}</div><div class="group">${rows.map(r => `<div class="trow ${tc(r.id)}${r.p < 70 ? " weak" : ""}"><span>${esc(topicName(r.id))}${r.p < 70 ? `<span class="tag-weak">${U.weak}</span>` : ""}</span><div class="meter"><i style="width:${r.p}%"></i></div><span class="pc">${r.p}%</span><span class="arrow ${r.arr}" title="${esc(U.cmp)}">${r.sym}</span></div>`).join("")}
-      ${weak.length && !ro ? `<div class="srow trainrow" style="border-top:1px solid var(--line)"><span class="sub" style="margin:0">${esc(weak.map(topicName).join(", "))}</span><button class="btn sm" type="button" data-act="train" data-only="${weak.join(",")}">${U.trainBtn}</button></div>` : ""}</div>`;
+        : cur.html
+    }</div></div>`;
   }
-  h += `<div class="sec">${U.timeT}</div><div class="group">${timed.length ? `<div class="srow"><span class="k">${U.kTime}</span><b>${fmtTime(avgTime)}</b></div><div class="srow"><span class="k">${U.tPerTask}</span><b>${fmtTime(perTask)}</b></div>${limShare != null ? `<div class="srow"><span class="k">${U.tLimit}</span><b>${limShare}%</b></div>` : ""}` : `<div class="srow"><span class="sub" style="margin:0">${U.tNone}</span></div>`}</div>
-   <div class="sec">${U.oly}</div><div class="group"><div class="srow"><span class="k">${U.oly}</span><b>${U.olySolved(
-     olyDone.size,
-     availGrades().reduce((s, g) => s + genFor(g).OLY.length, 0),
-   )}</b></div></div>
-   ${secBadge(U.hist, ro ? o.newWorks : 0, "works")}<div class="group">${
-     n
-       ? hist
-           .map(
-             (r, i) =>
-               `<button class="hsrow" type="button" data-review="${i}" data-src="${ro ? "kid" : "me"}"><span><span>${fmtD(new Date(r.ts))} · ${esc(U.ty[r.type] || "")} · ${LV[r.level] || ""}</span><br><span class="m">${esc(
-                 Object.keys(r.topics || {})
-                   .filter(x => x !== "oly" && x !== "proof")
-                   .map(topicName)
-                   .join(", "),
-               )}</span></span><span class="s">${r.score}/${r.max}</span>${r.meta ? ICON_CHEV : "<span></span>"}</button>`,
-           )
-           .join("")
-       : `<div class="srow"><span class="sub" style="margin:0">${U.histNone}</span></div>`
-   }</div>
-  ${o.extra || ""}</div>`;
-  return h;
+  const link = x =>
+    `<button class="srow link" type="button" data-act="psec" data-s="${x.k}"><span>${x.t}${x.badge ? ` <span class="badge" aria-label="${esc(U.newN(x.badge))}">${x.badge}</span>` : ""}</span><span class="pv">${x.v ?? ""}${ICON_CHEV}</span></button>`;
+  const groups = [...new Set(secs.map(x => x.g))];
+  const head = ro
+    ? `<div class="pcard"><div class="ava">${esc(initial)}</div><div class="pid"><b>${esc(nm || U.noName)}</b><span class="sub">${U.title}${o.level && LV[o.level] ? " · " + LV[o.level] : ""} · ${U.year} ${y0}</span></div><button class="btn ghost" type="button" data-go="prog">${U.prog}</button></div>`
+    : `<button class="pcard link" type="button" data-act="psec" data-s="me"><div class="ava">${esc(initial)}</div><div class="pid"><b>${esc(nm || U.noName)}</b><span class="sub">${U.gradeN(st.grade)} · ${esc(st.year)}</span></div>${ICON_CHEV}</button>`;
+  return `<div class="screen">${subhead(o.title || U.profile, o.back || "main")}
+   <div class="group" style="margin-top:12px">${head}</div>
+   ${ro || session.sync === "ok" ? "" : `<p class="sub below">${U.offline}</p>`}
+   ${groups
+     .map(
+       g =>
+         `<div class="sec">${g}</div>${grp(
+           secs
+             .filter(x => x.g === g)
+             .map(link)
+             .join(""),
+         )}`,
+     )
+     .join("")}
+   ${ro ? "" : `<div class="group" style="margin-top:24px"><button class="srow link" type="button" data-act="logout"><span class="ico-l">${ICON_EXIT}${U.logout}</span></button></div>`}
+  </div>`;
 }
 
 export function viewReview() {
@@ -157,5 +238,5 @@ export function viewReview() {
     return fromKid ? viewKid() : viewProfile(studentProfileOpts());
   }
   const test = buildFrom(r.meta);
-  return `<div class="screen">${subhead(`${U.review} ${fmtD(new Date(r.ts))}`, fromKid ? "kid" : "profile")}${sheetHtml({ helpCid: !fromKid && r.cid ? r.cid : null, focus: st.rv.focus, test, meta: r.meta, answers: r.answers || {}, checked: true, open: st.rv.open || {}, blockTime: r.blockTime || {}, timeSec: r.timeSec || 0, laps: r.laps || [], readonly: true })}</div>`;
+  return `<div class="screen">${subhead(`${U.review} ${fmtD(new Date(r.ts))}`, fromKid ? "kid" : "profile", st.psec)}${sheetHtml({ helpCid: !fromKid && r.cid ? r.cid : null, focus: st.rv.focus, test, meta: r.meta, answers: r.answers || {}, checked: true, open: st.rv.open || {}, blockTime: r.blockTime || {}, timeSec: r.timeSec || 0, laps: r.laps || [], readonly: true })}</div>`;
 }

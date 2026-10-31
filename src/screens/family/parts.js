@@ -34,7 +34,7 @@ export function msgHtml() {
 function familyHtml() {
   const act = family.parents.filter(p => p.status === "active");
   const inv = family.myInvites.filter(i => i.role === "parent");
-  let h = `<div class="sec">${U.family}</div><div class="group">`;
+  let h = `<div class="group">`;
   if (!act.length && !inv.length)
     h += `<div class="srow"><span class="sub">${U.noParents}</span></div>`;
   h +=
@@ -47,7 +47,7 @@ function familyHtml() {
       )
       .join("") + inviteRows(inv);
   h += `</div><div class="sec">${U.inviteParent}</div><div class="group">${inviteForm("invparent")}</div>${msgHtml()}`;
-  return h;
+  return { k: "family", g: U.family, t: U.parentsT, v: act.length || "", html: h };
 }
 
 export function helpBtn(cid, k, title) {
@@ -61,7 +61,7 @@ export function helpBtn(cid, k, title) {
 function laterHtml() {
   const par = hasParent();
   const hs = sortedHist();
-  let h = `<div class="sec sec-row"><span>${par ? U.myHelpSec : U.laterSec}</span><span class="sub">${U.ofLimit(family.myHelp.length)}</span></div><div class="group" id="later">`;
+  let h = `<div class="group" id="later">`;
   if (!family.myHelp.length) h += `<div class="srow"><span class="sub">${U.laterNone}</span></div>`;
   family.myHelp
     .slice()
@@ -75,15 +75,12 @@ function laterHtml() {
         : "";
       h += `<div class="srow"><span><b>${esc(x.title)}</b><br><span class="sub">${fmtD(new Date(x.created_at))}${wt ? " · " + esc(U.workOf(wt)) : ""}</span></span><span class="tline">${r ? `<button class="btn ghost" type="button" data-act="myhelpopen" data-cid="${esc(x.result_cid)}" data-hk="${esc(x.item_key)}">${U.helpOpen}</button>` : ""}<button class="btn ghost" type="button" data-act="myhelpdel" data-id="${x.id}">${U.removeIt}</button></span></div>`;
     });
-  h += `</div>`;
+  h += `</div><p class="sub below">${U.ofLimit(family.myHelp.length)}</p>`;
   if (!par) h += `<p class="sub below">${U.laterNote}</p>`;
-  return h;
+  const t = par ? U.myHelpSec : U.laterSec;
+  return { k: "later", g: U.grpTasks, t, v: `${family.myHelp.length} ${U.of} 20`, html: h };
 }
 
 export function studentProfileOpts() {
-  return { extra: laterHtml() + familyHtml() };
-}
-
-export function secBadge(title, n, key) {
-  return `<div class="sec sec-row"><span class="sec-t">${title}${n ? ` <span class="badge" aria-label="${esc(U.newN(n))}">${n}</span>` : ""}</span>${n ? `<button class="link-btn" type="button" data-act="seenreset" data-k="${key}">${U.resetNew}</button>` : ""}</div>`;
+  return { sections: [laterHtml(), familyHtml()] };
 }

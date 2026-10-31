@@ -16,8 +16,9 @@ export function pick(label, attr, vals, cur, labels) {
   return `<label class="srow selrow"><span>${esc(label)}</span><span class="pv">${on == null ? "" : nm(on)}${ICON_DOWN}</span><select ${attr} aria-label="${esc(label)}">${vals.map(v => `<option value="${v}"${String(v) === String(cur) ? " selected" : ""}>${nm(v)}</option>`).join("")}</select></label>`;
 }
 
-export function subhead(title, backTo) {
-  return `<div class="subhead"><button class="back" type="button" data-go="${backTo}" aria-label="${esc(U.back)}">${ICON_BACK}</button><h2>${esc(title)}</h2></div>`;
+// ps — раздел профиля, в который вернуться (иначе — корень экрана)
+export function subhead(title, backTo, ps) {
+  return `<div class="subhead"><button class="back" type="button" data-go="${backTo}"${ps ? ` data-ps="${ps}"` : ""} aria-label="${esc(U.back)}">${ICON_BACK}</button><h2>${esc(title)}</h2></div>`;
 }
 
 const segPos = {};

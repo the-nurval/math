@@ -29,6 +29,7 @@ export function navigate(go) {
     st.faqOpen = go.dataset.faq != null ? Number(go.dataset.faq) : null;
   }
   st.view = to;
+  st.psec = go.dataset.ps || null;
   enter(to === "profile" ? "profile" : "screen");
   renderScreen();
   window.scrollTo({ top: 0 });

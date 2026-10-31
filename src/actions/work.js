@@ -6,7 +6,7 @@ import { savePrefs } from "../services/prefs.js";
 import { st } from "../state.js";
 import { renderBar } from "../ui/bar.js";
 import { reduced } from "../ui/motion.js";
-import { renderMain, renderNav } from "../ui/render.js";
+import { renderMain, renderNav, renderScreen } from "../ui/render.js";
 import { closeSum, openSum } from "../ui/summary.js";
 import { mixOn } from "../work/grades.js";
 import { finish, newTest, totals } from "../work/test.js";
@@ -42,6 +42,12 @@ export const workActions = {
     st.mix = !mixOn();
     saveProfile();
     renderMain();
+  },
+  // раздел профиля: итоги, история, семья…
+  psec(a) {
+    st.psec = a.dataset.s;
+    renderScreen();
+    window.scrollTo({ top: 0 });
   },
   headmode(a) {
     st.headMode = a.dataset.m;

@@ -2,7 +2,7 @@
 import { U } from "../../i18n/index.js";
 import { esc, fmtD, loc } from "../../lib/format.js";
 import { LS } from "../../lib/storage.js";
-import { inviteForm, inviteRows, msgHtml, personRow, secBadge } from "./parts.js";
+import { inviteForm, inviteRows, msgHtml, personRow } from "./parts.js";
 import { viewProfile } from "../profile/index.js";
 import { family, session } from "../../state.js";
 import { ICON_CHEV } from "../../ui/icons.js";
@@ -60,12 +60,17 @@ function kidExtra() {
   const newHelp = family.kidHelp.filter(
     x => !x.done && new Date(x.created_at).getTime() > seen.help,
   ).length;
-  let h = `${secBadge(U.helpSec, newHelp, "help")}<div class="group">`;
+  let h =
+    (newHelp
+      ? `<p class="sub below"><button class="link-btn" type="button" data-act="seenreset" data-k="help">${U.resetNew}</button></p>`
+      : "") + `<div class="group">`;
   if (!family.kidHelp.length) h += `<div class="srow"><span class="sub">${U.helpNone}</span></div>`;
   family.kidHelp.forEach(x => {
     h += `<div class="srow"><span>${x.done ? "" : "<b>"}${esc(x.title)}${x.done ? "" : "</b>"}<br><span class="sub">${fmtD(new Date(x.created_at))}${x.done ? " · " + U.helpDoneMark : ""}</span></span><span class="tline"><button class="btn ghost" type="button" data-act="helpopen" data-cid="${esc(x.result_cid)}" data-hk="${esc(x.item_key)}">${U.helpOpen}</button>${x.done ? "" : `<button class="btn ghost" type="button" data-act="helpdone" data-id="${x.id}">${U.helpDone}</button>`}</span></div>`;
   });
-  h += `</div><div class="sec">${U.family}</div><div class="group">`;
+  h += `</div>`;
+  const help = { k: "help", g: U.grpTasks, t: U.helpSec, badge: newHelp, html: h };
+  h = `<div class="group">`;
   h += family.kidParents
     .map(p =>
       personRow(
@@ -86,7 +91,8 @@ function kidExtra() {
   h += msgHtml();
   if (amMain)
     h += `<div class="sec">${U.kidAccSec}</div><div class="group"><div class="srow"><span class="sub">${U.kidDelWarn}</span><button class="btn ghost danger" type="button" data-act="d1" data-sid="${sid}">${U.deleteAcc}</button></div></div>`;
-  return h;
+  const fam = { k: "family", g: U.family, t: U.parentsT, v: family.kidParents.length, html: h };
+  return [help, fam];
 }
 
 export function viewKid() {
@@ -100,6 +106,6 @@ export function viewKid() {
     name: family.kid.name,
     back: "kids",
     title: family.kid.name || U.noName,
-    extra: kidExtra(),
+    sections: kidExtra(),
   });
 }

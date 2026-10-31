@@ -2,6 +2,28 @@
    Подпись слева, значение серым справа, выбор — меню по стрелке; тонкие линии от +24 до −24 px */
 :root {
   --r-card: 16px;
+  /* кнопки и поля прямоугольнее, под карточки 16 px; меню: 16, пункты внутри с отступом 8 → 8 */
+  --r-ctl: 10px;
+}
+.pill-btn,
+.fchip,
+.head-b .btn,
+.ib-soft,
+.sumbtn,
+.sum .ib {
+  border-radius: var(--r-ctl);
+}
+.gmenu,
+.lmenu,
+.hpop {
+  border-radius: var(--r-card);
+}
+.gm-row,
+.lmenu button {
+  border-radius: 8px;
+}
+.sum {
+  border-radius: var(--r-card) 0 0 var(--r-card);
 }
 .sec {
   margin: 24px 0 8px var(--pad-card);
@@ -123,7 +145,40 @@
   letter-spacing: 0;
   font-weight: 500;
 }
-/* профиль: аватар, имя и почта */
+/* профиль: аватар, имя и почта; в корне карточка — ссылка на данные ученика */
+.pcard.link {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.pcard.link:hover {
+  background: var(--soft);
+}
+.pcard.link > svg {
+  flex: none;
+  color: var(--muted);
+}
+.pcard.col {
+  flex-direction: column;
+  padding: 24px var(--pad-card);
+  gap: 8px;
+}
+.ava.lg {
+  width: 72px;
+  height: 72px;
+  font-size: 1.8rem;
+}
+.psec > .group:first-child {
+  margin-top: 12px;
+}
+.srow.link .pv svg {
+  width: 20px;
+  height: 20px;
+}
 .pcard {
   display: flex;
   align-items: center;
@@ -173,4 +228,8 @@
 /* учебная неделя: кнопка на правой линии, как в шапке */
 .week {
   padding: 16px var(--pad-card);
+}
+/* строка с полем: подпись в свою ширину, поле — остаток */
+.srow:has(input.inl) {
+  grid-template-columns: auto minmax(0, 1fr);
 }
